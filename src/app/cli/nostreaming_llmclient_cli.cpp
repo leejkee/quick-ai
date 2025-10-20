@@ -23,6 +23,7 @@ int main()
     };
     QA::Core::Conversation conversation{system_prompt};
     QA::Core::LLMClient client(api_key);
+    std::cout << "Time: " << conversation.get_start_time() << std::endl;
     std::cout << "Starting chat session (system prompt: '" << system_prompt.
             content << "'). Type 'exit' to end." << std::endl;
 
