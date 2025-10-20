@@ -15,10 +15,14 @@ public:
     std::optional<NoStreamingResponsePacket> no_streaming_request(
         const std::vector<Message>& messages);
 
-    // bool streaming_request(std::string_view prompt
-    //                        , std::function<void(
-    //                            const StreamingResponsePacket& chunk)>&
-    //                        chunk_received);
+    bool streaming_request(const std::vector<Message>& messages
+                           , const std::function<void(
+                               const std::string_view& content_chunk)>&
+                           content_chunk_received
+                           , const std::function<void(
+                               const std::string_view& finish_reason
+                               , const Usage& usage_info)>&
+                           completion_chunk_received);
 
     static void print_response(
         const NoStreamingResponsePacket& response);
