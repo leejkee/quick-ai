@@ -9,8 +9,9 @@
 * `qacli-streamingclient`  
 返回流式数据chunk，回复多少显示多少，体验流畅
 
+
 ## Todo
 - [x] LLM(Deepseek) client cli
 - [x] Conversation management
 - [ ] Gui based QtQuick
-- [ ] Multi-model switching capability 
+- [x] Multi-model switching capability 
