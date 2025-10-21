@@ -33,4 +33,3 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
 )
 
 add_subdirectory(src)
-add_subdirectory(examples)
