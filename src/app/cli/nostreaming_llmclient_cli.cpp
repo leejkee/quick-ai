@@ -1,8 +1,8 @@
 //
 // Created by 31305 on 2025/10/18.
 //
-#include <llm/client.h>
 #include <llm/conversation.h>
+#include <llm/llmclient.h>
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -22,7 +22,7 @@ int main()
         , "You are a translation expert."
     };
     QA::Core::Conversation conversation{system_prompt};
-    QA::Core::LLMClient client(api_key);
+    QA::Core::LLMClient client(QA::Core::LLMClient::Model::deepseek_chat, api_key);
     std::cout << "Time: " << conversation.get_start_time() << std::endl;
     std::cout << "Starting chat session (system prompt: '" << system_prompt.
             content << "'). Type 'exit' to end." << std::endl;
@@ -40,9 +40,10 @@ int main()
         if (const auto r = client.
                 no_streaming_request(conversation.get_messages()))
         {
-            const auto& assistant_message = r.value().choices[0].message;
-            conversation.push_message(assistant_message);
-            std::cout << "A: " << assistant_message.content << std::endl;
+            const auto& assistant_message = r.value();
+            conversation.push_message(assistant_message.message);
+            std::cout << "A: " << assistant_message.message.content << std::endl;
+            std::cout << "Total tokens: " << assistant_message.usage.total_tokens << std::endl;
         }
         else
         {
