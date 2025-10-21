@@ -68,7 +68,7 @@ std::optional<CommonChatResponse> DeepSeekAdapter::no_streaming_request(
 }
 
 std::optional<CommonChatResponse> DeepSeekAdapter::streaming_request(
-    std::vector<Message>& messages
+    const std::vector<Message>& messages
     , const content_callback& content_call)
 {
     if (messages.empty())

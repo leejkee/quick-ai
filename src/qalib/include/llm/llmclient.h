@@ -23,7 +23,7 @@ public:
     std::optional<CommonChatResponse> no_streaming_request(const std::vector<Message>& messages);
 
     std::optional<CommonChatResponse> streaming_request(
-        std::vector<Message>& messages
+        const std::vector<Message>& messages
         , const content_callback& content_call);
 
 

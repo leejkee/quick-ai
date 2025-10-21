@@ -42,8 +42,10 @@ int main()
         {
             const auto& assistant_message = r.value();
             conversation.push_message(assistant_message.message);
-            std::cout << "A: " << assistant_message.message.content << std::endl;
-            std::cout << "Total tokens: " << assistant_message.usage.total_tokens << std::endl;
+            std::cout << "A: " << assistant_message.message.content << '\n';
+            std::cout << "[finish_reason]: " << assistant_message.finish_reason << '\n';
+            std::cout << "[Model]: " << assistant_message.model_name << '\n';
+            std::cout << "[Total tokens]: " << assistant_message.usage.total_tokens << '\n';
         }
         else
         {

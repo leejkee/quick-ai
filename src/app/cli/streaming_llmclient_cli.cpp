@@ -1,8 +1,8 @@
 //
 // Created by 31305 on 2025/10/20.
 //
-#include <llm/client.h>
 #include <llm/conversation.h>
+#include <llm/llmclient.h>
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -22,7 +22,7 @@ int main()
         , "You are a translation expert."
     };
     QA::Core::Conversation conversation{system_prompt};
-    QA::Core::LLMClient client(api_key);
+    QA::Core::LLMClient client(QA::Core::LLMClient::Model::deepseek_chat, api_key);
     std::cout << "Time: " << conversation.get_start_time() << std::endl;
     std::cout << "Starting chat session (system prompt: '" << system_prompt.
             content << "'). Type 'exit' to end." << std::endl;
@@ -38,31 +38,23 @@ int main()
         }
         std::cout << "A: ";
         conversation.push_message({"user", content});
-        QA::Core::Message a_message;
-        a_message.role = "assistant";
-
-        auto on_content_received = [&a_message](
-            const std::string_view& content_chunk)
+        auto on_content_received = [](
+            const std::string_view content_chunk)
         {
-            a_message.content += content_chunk;
             std::cout << content_chunk << std::flush;
         };
-
-        auto on_stream_complete = [](const std::string_view& reason
-                                     , const QA::Core::Usage& usage)
+        if (const auto r = client.streaming_request(conversation.get_messages(), on_content_received))
         {
-            std::cout << "\n[Stream finished. Reason: " << reason << "]";
-            std::cout << " [Total Tokens: " << usage.total_tokens << "]\n";
-        };
-
-        if (!client.streaming_request(conversation.get_messages()
-                                      , on_content_received
-                                      , on_stream_complete))
-        {
-            std::cerr << "request failed." << std::endl;
-            break;
+            const auto& assistant_message = r.value();
+            conversation.push_message(assistant_message.message);
+            std::cout << "\n[finish_reason]: " << assistant_message.finish_reason << '\n';
+            std::cout << "[Model]: " << assistant_message.model_name << '\n';
+            std::cout << "[Total tokens]: " << assistant_message.usage.total_tokens << '\n';
         }
-        conversation.push_message(a_message);
+        else
+        {
+            std::cerr << "A: Error: API request failed." << std::endl;
+        }
     }
     return 0;
 }

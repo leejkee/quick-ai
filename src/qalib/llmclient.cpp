@@ -19,7 +19,7 @@ std::optional<CommonChatResponse> LLMClient::no_streaming_request(
 
 
 std::optional<CommonChatResponse> LLMClient::streaming_request(
-    std::vector<Message>& messages
+    const std::vector<Message>& messages
     , const content_callback& content_call)
 {
     return m_adapter->streaming_request(messages, content_call);

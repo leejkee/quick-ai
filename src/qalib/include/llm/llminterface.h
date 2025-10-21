@@ -28,7 +28,7 @@ public:
         const std::vector<Message>& messages) = 0;
 
     virtual std::optional<CommonChatResponse> streaming_request(
-        std::vector<Message>& messages
+        const std::vector<Message>& messages
         , const content_callback& content_call) = 0;
 };
 }
