@@ -2,6 +2,9 @@
 一个桌面大语言模型助手，快捷键唤起，随时随地问答
 
 ## 使用
+
+### 配置API_KEY
+安全起见，推荐将`api_key`配置到环境变量，cli工具会读取环境变量中的`DEEPSEEK_API_KEY`
 ### CLI Tool
 
 * `qacli-nostreamingclient`  
