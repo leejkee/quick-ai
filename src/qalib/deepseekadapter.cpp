@@ -1,7 +1,7 @@
 //
 // Created by 31305 on 2025/10/17.
 //
-#include <llm/client.h>
+#include <llm/deepseekadapter.h>
 #include <llm/models.h>
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
@@ -9,12 +9,13 @@
 
 namespace QA::Core
 {
-LLMClient::LLMClient(const std::string_view api_key)
+DeepSeekAdapter::DeepSeekAdapter(const std::string_view model, const std::string_view api_key)
     : m_api_key(api_key)
+    , m_model(model)
 {
 }
 
-std::optional<NoStreamingResponsePacket> LLMClient::no_streaming_request(
+std::optional<CommonChatResponse> DeepSeekAdapter::no_streaming_request(
     const std::vector<Message>& messages)
 {
     if (messages.empty())
@@ -22,7 +23,7 @@ std::optional<NoStreamingResponsePacket> LLMClient::no_streaming_request(
         return std::nullopt;
     }
     RequestPacket request{};
-    request.model = Model::deepseek_chat;
+    request.model = m_model;
     request.messages = messages;
     const nlohmann::json request_json = request;
     const cpr::Response r = cpr::Post(cpr::Url{m_url}
@@ -45,7 +46,14 @@ std::optional<NoStreamingResponsePacket> LLMClient::no_streaming_request(
     try
     {
         const nlohmann::json response_json = nlohmann::json::parse(r.text);
-        auto response = response_json.get<NoStreamingResponsePacket>();
+        const auto [id, choices, model, usage] = response_json.get<
+            NoStreamingResponsePacket>();
+        CommonChatResponse response;
+        response.message = choices[0].message;
+        response.finish_reason = choices[0].finish_reason;
+        response.id = id;
+        response.model_name = model;
+        response.usage = usage;
         return response;
     } catch (const nlohmann::json::parse_error& e)
     {
@@ -59,23 +67,18 @@ std::optional<NoStreamingResponsePacket> LLMClient::no_streaming_request(
     }
 }
 
-bool LLMClient::streaming_request(const std::vector<Message>& messages
-                                  , const std::function<void(
-                                      const std::string_view& content_chunk)>&
-                                  content_chunk_received
-                                  , const std::function<void(
-                                      const std::string_view& finish_reason
-                                      , const Usage& usage_info)>&
-                                  completion_chunk_received)
+std::optional<CommonChatResponse> DeepSeekAdapter::streaming_request(
+    std::vector<Message>& messages
+    , const content_callback& content_call)
 {
     if (messages.empty())
     {
         std::cerr << "Empty messages" << std::endl;
-        return false;
+        return std::nullopt;
     }
 
-    RequestPacket request_packet{};
-    request_packet.model = Model::deepseek_chat;
+    RequestPacket request_packet;
+    request_packet.model = m_model;
     request_packet.stream = true;
     request_packet.messages = messages;
 
@@ -91,8 +94,11 @@ bool LLMClient::streaming_request(const std::vector<Message>& messages
                           }
                       });
     session.SetBody(request_json.dump());
-
     std::string buffer;
+    CommonChatResponse response;
+    Message message;
+    message.role = "assistant";
+
     session.SetWriteCallback(cpr::WriteCallback([&](const std::string_view data
                                                     , intptr_t userdata)
     {
@@ -100,20 +106,19 @@ bool LLMClient::streaming_request(const std::vector<Message>& messages
         size_t pos;
         while ((pos = buffer.find("\n\n")) != std::string::npos)
         {
-            std::string message = buffer.substr(0, pos);
+            std::string sse_chunk = buffer.substr(0, pos);
             // "...}<pos>\n\ndata: {..."
             buffer.erase(0, pos + 2); // "...}\n\n<split>data: {..."
-            if (const std::string prefix = "data: "; message.rfind(prefix, 0) ==
-                0)
+            if (const std::string prefix{"data: "};
+                sse_chunk.rfind(prefix, 0) == 0)
             {
-                std::string jsonData = message.substr(prefix.length());
+                std::string jsonData = sse_chunk.substr(prefix.length());
                 // ...data: <L>{xxx}<R>...
 
                 if (jsonData == "[DONE]")
                 {
                     return true;
                 }
-
 
                 try
                 {
@@ -124,22 +129,25 @@ bool LLMClient::streaming_request(const std::vector<Message>& messages
                             "finish_reason"].is_null() && unknow_json.
                         contains("usage"))
                     {
-                        std::string finish_reason = choices["finish_reason"];
-                        const Usage usage = unknow_json["usage"].get<Usage>();
-                        completion_chunk_received(finish_reason, usage);
+                        response.finish_reason = choices["finish_reason"];
+                        response.usage = unknow_json["usage"].get<Usage>();
+                        response.id = unknow_json["id"];
+                        response.model_name = unknow_json["model"];
                     }
                     else if (choices["delta"].contains("content") && !choices[
                         "delta"]["content"].is_null())
                     {
-                        std::string content = choices["delta"]["content"];
-                        if (!content.empty() && content_chunk_received)
+                        const std::string content = choices["delta"]["content"];
+                        message.content += content;
+                        if (!content.empty() && content_call)
                         {
-                            content_chunk_received(content);
+                            content_call(content);
                         }
                     }
                 } catch (const nlohmann::json::parse_error& e)
                 {
-                    std::cerr << "\n[JSON parse error]: " << e.what() << std::endl;
+                    std::cerr << "\n[JSON parse error]: " << e.what() <<
+                            std::endl;
                 }
                 catch (const nlohmann::json::type_error& e)
                 {
@@ -155,19 +163,10 @@ bool LLMClient::streaming_request(const std::vector<Message>& messages
         std::cerr << "Request failed with status code: " << r.status_code <<
                 std::endl;
         std::cerr << "Error message: " << r.text << std::endl;
-        return false;
+        return std::nullopt;
     }
 
-    return true;
-}
-
-
-void LLMClient::print_response(const NoStreamingResponsePacket& response)
-{
-    std::string debug_info{"A: "};
-    debug_info += response.choices[0].message.content;
-    debug_info += "\nTotal tokens: " +
-            std::to_string(response.usage.total_tokens);
-    std::cout << debug_info << std::endl;
+    response.message = message;
+    return response;
 }
 }
