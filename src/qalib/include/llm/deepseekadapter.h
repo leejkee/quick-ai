@@ -60,6 +60,8 @@ class DeepSeekAdapter final : public LLMAdapterInterface
 public:
     explicit DeepSeekAdapter(std::string_view model, std::string_view api_key);
 
+    explicit DeepSeekAdapter(std::string_view model, std::string_view api_key, std::string_view url);
+
     std::optional<CommonChatResponse> no_streaming_request(
         const std::vector<Message>& messages) override;
 
@@ -70,6 +72,6 @@ public:
 private:
     std::string m_api_key;
     std::string m_model;
-    const std::string m_url{"https://api.deepseek.com/chat/completions"};
+    std::string m_url{"https://api.deepseek.com/chat/completions"};
 };
 }

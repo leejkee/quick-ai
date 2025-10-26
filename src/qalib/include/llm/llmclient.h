@@ -16,9 +16,13 @@ public:
     {
         inline static const std::string deepseek_chat = "deepseek-chat";
         inline static const std::string deepseek_reasoner = "deepseek-reasoner";
+        inline static const std::string deepseek_test = "deepseek-test";
     };
 
     explicit LLMClient(std::string_view model, std::string_view api_key);
+
+    explicit LLMClient(std::shared_ptr<LLMAdapterInterface> adapter)
+        : m_adapter(std::move(adapter)) {}
 
     std::optional<CommonChatResponse> no_streaming_request(const std::vector<Message>& messages);
 

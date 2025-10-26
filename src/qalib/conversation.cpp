@@ -37,4 +37,9 @@ const std::vector<Message>& Conversation::get_messages() const
 {
     return m_messages_history;
 }
+
+MessageTime Conversation::get_start_time() const
+{
+    return m_start_time;
+}
 }

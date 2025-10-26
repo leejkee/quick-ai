@@ -38,10 +38,12 @@ public:
     void push_message(const Message& message);
     [[nodiscard]] const std::vector<Message>& get_messages() const;
 
-    [[nodiscard]] std::string get_start_time() const
+    [[nodiscard]] std::string get_start_time_str() const
     {
         return m_start_time.to_string();
     }
+
+    [[nodiscard]] MessageTime get_start_time() const;
 
 private:
     MessageTime m_start_time;
