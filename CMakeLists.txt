@@ -9,6 +9,8 @@ project(Quick-Ai
 	LANGUAGES CXX
 )
 
+option(BUILD_TESTS "Build tests" OFF)
+
 include(FetchContent)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build all libraries as static")
 FetchContent_Declare(
@@ -22,14 +24,17 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/libcpr/cpr.git
     GIT_TAG  1.12.0
 )
-
 FetchContent_MakeAvailable(json cpr)
-
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS
 	Core
 	Widgets
 	Quick
 )
-
 add_subdirectory(src)
+
+if (BUILD_TESTS)
+	include(CTest)
+	enable_testing()
+	add_subdirectory(tests)
+endif ()

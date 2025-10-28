@@ -2,7 +2,7 @@
 // Created by 31305 on 2025/10/22.
 //
 #pragma once
-#include "llminterface.h"
+#include "llm_adapter_interface.h"
 #include <memory>
 #include <string_view>
 
@@ -19,6 +19,9 @@ public:
     };
 
     explicit LLMClient(std::string_view model, std::string_view api_key);
+
+    explicit LLMClient(std::shared_ptr<LLMAdapterInterface> adapter)
+        : m_adapter(std::move(adapter)) {}
 
     std::optional<CommonChatResponse> no_streaming_request(const std::vector<Message>& messages);
 

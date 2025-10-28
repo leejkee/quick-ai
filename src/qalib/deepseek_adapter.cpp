@@ -1,7 +1,7 @@
 //
 // Created by 31305 on 2025/10/17.
 //
-#include <llm/deepseekadapter.h>
+#include <llm/deepseek_adapter.h>
 #include <llm/models.h>
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
@@ -9,11 +9,22 @@
 
 namespace QA::Core
 {
-DeepSeekAdapter::DeepSeekAdapter(const std::string_view model, const std::string_view api_key)
-    : m_api_key(api_key)
-    , m_model(model)
+DeepSeekAdapter::DeepSeekAdapter(const std::string_view model
+                                 , const std::string_view api_key)
+    : m_api_key(api_key),
+      m_model(model)
 {
 }
+
+DeepSeekAdapter::DeepSeekAdapter(const std::string_view model
+                                 , const std::string_view api_key
+                                 , const std::string_view url)
+    : m_api_key(api_key),
+      m_model(model),
+      m_url(url)
+{
+}
+
 
 std::optional<CommonChatResponse> DeepSeekAdapter::no_streaming_request(
     const std::vector<Message>& messages)

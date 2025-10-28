@@ -31,7 +31,8 @@
       "inherits": "windows-base",
       "binaryDir": "${sourceDir}/build/windows-debug",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_TESTS": "ON"
       }
     },
 

@@ -1,13 +1,13 @@
 //
 // Created by 31305 on 2025/10/18.
 //
-#include <llm/conversation.h>
+#include <llm/llm_conversation.h>
 #include <chrono>
 #include <ctime>
 
 namespace QA::Core
 {
-Conversation::Conversation(const Message& system_prompt)
+LLMConversation::LLMConversation(const Message& system_prompt)
 {
     std::time_t time_t_value =
             std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -28,13 +28,18 @@ Conversation::Conversation(const Message& system_prompt)
     m_messages_history.push_back(system_prompt);
 }
 
-void Conversation::push_message(const Message& message)
+void LLMConversation::push_message(const Message& message)
 {
     m_messages_history.push_back(message);
 }
 
-const std::vector<Message>& Conversation::get_messages() const
+const std::vector<Message>& LLMConversation::get_messages() const
 {
     return m_messages_history;
+}
+
+MessageTime LLMConversation::get_start_time() const
+{
+    return m_start_time;
 }
 }

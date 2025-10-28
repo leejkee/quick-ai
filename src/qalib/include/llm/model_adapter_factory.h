@@ -2,8 +2,8 @@
 // Created by 31305 on 2025/10/22.
 //
 #pragma once
-#include "llminterface.h"
-#include "deepseekadapter.h"
+#include "llm_adapter_interface.h"
+#include "deepseek_adapter.h"
 #include <memory>
 
 namespace QA::Core

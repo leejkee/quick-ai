@@ -1,8 +1,8 @@
 //
 // Created by 31305 on 2025/10/18.
 //
-#include <llm/conversation.h>
-#include <llm/llmclient.h>
+#include <llm/llm_conversation.h>
+#include <llm/llm_client.h>
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -21,9 +21,9 @@ int main()
         "system"
         , "You are a translation expert."
     };
-    QA::Core::Conversation conversation{system_prompt};
+    QA::Core::LLMConversation conversation{system_prompt};
     QA::Core::LLMClient client(QA::Core::LLMClient::Model::deepseek_chat, api_key);
-    std::cout << "Time: " << conversation.get_start_time() << std::endl;
+    std::cout << "Time: " << conversation.get_start_time_str() << std::endl;
     std::cout << "Starting chat session (system prompt: '" << system_prompt.
             content << "'). Type 'exit' to end." << std::endl;
 
