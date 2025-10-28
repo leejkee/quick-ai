@@ -58,12 +58,8 @@ jobs:
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev libunistring-dev
-
-      - name: Install Ninja (Windows)
-        if: runner.os == 'Windows'
-        run: choco install ninja
+          sudo apt update
+          sudo apt install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev libunistring-dev
 
       - name: Setup MSVC Developer Command Prompt (Windows)
         if: runner.os == 'Windows'
