@@ -4,14 +4,16 @@
 #include <catch2/catch_test_macros.hpp>
 #include <llm/llm_client.h>
 
-
-class MockAdapter final : public QA::Core::LLMAdapterInterface {
+namespace
+{
+class MockAdapter final : public QA::Core::LLMAdapterInterface
+{
 public:
     bool streaming_was_called = false;
     std::string received_prompt;
 
     std::optional<QA::Core::CommonChatResponse> no_streaming_request(
-        const std::vector<QA::Core::Message>& messages) override
+            const std::vector<QA::Core::Message>& messages) override
     {
         QA::Core::CommonChatResponse response;
         response.message = {"assistant", "Mocked non-streaming response"};
@@ -19,9 +21,9 @@ public:
         return response;
     }
 
-    std::optional<QA::Core::CommonChatResponse> streaming_request(
-        const std::vector<QA::Core::Message>& messages,
-        const QA::Core::content_callback& on_content) override
+    std::optional<QA::Core::CommonChatResponse>
+    streaming_request(const std::vector<QA::Core::Message>& messages,
+                      const QA::Core::content_callback& on_content) override
     {
         streaming_was_called = true;
         received_prompt = messages.back().content;
@@ -31,15 +33,17 @@ public:
         on_content("world!");
 
         QA::Core::CommonChatResponse response;
-        response.message = {"assistant", "Hello, mocked world!"}; // 完整的回复
+        response.message = {"assistant", "Hello, mocked world!"};
         response.usage.total_tokens = 3;
         response.finish_reason = "stop";
         return response;
     }
 };
+} // namespace
 
-
-TEST_CASE("LLMClient streaming request uses adapter and callback", "[llmclient]") {
+TEST_CASE("LLMClient streaming request uses adapter and callback",
+          "[llm-client]")
+{
     auto mock_adapter = std::make_shared<MockAdapter>();
     QA::Core::LLMClient client(mock_adapter);
 
@@ -47,9 +51,8 @@ TEST_CASE("LLMClient streaming request uses adapter and callback", "[llmclient]"
     std::string accumulated_reply;
 
     auto result = client.streaming_request(messages,
-        [&](const std::string_view chunk){
-            accumulated_reply += chunk;
-        });
+                                           [&](const std::string_view chunk)
+                                           { accumulated_reply += chunk; });
 
     CHECK(mock_adapter->streaming_was_called == true);
     CHECK(mock_adapter->received_prompt == "test prompt");
@@ -60,8 +63,9 @@ TEST_CASE("LLMClient streaming request uses adapter and callback", "[llmclient]"
     CHECK(result->finish_reason == "stop");
 }
 
-TEST_CASE("LLMClient no-streaming request uses adapter", "[llmclient]") {
-    auto mock_adapter = std::make_shared<MockAdapter>();
+TEST_CASE("LLMClient no-streaming request uses adapter", "[llm-client]")
+{
+    const auto mock_adapter = std::make_shared<MockAdapter>();
     QA::Core::LLMClient client(mock_adapter);
 
     auto result = client.no_streaming_request({{"user", "test"}});
