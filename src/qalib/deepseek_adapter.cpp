@@ -1,7 +1,7 @@
 //
 // Created by 31305 on 2025/10/17.
 //
-#include <llm/deepseekadapter.h>
+#include <llm/deepseek_adapter.h>
 #include <llm/models.h>
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>

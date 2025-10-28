@@ -1,8 +1,8 @@
 //
 // Created by 31305 on 2025/10/22.
 //
-#include <llm/llmclient.h>
-#include <llm/modeladapterfactory.h>
+#include <llm/llm_client.h>
+#include <llm/model_adapter_factory.h>
 
 namespace QA::Core
 {

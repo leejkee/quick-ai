@@ -2,7 +2,7 @@
 // Created by 31305 on 2025/10/17.
 //
 #pragma once
-#include "llminterface.h"
+#include "llm_adapter_interface.h"
 #include <optional>
 
 namespace QA::Core

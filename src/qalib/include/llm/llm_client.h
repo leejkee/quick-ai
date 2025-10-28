@@ -2,7 +2,7 @@
 // Created by 31305 on 2025/10/22.
 //
 #pragma once
-#include "llminterface.h"
+#include "llm_adapter_interface.h"
 #include <memory>
 #include <string_view>
 
@@ -16,7 +16,6 @@ public:
     {
         inline static const std::string deepseek_chat = "deepseek-chat";
         inline static const std::string deepseek_reasoner = "deepseek-reasoner";
-        inline static const std::string deepseek_test = "deepseek-test";
     };
 
     explicit LLMClient(std::string_view model, std::string_view api_key);
