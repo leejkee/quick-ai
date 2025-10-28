@@ -59,12 +59,15 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev
+          sudo apt-get install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev libunistring-dev
 
       - name: Configure CMake (with Tests)
         # 1. Use -DBUILD_TESTS=ON and -DBUILD_EXAMPLES=ON
         if: runner.os == 'Windows'
         shell: powershell # Explicitly set the shell to PowerShell
+        env:
+          CC: cl.exe
+          CXX: cl.exe
         run: |
           mkdir -p ${{ steps.strings.outputs.build-output-dir }}
           cmake -B ${{ steps.strings.outputs.build-output-dir }} `
