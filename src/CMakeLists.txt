@@ -1,3 +1,5 @@
 add_subdirectory(qalib)
 add_subdirectory(app)
-add_subdirectory(qaui)
+if (QA_BUILD_UI)
+    add_subdirectory(qaui)
+endif ()

@@ -9,31 +9,12 @@ project(Quick-Ai
 	LANGUAGES CXX
 )
 
-option(BUILD_TESTS "Build tests" OFF)
+option(QA_BUILD_TESTS "Build tests" OFF)
+option(QA_BUILD_UI "Build the Qt-based UI" OFF)
 
 include(FetchContent)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build all libraries as static")
-FetchContent_Declare(
-	json
-	GIT_REPOSITORY https://github.com/nlohmann/json.git
-	GIT_TAG v3.11.3
-)
-set(CURL_STATICLIB ON CACHE BOOL "Force static curl build for cpr")
-FetchContent_Declare(
-    cpr
-    GIT_REPOSITORY https://github.com/libcpr/cpr.git
-    GIT_TAG  1.12.0
-)
-FetchContent_MakeAvailable(json cpr)
-
-find_package(Qt6 6.8 REQUIRED COMPONENTS
-	Core
-	Widgets
-	Quick
-)
 add_subdirectory(src)
-
-if (BUILD_TESTS)
+if (QA_BUILD_TESTS)
 	include(CTest)
 	enable_testing()
 	add_subdirectory(tests)
