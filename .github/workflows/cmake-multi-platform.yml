@@ -55,6 +55,12 @@ jobs:
       - name: Install Meson
         run: pip install meson
 
+      - name: Install Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev
+
       - name: Configure CMake (with Tests)
         # 1. Use -DBUILD_TESTS=ON and -DBUILD_EXAMPLES=ON
         if: runner.os == 'Windows'
@@ -64,7 +70,8 @@ jobs:
           cmake -B ${{ steps.strings.outputs.build-output-dir }} `
              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} `
              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-             -DBUILD_TESTS=ON `
+             -DQA_BUILD_TESTS=ON `
+             -DQA_BUILD_UI=OFF `
              -S ${{ github.workspace }}
 
       - name: Configure CMake (with Tests)
@@ -76,7 +83,8 @@ jobs:
           cmake -B ${{ steps.strings.outputs.build-output-dir }} \
              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-             -DBUILD_TESTS=ON \
+             -DQA_BUILD_TESTS=ON \
+             -DQA_BUILD_UI=OFF \
              -S ${{ github.workspace }}
 
       - name: Build
