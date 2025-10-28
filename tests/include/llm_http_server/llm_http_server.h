@@ -16,7 +16,7 @@ using json = nlohmann::json;
 class LLMHttpServer
 {
 public:
-    LLMHttpServer::LLMHttpServer(std::string_view host, int port);
+    LLMHttpServer(std::string_view host, int port);
 
     ~LLMHttpServer();
 
