@@ -2,7 +2,7 @@
 // Created by 31305 on 2025/10/22.
 //
 #include <catch2/catch_test_macros.hpp>
-#include <llm/llmclient.h>
+#include <llm/llm_client.h>
 
 
 class MockAdapter final : public QA::Core::LLMAdapterInterface {
