@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "llminterface.h"
-#include "deepseekadapter.h"
+#include "deepseek_adapter.h"
 #include <memory>
 
 namespace QA::Core
