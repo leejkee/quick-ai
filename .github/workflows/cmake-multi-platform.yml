@@ -61,23 +61,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev libunistring-dev
 
-      - name: Configure CMake (with Tests)
-        # 1. Use -DBUILD_TESTS=ON and -DBUILD_EXAMPLES=ON
+      - name: Install Ninja (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ninja
+
+      - name: Setup MSVC Developer Command Prompt (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure CMake (Windows, with Tests)
         if: runner.os == 'Windows'
         shell: powershell # Explicitly set the shell to PowerShell
-        env:
-          CC: cl.exe
-          CXX: cl.exe
         run: |
           mkdir -p ${{ steps.strings.outputs.build-output-dir }}
-          cmake -B ${{ steps.strings.outputs.build-output-dir }} `
+          cmake -G Ninja -B ${{ steps.strings.outputs.build-output-dir }} `
              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} `
              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
              -DQA_BUILD_TESTS=ON `
              -DQA_BUILD_UI=OFF `
              -S ${{ github.workspace }}
 
-      - name: Configure CMake (with Tests)
+      - name: Configure CMake (Linux, with Tests)
       # This step runs on Linux (where the shell is bash)
         if: runner.os == 'Linux'
         shell: bash # Explicitly set the shell to Bash (optional, but clearer)
@@ -91,7 +95,6 @@ jobs:
              -S ${{ github.workspace }}
 
       - name: Build
-        # Build your program and all targets (including tests and examples)
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
       - name: Test (Test Quick-Ai)
