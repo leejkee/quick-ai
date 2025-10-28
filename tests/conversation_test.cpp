@@ -4,7 +4,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <llm/llm_conversation.h>
 
-TEST_CASE("Conversation history is managed correctly", "[conversation]") {
+TEST_CASE("Conversation history is managed correctly", "[conversation]")
+{
     QA::Core::Message system_prompt{"system", "You are an assistant."};
     QA::Core::LLMConversation conversation(system_prompt);
 
@@ -21,7 +22,8 @@ TEST_CASE("Conversation history is managed correctly", "[conversation]") {
     CHECK(history[2].role == "assistant");
 }
 
-TEST_CASE("Conversation start time is set", "[conversation]") {
+TEST_CASE("Conversation start time is set", "[conversation]")
+{
     const QA::Core::LLMConversation conversation({"system", "test"});
     const auto start_time = conversation.get_start_time();
     REQUIRE(start_time.year > 2024);

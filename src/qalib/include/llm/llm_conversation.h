@@ -2,10 +2,10 @@
 // Created by 31305 on 2025/10/18.
 //
 #pragma once
-#include "models.h"
-#include <vector>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <vector>
+#include "models.h"
 
 namespace QA::Core
 {
@@ -18,27 +18,17 @@ struct MessageTime
     int minute;
     int second;
 
-    MessageTime()
-        : year(2000),
-          month(1),
-          day(1),
-          hour(0),
-          minute(0),
-          second(0)
+    MessageTime() : year(2000), month(1), day(1), hour(0), minute(0), second(0)
     {
     }
 
-    MessageTime(const int year
-                , const int month
-                , const int day
-                , const int hour
-                , const int minute
-                , const int second)
-        : year(year),
-          month(month),
-          day(day),
-          hour(hour),
-          minute(minute),
+    MessageTime(const int year,
+                const int month,
+                const int day,
+                const int hour,
+                const int minute,
+                const int second)
+        : year(year), month(month), day(day), hour(hour), minute(minute),
           second(second)
     {
     }
@@ -46,12 +36,11 @@ struct MessageTime
     [[nodiscard]] std::string to_string() const
     {
         std::stringstream ss;
-        ss << year << "-"
-                << std::setfill('0') << std::setw(2) << month << "-"
-                << std::setfill('0') << std::setw(2) << day << " "
-                << std::setfill('0') << std::setw(2) << hour << ":"
-                << std::setfill('0') << std::setw(2) << minute << ":"
-                << std::setfill('0') << std::setw(2) << second;
+        ss << year << "-" << std::setfill('0') << std::setw(2) << month << "-"
+           << std::setfill('0') << std::setw(2) << day << " "
+           << std::setfill('0') << std::setw(2) << hour << ":"
+           << std::setfill('0') << std::setw(2) << minute << ":"
+           << std::setfill('0') << std::setw(2) << second;
         return ss.str();
     }
 };
@@ -74,4 +63,4 @@ private:
     MessageTime m_start_time;
     std::vector<Message> m_messages_history;
 };
-}
+} // namespace QA::Core

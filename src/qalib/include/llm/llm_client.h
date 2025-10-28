@@ -2,9 +2,9 @@
 // Created by 31305 on 2025/10/22.
 //
 #pragma once
-#include "llm_adapter_interface.h"
 #include <memory>
 #include <string_view>
+#include "llm_adapter_interface.h"
 
 namespace QA::Core
 {
@@ -21,17 +21,20 @@ public:
     explicit LLMClient(std::string_view model, std::string_view api_key);
 
     explicit LLMClient(std::shared_ptr<LLMAdapterInterface> adapter)
-        : m_adapter(std::move(adapter)) {}
+        : m_adapter(std::move(adapter))
+    {
+    }
 
-    std::optional<CommonChatResponse> no_streaming_request(const std::vector<Message>& messages);
+    std::optional<CommonChatResponse>
+    no_streaming_request(const std::vector<Message>& messages);
 
-    std::optional<CommonChatResponse> streaming_request(
-        const std::vector<Message>& messages
-        , const content_callback& content_call);
+    std::optional<CommonChatResponse>
+    streaming_request(const std::vector<Message>& messages,
+                      const content_callback& content_call);
 
 
 private:
     std::shared_ptr<LLMAdapterInterface> m_adapter;
 };
 
-}
+} // namespace QA::Core

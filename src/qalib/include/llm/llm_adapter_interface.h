@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "models.h"
 #include <optional>
+#include "models.h"
 
 namespace QA::Core
 {
@@ -24,11 +24,11 @@ class LLMAdapterInterface
 public:
     virtual ~LLMAdapterInterface();
 
-    virtual std::optional<CommonChatResponse> no_streaming_request(
-        const std::vector<Message>& messages) = 0;
+    virtual std::optional<CommonChatResponse>
+    no_streaming_request(const std::vector<Message>& messages) = 0;
 
-    virtual std::optional<CommonChatResponse> streaming_request(
-        const std::vector<Message>& messages
-        , const content_callback& content_call) = 0;
+    virtual std::optional<CommonChatResponse>
+    streaming_request(const std::vector<Message>& messages,
+                      const content_callback& content_call) = 0;
 };
-}
+} // namespace QA::Core

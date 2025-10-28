@@ -24,9 +24,9 @@ struct Usage
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Message, role, content)
 
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Usage
-                                   , completion_tokens
-                                   , prompt_tokens
-                                   , total_tokens)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Usage,
+                                   completion_tokens,
+                                   prompt_tokens,
+                                   total_tokens)
 
-}
+} // namespace QA::Core
