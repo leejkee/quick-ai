@@ -1,5 +1,5 @@
 ## Quick-Ai-Assistant
-一个桌面大语言模型助手，快捷键唤起，随时随地问答
+实现了访问 `deepseek api` 的两种方式: `streaming` 和 `non-streaming`
 
 ## 使用
 
@@ -16,5 +16,7 @@
 ## Todo
 - [x] LLM(Deepseek) client cli
 - [x] Conversation management
-- [ ] Gui based QtQuick
-- [x] Multi-model switching capability 
+- [x] Multi-model switching capability
+- [ ] Gui based on QtQuick
+  - [ ] ui-session
+  - [ ] ui-settings
