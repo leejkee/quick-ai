@@ -1,5 +1,5 @@
-add_executable(qacli-no-streaming-client no_streaming_llm_client_cli.cpp)
-target_link_libraries(qacli-no-streaming-client PRIVATE quick-ai-lib)
+add_executable(QuickAICLINoStreamingClient no_streaming_llm_client_cli.cpp)
+target_link_libraries(QuickAICLINoStreamingClient PRIVATE QuickAILib)
 
-add_executable(qacli-streaming-client streaming_llm_client_cli.cpp)
-target_link_libraries(qacli-streaming-client PRIVATE quick-ai-lib)
+add_executable(QuickAICLIStreamingClient streaming_llm_client_cli.cpp)
+target_link_libraries(QuickAICLIStreamingClient PRIVATE QuickAILib)
