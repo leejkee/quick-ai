@@ -49,6 +49,7 @@ class LLMConversation
 {
 public:
     explicit LLMConversation(const Message& system_prompt);
+    LLMConversation();
     void push_message(const Message& message);
     [[nodiscard]] const std::vector<Message>& get_messages() const;
 

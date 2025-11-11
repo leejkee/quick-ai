@@ -23,8 +23,14 @@ LLMConversation::LLMConversation(const Message& system_prompt)
                     tm_struct.tm_hour,
                     tm_struct.tm_min,
                     tm_struct.tm_sec};
-    m_messages_history.push_back(system_prompt);
+    if (!system_prompt.content.empty())
+    {
+        m_messages_history.push_back(system_prompt);
+    }
 }
+
+LLMConversation::LLMConversation() : LLMConversation({{}, {}}) {}
+
 
 void LLMConversation::push_message(const Message& message)
 {
