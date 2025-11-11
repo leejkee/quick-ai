@@ -1,7 +1,9 @@
-find_package(Qt6 6.8 REQUIRED COMPONENTS
-        Core
-        Widgets
-        Quick
+cmake_minimum_required(VERSION 3.23)
+qt_add_library(QuickAIUi STATIC)
+qt_add_qml_module(QuickAIUi
+        URI qaui
+        QML_FILES
+            "Main.qml"
+            "InputView.qml"
+            "SessionView.qml"
 )
-
-message(STATUS "Building UI targets in gui/ directory...")

@@ -1,0 +1,4 @@
+module qaui
+Main 1.0 Main.qml
+InputView 1.0 InputView.qml
+SessionView 1.0 SessionView.qml
