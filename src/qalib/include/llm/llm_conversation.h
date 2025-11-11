@@ -49,8 +49,14 @@ class LLMConversation
 {
 public:
     explicit LLMConversation(const Message& system_prompt);
+
+    LLMConversation();
+
     void push_message(const Message& message);
+
     [[nodiscard]] const std::vector<Message>& get_messages() const;
+
+    [[nodiscard]] std::vector<Message> get_context() const;
 
     [[nodiscard]] std::string get_start_time_str() const
     {
@@ -60,7 +66,11 @@ public:
     [[nodiscard]] MessageTime get_start_time() const;
 
 private:
+    static constexpr int MAX_CONTEXT_WINDOW = 3;
     MessageTime m_start_time;
     std::vector<Message> m_messages_history;
+    int m_sliding_left = 0;
+    int m_sliding_right = 0;
+
 };
 } // namespace QA::Core
