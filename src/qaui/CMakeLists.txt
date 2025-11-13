@@ -6,4 +6,5 @@ qt_add_qml_module(QuickAIUi
             "Main.qml"
             "InputView.qml"
             "SessionView.qml"
+            "StatusBar.qml"
 )

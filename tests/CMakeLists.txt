@@ -26,7 +26,7 @@ add_executable(qalib-test
 
 target_link_libraries(qalib-test PRIVATE
         qatest-httpserver
-        quick-ai-lib
+        QuickAILib
         Catch2::Catch2WithMain
 )
 

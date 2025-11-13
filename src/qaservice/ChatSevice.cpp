@@ -2,13 +2,12 @@
 // Created by 31305 on 2025/11/11.
 //
 #include <ChatService/ChatService.h>
+#include <MessageListModel/MessageListModel.h>
 #include <QDebug>
 namespace QA::Service
 {
 
-ChatService::ChatService(QObject* parent) : QObject(parent)
-{
-}
+ChatService::ChatService(QObject* parent) : QObject(parent) {}
 
 void ChatService::init()
 {
@@ -23,16 +22,23 @@ void ChatService::init()
     m_conversation = std::make_unique<Core::LLMConversation>();
 }
 
-void ChatService::postPrompt(const Core::Message& message)
+void ChatService::postPrompt(const MessageBody& message)
 {
-    m_conversation->push_message(message);
+    const Core::Message userMessage{message.role.toStdString(),
+                                    message.content.toStdString()};
+    m_conversation->push_message(userMessage);
     if (const auto r =
                 m_client->no_streaming_request(m_conversation->get_context()))
     {
         const auto& assistant_message = r.value();
         const Core::Message responseMsg = assistant_message.message;
+        const int tokens = assistant_message.usage.total_tokens;
+        const MessageBody responseMessageBody{
+                QString::fromStdString(responseMsg.role),
+                QString::fromStdString(responseMsg.content),
+                tokens};
         m_conversation->push_message(responseMsg);
-        Q_EMIT signalLLMResponse(responseMsg);
+        Q_EMIT signalLLMResponse(responseMessageBody);
     }
 }
 

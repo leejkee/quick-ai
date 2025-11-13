@@ -93,7 +93,7 @@ jobs:
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-      - name: Test (Test Quick-Ai)
+      - name: Test (Test Quick-AI-Lib)
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         # Use CTest to run the specific test target
         # We use --build-config for multi-config generators (like on Windows)

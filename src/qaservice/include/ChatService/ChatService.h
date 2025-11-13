@@ -2,6 +2,7 @@
 // Created by 31305 on 2025/11/11.
 //
 #pragma once
+#include <MessageListModel/MessageListModel.h>
 #include <QObject>
 #include <llm/llm_client.h>
 #include <llm/llm_conversation.h>
@@ -18,10 +19,10 @@ public:
     void init();
 
 Q_SIGNALS:
-    void signalLLMResponse(const QA::Core::Message& message);
+    void signalLLMResponse(const MessageBody& message);
 
 public Q_SLOTS:
-    void postPrompt(const Core::Message& message);
+    void postPrompt(const MessageBody& message);
 
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;

@@ -5,8 +5,17 @@
 #include <QAbstractListModel>
 #include <QVector>
 #include <llm/models.h>
+#include <optional>
+
 namespace QA::Service
 {
+
+struct MessageBody
+{
+    QString role;
+    QString content;
+    std::optional<int> tokens;
+};
 
 class MessageListModel final : public QAbstractListModel
 {
@@ -17,12 +26,15 @@ public:
     enum MessageRoles
     {
         RoleRole = Qt::UserRole + 1,
-        TextRole
+        ContentRole,
+        TokensRole
     };
 
     inline static const auto STR_ROLE = QStringLiteral("role");
 
-    inline static const auto STR_TEXT = QStringLiteral("text");
+    inline static const auto STR_Content = QStringLiteral("content");
+
+    inline static const auto STR_TOKENS = QStringLiteral("tokens");
 
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
 
@@ -31,9 +43,9 @@ public:
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-    Q_SLOT void pushMessage(const Core::Message& message);
+    Q_SLOT void pushMessage(const MessageBody& message);
 
 private:
-    QVector<Core::Message> m_messages;
+    QVector<MessageBody> m_messages;
 };
 } // namespace QA::Service
