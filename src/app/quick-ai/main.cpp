@@ -11,14 +11,14 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
     auto* service = new QA::Service::ChatService();
     auto* serviceThread = new QThread(&app);
     service->moveToThread(serviceThread);
     QObject::connect(serviceThread, &QThread::started, service, &QA::Service::ChatService::init);
-    QObject::connect(serviceThread, &QThread::finished, service, &QObject::deleteLater);
-
-    auto* chatViewModel = new QA::Service::ChatViewModel(service, &app);
+    QObject::connect(
+            serviceThread, &QThread::finished, service, &QObject::deleteLater);
+    const auto model = new QA::Service::MessageListModel(&app);
+    auto* chatViewModel = new QA::Service::ChatViewModel(model, service, &app);
 
     serviceThread->start();
     QQmlApplicationEngine engine;

@@ -22,13 +22,15 @@ QVariant MessageListModel::data(const QModelIndex& index, const int role) const
     {
         return {};
     }
-    const auto& [roleStr, content] = m_messages[index.row()];
+    const auto& [roleStr, content, tokens] = m_messages[index.row()];
     switch (role)
     {
     case RoleRole:
-        return QString::fromStdString(roleStr);
-    case TextRole:
-        return QString::fromStdString(content);
+        return roleStr;
+    case ContentRole:
+        return content;
+    case TokensRole:
+        return tokens.has_value() ? tokens.value() : 0;
     default:
         return {};
     }
@@ -38,15 +40,16 @@ QHash<int, QByteArray> MessageListModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[RoleRole] = STR_ROLE.toUtf8();
-    roles[TextRole] = STR_TEXT.toUtf8();
+    roles[ContentRole] = STR_Content.toUtf8();
+    roles[TokensRole] = STR_TOKENS.toUtf8();
     return roles;
 }
 
-void MessageListModel::pushMessage(const Core::Message& message)
+void MessageListModel::pushMessage(const MessageBody& message)
 {
     const int newIndex = static_cast<int>(m_messages.count());
     beginInsertRows(QModelIndex(), newIndex, newIndex);
     m_messages.append(message);
     endInsertRows();
 }
-}
+} // namespace QA::Service

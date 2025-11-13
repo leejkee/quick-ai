@@ -5,6 +5,7 @@
 #include <QObject>
 #include <llm/llm_client.h>
 #include <llm/llm_conversation.h>
+#include <MessageListModel/MessageListModel.h>
 #include <memory>
 
 namespace QA::Service
@@ -18,10 +19,10 @@ public:
     void init();
 
 Q_SIGNALS:
-    void signalLLMResponse(const QA::Core::Message& message);
+    void signalLLMResponse(const MessageBody& message);
 
 public Q_SLOTS:
-    void postPrompt(const Core::Message& message);
+    void postPrompt(const MessageBody& message);
 
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;

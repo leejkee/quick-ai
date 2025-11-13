@@ -6,10 +6,11 @@
 
 namespace QA::Service
 {
-ChatViewModel::ChatViewModel(const ChatService* service, QObject* parent)
-    : QObject(parent)
+ChatViewModel::ChatViewModel(MessageListModel* model,
+                             const ChatService* service,
+                             QObject* parent)
+    : QObject(parent), m_messageListModel(model)
 {
-    m_messageListModel = new MessageListModel(this);
     connect(this,
             &ChatViewModel::signalSendPrompt,
             service,
@@ -22,17 +23,21 @@ ChatViewModel::ChatViewModel(const ChatService* service, QObject* parent)
 
 void ChatViewModel::handleUserRequest(const QString& prompt)
 {
-    Core::Message promptMsg;
+    if (prompt.isEmpty())
+    {
+        qDebug() << "prompt is empty";
+        return;
+    }
+    MessageBody promptMsg;
     promptMsg.role = "user";
-    promptMsg.content = prompt.toStdString();
-
+    promptMsg.content = prompt;
     m_messageListModel->pushMessage(promptMsg);
     Q_EMIT signalSendPrompt(promptMsg);
 }
 
 QObject* ChatViewModel::messageListModel() const { return m_messageListModel; }
 
-void ChatViewModel::handleLLMResponse(const Core::Message& message)
+void ChatViewModel::handleLLMResponse(const MessageBody& message)
 {
     m_messageListModel->pushMessage(message);
 }

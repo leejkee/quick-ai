@@ -9,14 +9,12 @@ ApplicationWindow {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 0
+        anchors.margins: 10
+        spacing: 10
 
         InputView {
             id: inputView
-
             Layout.fillWidth: true
-            Layout.preferredHeight: 80
-
             onSendMessage: text => chatViewModel.handleUserRequest(text)
         }
         SessionView {
