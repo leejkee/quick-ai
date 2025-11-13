@@ -2,10 +2,10 @@
 // Created by 31305 on 2025/11/11.
 //
 #pragma once
+#include <MessageListModel/MessageListModel.h>
 #include <QObject>
 #include <llm/llm_client.h>
 #include <llm/llm_conversation.h>
-#include <MessageListModel/MessageListModel.h>
 #include <memory>
 
 namespace QA::Service

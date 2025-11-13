@@ -24,5 +24,11 @@ ApplicationWindow {
             Layout.fillWidth: true
             chatModel: chatViewModel.messageListModel
         }
+        StatusBar {
+            id: statusBar
+
+            Layout.fillWidth: true
+            leftText: chatViewModel.statusMessage
+        }
     }
 }

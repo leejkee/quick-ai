@@ -35,11 +35,28 @@ void ChatViewModel::handleUserRequest(const QString& prompt)
     Q_EMIT signalSendPrompt(promptMsg);
 }
 
-QObject* ChatViewModel::messageListModel() const { return m_messageListModel; }
-
 void ChatViewModel::handleLLMResponse(const MessageBody& message)
 {
     m_messageListModel->pushMessage(message);
+    if (message.role == "assistant" && message.tokens.has_value())
+    {
+        setStatusMessage(QString("Total tokens: %1").arg(message.tokens.value()));
+    }
 }
+
+void ChatViewModel::handleClearSession()
+{
+    m_messageListModel.clear();
+}
+
+void ChatViewModel::setStatusMessage(const QString& message)
+{
+    if (m_statusMessage != message)
+    {
+        m_statusMessage = message;
+        Q_EMIT signalStatusMessageChanged();
+    }
+}
+
 
 } // namespace QA::Service
