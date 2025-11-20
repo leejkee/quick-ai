@@ -45,7 +45,7 @@ const std::vector<Message>& LLMConversation::get_messages() const
 std::vector<Message> LLMConversation::get_context() const
 {
     const int message_size = MAX_CONTEXT_WINDOW * 2 + 2;
-    const int size = m_messages_history.size();
+    const int size = static_cast<int>(m_messages_history.size());
     if (size <= message_size)
     {
         return m_messages_history;
