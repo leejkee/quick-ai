@@ -11,14 +11,15 @@ ChatService::ChatService(QObject* parent) : QObject(parent) {}
 
 void ChatService::init()
 {
-    const char* api_key_env = std::getenv("DEEPSEEK_API_KEY");
+    const char* api_key_env = std::getenv("QWEN_API_KEY");
     if (!api_key_env)
     {
         qDebug() << "DEEPSEEK_API_KEY not set";
         return;
     }
     const std::string api_key{api_key_env};
-    m_client = std::make_unique<Core::LLMClient>("deepseek-chat", api_key);
+    const Core::ModelMeta model_meta{"qwen3-max", api_key, "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"};
+    m_client = Core::LLMClientFactory::create_llm_client(model_meta);
     m_conversation = std::make_unique<Core::LLMConversation>();
 }
 
@@ -28,16 +29,15 @@ void ChatService::postPrompt(const MessageBody& message)
                                     message.content.toStdString()};
     m_conversation->push_message(userMessage);
     if (const auto r =
-                m_client->no_streaming_request(m_conversation->get_context()))
+                m_client->no_streaming_chat(Core::ModelParams(), m_conversation->get_context()))
     {
-        const auto& assistant_message = r.value();
-        const Core::Message responseMsg = assistant_message.message;
-        const int tokens = assistant_message.usage.total_tokens;
+        const auto& [message, total_tokens] = r.value();
+        const int tokens = total_tokens;
         const MessageBody responseMessageBody{
-                QString::fromStdString(responseMsg.role),
-                QString::fromStdString(responseMsg.content),
+                QString::fromStdString(message.role),
+                QString::fromStdString(message.content),
                 tokens};
-        m_conversation->push_message(responseMsg);
+        m_conversation->push_message(message);
         Q_EMIT signalLLMResponse(responseMessageBody);
     }
 }

@@ -39,6 +39,7 @@ struct ServiceConfig
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(ServiceConfig, name, endpoint, method)
 };
 
+// base config
 struct ProviderConfig
 {
     std::string id;

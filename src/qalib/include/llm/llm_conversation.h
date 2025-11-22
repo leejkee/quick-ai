@@ -5,7 +5,8 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
-#include "models.h"
+#include <llm/llm_models.h>
+
 
 namespace QA::Core
 {
@@ -69,8 +70,5 @@ private:
     static constexpr int MAX_CONTEXT_WINDOW = 3;
     MessageTime m_start_time;
     std::vector<Message> m_messages_history;
-    int m_sliding_left = 0;
-    int m_sliding_right = 0;
-
 };
 } // namespace QA::Core

@@ -4,7 +4,7 @@
 #pragma once
 #include <QAbstractListModel>
 #include <QVector>
-#include <llm/models.h>
+#include <llm/llm_models.h>
 #include <optional>
 
 namespace QA::Service

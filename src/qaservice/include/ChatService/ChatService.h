@@ -4,7 +4,7 @@
 #pragma once
 #include <MessageListModel/MessageListModel.h>
 #include <QObject>
-#include <llm/llm_client.h>
+#include <llm/llm_client_factory.h>
 #include <llm/llm_conversation.h>
 #include <memory>
 
@@ -26,6 +26,6 @@ public Q_SLOTS:
 
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;
-    std::unique_ptr<Core::LLMClient> m_client;
+    std::unique_ptr<Core::LLMClientBase> m_client;
 };
 } // namespace QA::Service
