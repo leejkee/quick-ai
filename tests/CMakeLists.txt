@@ -20,8 +20,7 @@ target_link_libraries(qatest-httpserver PRIVATE
 
 add_executable(qalib-test
         conversation_test.cpp
-        llm_client_test.cpp
-        deepseek_adapter_test.cpp
+        openai_client_test.cpp
 )
 
 target_link_libraries(qalib-test PRIVATE
