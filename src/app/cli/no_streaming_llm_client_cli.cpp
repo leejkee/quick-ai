@@ -3,13 +3,14 @@
 //
 #include <cstdlib>
 #include <iostream>
-#include <llm/llm_client.h>
+#include <llm/llm_client_factory.h>
 #include <llm/llm_conversation.h>
 #include <string>
 
 int main()
 {
-    const char* api_key_env = std::getenv("DEEPSEEK_API_KEY");
+    // const char* api_key_env = std::getenv("DEEPSEEK_API_KEY");
+    const char* api_key_env = std::getenv("QWEN_API_KEY");
     if (!api_key_env)
     {
         std::cerr << "Error: DEEPSEEK_API_KEY environment variable not set."
@@ -17,15 +18,14 @@ int main()
         return 1;
     }
     const std::string api_key{api_key_env};
-    const QA::Core::Message system_prompt{"system",
-                                          "You are a translation expert."};
-    QA::Core::LLMConversation conversation{system_prompt};
-    QA::Core::LLMClient client(QA::Core::LLMClient::Model::deepseek_chat,
-                               api_key);
+    // const std::string api_url = "https://api.deepseek.com/chat/completions";
+    const std::string api_url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+    QA::Core::LLMConversation conversation;
+    // const QA::Core::ModelMeta model_meta{"deepseek-chat", api_key, api_url};
+    const QA::Core::ModelMeta model_meta{"qwen3-max", api_key, api_url};
+    const auto client =
+            QA::Core::LLMClientFactory::create_llm_client(model_meta);
     std::cout << "Time: " << conversation.get_start_time_str() << std::endl;
-    std::cout << "Starting chat session (system prompt: '"
-              << system_prompt.content << "'). Type 'exit' to end."
-              << std::endl;
 
     while (true)
     {
@@ -37,17 +37,13 @@ int main()
             break;
         }
         conversation.push_message({"user", content});
-        if (const auto r =
-                    client.no_streaming_request(conversation.get_messages()))
+        if (const auto r = client->no_streaming_chat(
+                    QA::Core::ModelParams(), conversation.get_context()))
         {
-            const auto& assistant_message = r.value();
-            conversation.push_message(assistant_message.message);
-            std::cout << "A: " << assistant_message.message.content << '\n';
-            std::cout << "[finish_reason]: " << assistant_message.finish_reason
-                      << '\n';
-            std::cout << "[Model]: " << assistant_message.model_name << '\n';
-            std::cout << "[Total tokens]: "
-                      << assistant_message.usage.total_tokens << '\n';
+            const auto& [message, total_tokens] = r.value();
+            conversation.push_message(message);
+            std::cout << "A: " << message.content << '\n';
+            std::cout << "[Total tokens]: " << total_tokens << '\n';
         }
         else
         {
