@@ -7,11 +7,14 @@ Item {
 
     signal sendMessage(string text)
 
-    height: mainColumnLayout.implicitHeight
+    implicitHeight: mainColumnLayout.implicitHeight
+    implicitWidth: mainColumnLayout.implicitWidth
 
     ColumnLayout {
         id: mainColumnLayout
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         // anchors.margins: 10
         spacing: 5
 
@@ -76,7 +79,7 @@ Item {
                     anchors.left: parent.left
                     anchors.top: parent.top
 
-                    placeholderText: "Type a message... (Shift + Enter for new line)"
+                    placeholderText: "Type a message... (Shift + Enter for a new line)"
                     wrapMode: Text.WordWrap
                     background: null
                     onCursorRectangleChanged: {
