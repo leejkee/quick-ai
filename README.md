@@ -14,7 +14,8 @@
 - [x] LLM(DeepSeek) client cli
 - [x] Conversation management
 - [x] Multi-model switching capability
-- [ ] Docs
-- [ ] Gui based on QtQuick
-  - [ ] ui-session
-  - [ ] ui-settings
+- [x] Docs
+- [x] Gui based on QtQuick
+  - [x] ui-session
+  - [x] ui-settings
+  - [ ] user-config
