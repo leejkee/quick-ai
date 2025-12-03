@@ -19,10 +19,10 @@ public:
     void init();
 
 Q_SIGNALS:
-    void signalLLMResponse(const MessageBody& message);
+    void signalLLMResponse(const QA::Service::MessageBody& message);
 
 public Q_SLOTS:
-    void postPrompt(const MessageBody& message);
+    void postPrompt(const QA::Service::MessageBody& message);
 
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;

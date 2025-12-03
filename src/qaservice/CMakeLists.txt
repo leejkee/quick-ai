@@ -10,7 +10,10 @@ set_target_properties(QuickAIService PROPERTIES AUTOMOC ON)
 
 target_link_libraries(QuickAIService PRIVATE Qt6::Core)
 
-target_link_libraries(QuickAIService PUBLIC QuickAILib)
+target_link_libraries(QuickAIService PUBLIC
+        QuickAILog
+        QuickAILib
+)
 
 target_include_directories(QuickAIService PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
