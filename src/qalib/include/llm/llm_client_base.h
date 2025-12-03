@@ -4,7 +4,6 @@
 #pragma once
 #include <cpr/cpr.h>
 #include <llm/llm_models.h>
-#include <nlohmann/json.hpp>
 #include <optional>
 #include <vector>
 
