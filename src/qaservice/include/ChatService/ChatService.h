@@ -6,7 +6,9 @@
 #include <QObject>
 #include <llm/llm_client_factory.h>
 #include <llm/llm_conversation.h>
+#include <QPointer>
 #include <memory>
+#include "ParamsConfig.h"
 
 namespace QA::Service
 {
@@ -14,7 +16,7 @@ class ChatService final : public QObject
 {
     Q_OBJECT
 public:
-    explicit ChatService(QObject* parent = nullptr);
+    explicit ChatService(ParamsConfig* params, QObject* parent = nullptr);
 
     void init();
 
@@ -27,5 +29,6 @@ public Q_SLOTS:
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;
     std::unique_ptr<Core::LLMClientBase> m_client;
+    QPointer<ParamsConfig> m_params;
 };
 } // namespace QA::Service

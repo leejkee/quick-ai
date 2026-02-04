@@ -14,6 +14,7 @@ ApplicationWindow {
 
         InputView {
             id: inputView
+
             Layout.fillWidth: true
             onSendMessage: text => chatViewModel.handleUserRequest(text)
         }
@@ -29,6 +30,18 @@ ApplicationWindow {
 
             Layout.fillWidth: true
             leftText: chatViewModel.statusMessage
+        }
+        ParamsConfig {
+            id: paramsConfig
+
+            paramsManager: paramsConfigManager
+            Layout.fillWidth: true
+        }
+
+        SelectionConfig {
+            id: selectionConfig
+            selectionManager: selectionConfigManager
+            Layout.fillWidth: true
         }
     }
 }

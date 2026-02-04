@@ -7,7 +7,7 @@
 namespace QA::Service
 {
 
-ChatService::ChatService(QObject* parent) : QObject(parent) {}
+ChatService::ChatService(ParamsConfig* params, QObject* parent) : QObject(parent), m_params(params) {}
 
 void ChatService::init()
 {
@@ -29,8 +29,9 @@ void ChatService::postPrompt(const MessageBody& message)
                                     message.content.toStdString()};
     m_conversation->push_message(userMessage);
     if (const auto r =
-                m_client->no_streaming_chat(Core::ModelParams(), m_conversation->get_context()))
+                m_client->no_streaming_chat(m_params->getParams(), m_conversation->get_context()))
     {
+        qDebug() << "Temperature: " << m_params->getParams().temperature;
         const auto& [message, total_tokens] = r.value();
         const int tokens = total_tokens;
         const MessageBody responseMessageBody{
