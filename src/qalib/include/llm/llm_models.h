@@ -39,10 +39,7 @@ struct ModelParams
                          rhs.stream);
     }
 
-    bool operator!=(const ModelParams& rhs) const
-    {
-        return !(*this == rhs);
-    }
+    bool operator!=(const ModelParams& rhs) const { return !(*this == rhs); }
 };
 
 struct ChatResponseBody
@@ -59,17 +56,11 @@ struct ModelMeta
 
     bool operator==(const ModelMeta& rhs) const
     {
-        return std::tie(model,
-                api_key,
-                url) ==
-            std::tie(rhs.model,
-                rhs.api_key);
+        return std::tie(model, api_key, url) ==
+                std::tie(rhs.model, rhs.api_key, rhs.url);
     }
 
-    bool operator!=(const ModelMeta& rhs) const
-    {
-        return !(*this == rhs);
-    }
+    bool operator!=(const ModelMeta& rhs) const { return !(*this == rhs); }
 };
 
 } // namespace QA::Core
