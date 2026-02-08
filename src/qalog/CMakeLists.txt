@@ -1,5 +1,5 @@
 add_library(QuickAILog STATIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/QALog.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Log.cpp
 )
 
 target_include_directories(QuickAILog PUBLIC

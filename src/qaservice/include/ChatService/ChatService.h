@@ -4,9 +4,9 @@
 #pragma once
 #include <MessageListModel/MessageListModel.h>
 #include <QObject>
-#include <llm/llm_client_factory.h>
-#include <llm/llm_conversation.h>
 #include <QPointer>
+#include <llm/LLMClientBase.h>
+#include <llm/LLMConversation.h>
 #include <memory>
 #include "ParamsConfig.h"
 

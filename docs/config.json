@@ -1,0 +1,44 @@
+{
+  "Appearance": {
+    "theme": "Light"
+  },
+  "RuntimeParams": {
+
+  },
+  "LLMSelection": {
+    "Providers": [
+      {
+        "id": "DeepSeek",
+        "protocol": "OpenAI",
+        "baseUrl": "https://api.deepseek.com",
+        "apiKey": "sk-1d00763b38184cfaafb5b3ea8cfd3b7e",
+        "models": [
+          {
+            "name": "deepseek-chat",
+            "endPointer": "/chat/completions"
+          },
+          {
+            "name": "deepseek-reasoner",
+            "endPointer": "/chat/completions"
+          }
+        ]
+      },
+      {
+        "id": "Qwen",
+        "protocol": "OpenAI",
+        "baseUrl": "https://dashscope.aliyuncs.com",
+        "apiKey": "sk-c14ea95925184cf2a4609f0931a1a9c4",
+        "models": [
+          {
+            "name": "qwen3-max",
+            "endPointer": "/compatible-mode/v1/chat/completions"
+          }
+        ]
+      }
+    ],
+    "LaunchSelection": {
+      "providerId": "DeepSeek",
+      "model": "deepseek-chat"
+    }
+  }
+}

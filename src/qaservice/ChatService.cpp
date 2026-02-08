@@ -1,9 +1,10 @@
 //
 // Created by 31305 on 2025/11/11.
 //
+#include <llm/LLMClientFactory.h>
 #include <ChatService/ChatService.h>
 #include <MessageListModel/MessageListModel.h>
-#include <QDebug>
+#include <qalog/Log.h>
 namespace QA::Service
 {
 
@@ -11,34 +12,34 @@ ChatService::ChatService(ParamsConfig* params, QObject* parent) : QObject(parent
 
 void ChatService::init()
 {
-    const char* api_key_env = std::getenv("QWEN_API_KEY");
-    if (!api_key_env)
+    const char* APIKeyENV = std::getenv("QWEN_API_KEY");
+    if (!APIKeyENV)
     {
-        qDebug() << "DEEPSEEK_API_KEY not set";
+        QA_LOG_DEBUG("DEEPSEEK_API_KEY not set");
         return;
     }
-    const std::string api_key{api_key_env};
-    const Core::ModelMeta model_meta{"qwen3-max", api_key, "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"};
-    m_client = Core::LLMClientFactory::create_llm_client(model_meta);
+    const QString APIKey{APIKeyENV};
+    const Core::PostBody postBody{"qwen3-max", APIKey, "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"};
+    m_client = Core::LLMClientFactory::createLLMClient(postBody);
     m_conversation = std::make_unique<Core::LLMConversation>();
 }
 
 void ChatService::postPrompt(const MessageBody& message)
 {
-    const Core::Message userMessage{message.role.toStdString(),
-                                    message.content.toStdString()};
-    m_conversation->push_message(userMessage);
+    const Core::Message userMessage{message.role,
+                                    message.content};
+    m_conversation->pushMessage(userMessage);
     if (const auto r =
-                m_client->no_streaming_chat(m_params->getParams(), m_conversation->get_context()))
+                m_client->noStreamingChat(m_params->getParams(), m_conversation->getContext()))
     {
-        qDebug() << "Temperature: " << m_params->getParams().temperature;
+        QA_LOG_DEBUG(QString("Temperature: %1").arg(m_params->getParams().temperature, 0, 'f', 1));
         const auto& [message, total_tokens] = r.value();
         const int tokens = total_tokens;
         const MessageBody responseMessageBody{
-                QString::fromStdString(message.role),
-                QString::fromStdString(message.content),
+                message.role,
+                message.content,
                 tokens};
-        m_conversation->push_message(message);
+        m_conversation->pushMessage(message);
         Q_EMIT signalLLMResponse(responseMessageBody);
     }
 }

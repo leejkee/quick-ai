@@ -31,6 +31,35 @@ void ChatViewModel::handleUserRequest(const QString& prompt)
     MessageBody promptMsg;
     promptMsg.role = "user";
     promptMsg.content = prompt;
+    // TODO
+    // 多行代码作为prompt输入，对话框显示不完整
+//     std::unique_ptr<LLMClientBase>
+//
+// LLMClientFactory::create_llm_client(const ModelMeta& model_meta)
+//
+//     {
+//
+//         switch (inferProvider(model_meta.model))
+//
+//         {
+//
+//         case ProviderType::OpenAI:
+//
+//         default:
+//
+//         {
+//
+//             return std::make_unique<OpenAIClient>(model_meta);
+//
+//         }
+//
+//         }
+//
+//     }
+//
+//     然后调用m_client = Core::LLMClientFactory::create_llm_client(model_meta);
+//
+//     这里从函数内部的智能指针对象到m_client，是发生了所有权转移吗
     m_messageListModel->pushMessage(promptMsg);
     Q_EMIT signalSendPrompt(promptMsg);
 }
@@ -40,7 +69,7 @@ void ChatViewModel::handleLLMResponse(const MessageBody& message)
     m_messageListModel->pushMessage(message);
     if (message.role == "assistant" && message.tokens.has_value())
     {
-        setStatusMessage(QString("Total tokens: %1").arg(message.tokens.value()));
+        setStatusMessage(QString("Model: %1\nTotal tokens: %2").arg("QWEN").arg(message.tokens.value()));
     }
 }
 

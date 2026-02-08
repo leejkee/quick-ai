@@ -1,12 +1,12 @@
 //
 // Created by 31305 on 2025/11/25.
 //
-#include <QALog.h>
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
 #include <filesystem>
 #include <iostream>
+#include <qalog/Log.h>
 
 namespace QA::Log
 {

@@ -3,8 +3,8 @@
 //
 #include <cstdlib>
 #include <iostream>
-#include <llm/llm_client_factory.h>
-#include <llm/llm_conversation.h>
+#include <llm/LLMClientFactory.h>
+#include <llm/LLMConversation.h>
 #include <string>
 
 int main()
@@ -22,10 +22,10 @@ int main()
     const std::string api_url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
     QA::Core::LLMConversation conversation;
     // const QA::Core::ModelMeta model_meta{"deepseek-chat", api_key, api_url};
-    const QA::Core::ModelMeta model_meta{"qwen3-max", api_key, api_url};
+    const QA::Core::PostBody model_meta{"qwen3-max", api_key, api_url};
     const auto client =
-            QA::Core::LLMClientFactory::create_llm_client(model_meta);
-    std::cout << "Time: " << conversation.get_start_time_str() << std::endl;
+            QA::Core::LLMClientFactory::createLLMClient(model_meta);
+    std::cout << "Time: " << conversation.getStartTimeStr() << std::endl;
 
     while (true)
     {
@@ -38,10 +38,10 @@ int main()
         }
         conversation.push_message({"user", content});
         if (const auto r = client->no_streaming_chat(
-                    QA::Core::ModelParams(), conversation.get_context()))
+                    QA::Core::ModelParams(), conversation.getContext()))
         {
             const auto& [message, total_tokens] = r.value();
-            conversation.push_message(message);
+            conversation.pushMessage(message);
             std::cout << "A: " << message.content << '\n';
             std::cout << "[Total tokens]: " << total_tokens << '\n';
         }
