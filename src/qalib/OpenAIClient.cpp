@@ -20,24 +20,15 @@ OpenAIClient::OpenAIClient(const PostBody& modelMeta, QObject* parent)
 QJsonObject OpenAIClient::getRequestBody(const ModelParams& params,
                                          const QList<Message>& userPrompt) const
 {
-    QJsonObject root;
+    QJsonObject root = params.toJson();
     root.insert(QStringLiteral("model"), m_model);
 
     QJsonArray messagesArray;
-    for (const auto& [role, content] : userPrompt)
+    for (const auto& msg : userPrompt)
     {
-        QJsonObject msgObj;
-        msgObj.insert(QStringLiteral("role"), role);
-        msgObj.insert(QStringLiteral("content"), content);
-        messagesArray.append(msgObj);
+        messagesArray.append(msg.toJson());
     }
     root.insert(QStringLiteral("messages"), messagesArray);
-    root.insert(QStringLiteral("temperature"), params.temperature);
-    root.insert(QStringLiteral("max_tokens"), params.max_tokens);
-    root.insert(QStringLiteral("frequency_penalty"), params.frequency_penalty);
-    root.insert(QStringLiteral("presence_penalty"), params.presence_penalty);
-    root.insert(QStringLiteral("top_p"), params.top_p);
-    root.insert(QStringLiteral("stream"), params.stream);
 
     return root;
 }

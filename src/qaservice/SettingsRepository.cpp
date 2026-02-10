@@ -1,26 +1,53 @@
 //
 // Created by 31305 on 2025/12/25.
 //
-#include <QALog.h>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonDocument>
 #include <UserSettings/SettingsRepository.h>
+#include <qalog/Log.h>
 
 namespace QA::Service
 {
 SettingsRepository::SettingsRepository(const QString& filePath, QObject* parent)
-    : QObject(parent), m_configFilePath(filePath)
+    : QObject(parent), m_filePath(filePath)
 {
+    if (m_filePath.isEmpty())
+    {
+        QA_LOG_ERR("Settings file is empty");
+        return;
+    }
+
+    if (const QFileInfo fileInfo(m_filePath); !fileInfo.exists())
+    {
+        m_settings = UserSettings::createDefault();
+        generateSettingsFile(filePath);
+    }
+    else
+    {
+        if (const auto r = loadSettingsFromFile(); r.has_value())
+        {
+            m_settings = r.value();
+            QA_LOG_INFO(QString("Load settings from file: [%1] successfully.")
+                                .arg(m_filePath));
+        }
+        else
+        {
+            QA_LOG_ERR(QString("Load settings from file: [%1] failed.")
+                               .arg(m_filePath));
+        }
+    }
 }
 
-std::optional<UserSettings> SettingsRepository::loadConfig()
+std::optional<UserSettings> SettingsRepository::loadSettingsFromFile()
 {
-    if (m_configFilePath.isEmpty())
+    if (m_filePath.isEmpty())
     {
-        QA_LOG_ERR("Settings file is empty: " + m_configFilePath);
+        QA_LOG_ERR("Settings file is empty: " + m_filePath);
         return std::nullopt;
     }
-    QFile file(m_configFilePath);
+    QFile file(m_filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
         QA_LOG_ERR("Failed to open config file");
@@ -38,105 +65,79 @@ std::optional<UserSettings> SettingsRepository::loadConfig()
         return std::nullopt;
     }
     QA_LOG_INFO("Parse JSON successfully");
-
     const QJsonObject jsonObj = jsonDoc.object();
-
-    if (jsonObj.contains("providers") && jsonObj["providers"].isArray())
-    {
-        QJsonArray providers = jsonObj["providers"].toArray();
-        for (const auto& provider : providers)
-        {
-            settings.m_providers.append(
-                    ConfigProvider::fromJson(provider.toObject()));
-        }
-    }
-    else
-    {
-        QA_LOG_INFO("No key called [providers] in json");
-    }
-
-    if (jsonObj.contains("activeConfig") && jsonObj["activeConfig"].isObject())
-    {
-        settings.m_activeModel =
-                ConfigActiveModel::fromJson(jsonObj["activeConfig"].toObject());
-    }
-    else
-    {
-        QA_LOG_INFO("No key called [activeConfig] in json");
-    }
-
-    if (jsonObj.contains("modelParams") && jsonObj["modelParams"].isObject())
-    {
-        settings.m_modelParams =
-                ConfigModelParams::fromJson(jsonObj["modelParams"].toObject());
-    }
-    else
-    {
-        QA_LOG_INFO("No key called [modelParams] in json");
-    }
-
-    if (jsonObj.contains("appConfig") && jsonObj["appConfig"].isObject())
-    {
-        settings.m_appConfig =
-                AppSettings::fromJson(jsonObj["appConfig"].toObject());
-    }
-    else
-    {
-        QA_LOG_INFO("No key called [appConfig] in json");
-    }
-
-    if (jsonObj.contains("systemPrompt") && jsonObj["systemPrompt"].isString())
-    {
-        settings.m_systemPrompt = jsonObj["systemPrompt"].toString();
-    }
-    else
-    {
-        QA_LOG_INFO("No key called [systemPrompt] in json");
-    }
-
+    m_settings = UserSettings::fromJson(jsonObj);
     return settings;
 }
 
-void SettingsRepository::saveConfig(const UserSettings& config)
+bool SettingsRepository::saveSettingsToFile()
 {
-    if (m_configFilePath.isEmpty())
+    if (m_filePath.isEmpty())
     {
-        return;
+        QA_LOG_ERR("Settings file is empty: " + m_filePath);
+        return false;
     }
 
-    QJsonArray providersArr;
-    for (const auto& p : config.m_providers)
-    {
-        providersArr.append(p.toJson());
-    }
+    const QJsonObject rootObj = m_settings.toJson();
 
-    QJsonObject activeObj = config.m_activeModel.toJson();
-
-    QJsonObject paramsObj = config.m_modelParams.toJson();
-
-    QJsonObject systemPrompt;
-    systemPrompt["systemPrompt"] = config.m_systemPrompt;
-
-    QJsonObject appObj = config.m_appConfig.toJson();
-
-    QJsonObject rootObj;
-    rootObj["providers"] = providersArr;
-    rootObj["activeConfig"] = activeObj;
-    rootObj["modelParams"] = paramsObj;
-    rootObj["systemPrompt"] = systemPrompt;
-    rootObj["appConfig"] = appObj;
-    if (QFile file(m_configFilePath); file.open(QIODevice::WriteOnly))
+    if (QFile file(m_filePath); file.open(QIODevice::WriteOnly))
     {
         const QJsonDocument doc(rootObj);
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();
-        QA_LOG_INFO("Config saved to" + m_configFilePath);
+        QA_LOG_INFO("Config saved to" + m_filePath);
+        return true;
+    }
+    QA_LOG_ERR("Failed to save config file");
+    return false;
+}
+
+void SettingsRepository::generateSettingsFile(const QString& filePath)
+{
+    if (filePath.isEmpty())
+    {
+        QA_LOG_ERR(QString(
+                "Config file path is empty, cannot generate settings."));
+        return;
+    }
+
+    const QFileInfo fileInfo(filePath);
+    if (const QDir dir = fileInfo.absoluteDir(); !dir.exists())
+    {
+        if (!dir.mkpath("."))
+        {
+            QA_LOG_ERR(QString("Failed to create directory: %1")
+                               .arg(dir.absolutePath()));
+            return;
+        }
+    }
+
+    if (QFile file(filePath);
+        file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+    {
+        const UserSettings defaultSettings = UserSettings::createDefault();
+        const QJsonObject rootObj = defaultSettings.toJson();
+        const QJsonDocument doc(rootObj);
+        if (const qint64 bytesWritten =
+                    file.write(doc.toJson(QJsonDocument::Indented));
+            bytesWritten == -1)
+        {
+            QA_LOG_ERR(QString("Failed to write to config file: %1")
+                               .arg(file.errorString()));
+        }
+        else
+        {
+            QA_LOG_INFO(QString("Generated default settings file at: %1")
+                                .arg(filePath));
+        }
+        file.close();
     }
     else
     {
-        QA_LOG_ERR("Failed to save config file");
+        QA_LOG_ERR(
+                QString("Failed to open config file for writing: %1. Error: %2")
+                        .arg(filePath, file.errorString()));
     }
 }
-
 
 } // namespace QA::Service

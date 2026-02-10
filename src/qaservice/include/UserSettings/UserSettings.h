@@ -24,14 +24,17 @@ template <class T, class UnaryPred>
     return std::nullopt;
 }
 
-struct ConfigModel
+struct Model
 {
     QString name;
     QString endpoint;
 
-    static ConfigModel fromJson(const QJsonObject& json)
+    static Model fromJson(const QJsonObject& json)
     {
-        return {json["name"].toString(), json["endpoint"].toString()};
+        Model model;
+        model.name = json["name"].toString(model.name);
+        model.endpoint = json["endpoint"].toString(model.endpoint);
+        return model;
     }
 
     [[nodiscard]] QJsonObject toJson() const
@@ -39,73 +42,36 @@ struct ConfigModel
         return {{"name", name}, {"endpoint", endpoint}};
     }
 
-    bool operator==(const ConfigModel& rhs) const
+    bool operator==(const Model& rhs) const
     {
         return name == rhs.name && endpoint == rhs.endpoint;
     }
 
-    bool operator!=(const ConfigModel& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Model& rhs) const { return !(*this == rhs); }
 };
 
-struct ConfigModelParams
-{
-    Core::ModelParams data;
-
-    ConfigModelParams() = default;
-
-    explicit ConfigModelParams(const Core::ModelParams& p) : data(p) {}
-
-    static ConfigModelParams fromJson(const QJsonObject& json)
-    {
-        ConfigModelParams config;
-        config.data.frequency_penalty = json["frequencyPenalty"].toInt();
-        config.data.max_tokens = json["maxTokens"].toInt();
-        config.data.presence_penalty = json["presencePenalty"].toInt();
-        config.data.temperature = json["temperature"].toDouble();
-        config.data.top_p = json["topP"].toDouble();
-        config.data.stream = json["stream"].toBool();
-        return config;
-    }
-
-    [[nodiscard]] QJsonObject toJson() const
-    {
-        return {{"frequencyPenalty", data.frequency_penalty},
-                {"maxTokens", data.max_tokens},
-                {"presencePenalty", data.presence_penalty},
-                {"temperature", data.temperature},
-                {"topP", data.top_p},
-                {"stream", data.stream}};
-    }
-
-    bool operator==(const ConfigModelParams& rhs) const
-    {
-        return data == rhs.data;
-    }
-
-    bool operator!=(const ConfigModelParams& rhs) const
-    {
-        return !(*this == rhs);
-    }
-};
-
-struct ConfigProvider
+struct Provider
 {
     QString id;
     QString baseUrl;
     QString apiKey;
-    QList<ConfigModel> models;
+    QList<Model> models;
 
-    static ConfigProvider fromJson(const QJsonObject& json)
+    static Provider fromJson(const QJsonObject& json)
     {
-        ConfigProvider p;
-        p.id = json["id"].toString();
-        p.baseUrl = json["baseUrl"].toString();
-        p.apiKey = json["apiKey"].toString();
+        Provider p;
+        p.id = json["id"].toString(p.id);
+        p.baseUrl = json["baseUrl"].toString(p.baseUrl);
+        p.apiKey = json["apiKey"].toString(p.apiKey);
 
-        QJsonArray modelArray = json["models"].toArray();
-        for (const auto& m : modelArray)
+        if (json.contains("models"))
         {
-            p.models.append(ConfigModel::fromJson(m.toObject()));
+            const QJsonArray modelArray = json["models"].toArray();
+            p.models.reserve(modelArray.size());
+            for (const auto& m : modelArray)
+            {
+                p.models.append(Model::fromJson(m.toObject()));
+            }
         }
         return p;
     }
@@ -124,19 +90,19 @@ struct ConfigProvider
                 {"models", modelArray}};
     }
 
-    bool operator==(const ConfigProvider& rhs) const
+    bool operator==(const Provider& rhs) const
     {
         return std::tie(id, baseUrl, apiKey, models) ==
                 std::tie(rhs.id, rhs.baseUrl, rhs.apiKey, rhs.models);
     }
 
-    bool operator!=(const ConfigProvider& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Provider& rhs) const { return !(*this == rhs); }
 
     [[nodiscard]] QString getUrl(const QString& modelName) const
     {
         if (const auto r =
                     getDataFromVector(models,
-                                      [&modelName](const ConfigModel& model)
+                                      [&modelName](const Model& model)
                                       { return modelName == model.name; });
             r.has_value())
         {
@@ -146,31 +112,6 @@ struct ConfigProvider
     }
 };
 
-// this struct will be used to init the default provider and model.
-struct ConfigActiveModel
-{
-    QString providerId;
-    QString model;
-    static ConfigActiveModel fromJson(const QJsonObject& json)
-    {
-        return {json["providerId"].toString(), json["model"].toString()};
-    }
-
-    [[nodiscard]] QJsonObject toJson() const
-    {
-        return {{"providerId", providerId}, {"model", model}};
-    }
-
-    bool operator==(const ConfigActiveModel& rhs) const
-    {
-        return providerId == rhs.providerId && model == rhs.model;
-    }
-
-    bool operator!=(const ConfigActiveModel& rhs) const
-    {
-        return !(*this == rhs);
-    }
-};
 
 struct AppSettings
 {
@@ -215,93 +156,115 @@ struct AppSettings
     bool operator!=(const AppSettings& rhs) const { return !(*this == rhs); }
 };
 
-struct LLMSettings
-{
-    QList<ConfigProvider> m_providers;
-    ConfigModelParams m_modelParams;
-    ConfigActiveModel m_activeModel;
-    QString m_systemPrompt;
-
-
-    bool operator==(const LLMSettings& rhs) const
-    {
-        return std::tie(m_providers,
-                        m_modelParams,
-                        m_activeModel,
-                        m_systemPrompt) ==
-                std::tie(rhs.m_providers,
-                         rhs.m_modelParams,
-                         rhs.m_activeModel,
-                         rhs.m_systemPrompt);
-    }
-
-    bool operator!=(const LLMSettings& rhs) const { return !(*this == rhs); }
-
-    [[nodiscard]] std::optional<ConfigProvider>
-    findProvider(const QString& id) const
-    {
-        if (const auto r = getDataFromVector(m_providers,
-                                             [id](const ConfigProvider& p)
-                                             { return p.id == id; });
-            r.has_value())
-        {
-            return r.value();
-        }
-        return std::nullopt;
-    }
-
-    [[nodiscard]] QStringList getModels(const QString& providerId) const
-    {
-        if (const auto r = findProvider(providerId); r.has_value())
-        {
-            QStringList models;
-            for (const auto& m : r.value().models)
-            {
-                models.append(m.name);
-            }
-            return models;
-        }
-        return {};
-    }
-
-    bool setActiveProvider(const QString& id)
-    {
-        if (findProvider(id).has_value())
-        {
-            m_activeModel.providerId = id;
-            return true;
-        }
-        return false;
-    }
-
-    bool setActiveModel(const QString& model)
-    {
-        const auto p = findProvider(m_activeModel.providerId).value();
-        if (const auto r = getDataFromVector(p.models,
-                                             [model](const ConfigModel& m)
-                                             { return m.name == model; });
-            r.has_value())
-        {
-            m_activeModel.model = r.value().name;
-            return true;
-        }
-        return false;
-    }
-};
-
 
 // read/write config files;
 struct UserSettings
 {
     AppSettings m_appSettings;
-    LLMSettings m_llmSettings;
-    bool operator==(const UserSettings& rhs) const
+    QList<Provider> m_providers;
+    Core::ModelParams m_modelParams;
+    QString m_selectedProviderId;
+    QString m_selectedModel;
+    QString m_systemPrompt;
+
+    [[nodiscard]] QJsonObject toJson() const
     {
-        return m_appSettings == rhs.m_appSettings &&
-                m_llmSettings == rhs.m_llmSettings;
+        QJsonObject root;
+
+        root["appSettings"] = m_appSettings.toJson();
+        root["modelParams"] = m_modelParams.toJson();
+
+        QJsonArray providersArray;
+        for (const auto& provider : m_providers)
+        {
+            providersArray.append(provider.toJson());
+        }
+        root["providers"] = providersArray;
+
+        root["selectedProviderId"] = m_selectedProviderId;
+        root["selectedModel"] = m_selectedModel;
+        root["systemPrompt"] = m_systemPrompt;
+
+        return root;
     }
 
-    bool operator!=(const UserSettings& rhs) const { return !(*this == rhs); }
+    static UserSettings fromJson(const QJsonObject& json)
+    {
+        UserSettings settings;
+
+        if (json.contains("appSettings")) {
+            settings.m_appSettings = AppSettings::fromJson(json["appSettings"].toObject());
+        }
+
+        if (json.contains("modelParams")) {
+            settings.m_modelParams = Core::ModelParams::fromJson(json["modelParams"].toObject());
+        }
+
+        if (json.contains("providers") && json["providers"].isArray())
+        {
+            const QJsonArray providersArray = json["providers"].toArray();
+            settings.m_providers.reserve(providersArray.size());
+
+            for (const auto& val : providersArray)
+            {
+                if (val.isObject()) {
+                    settings.m_providers.append(Provider::fromJson(val.toObject()));
+                }
+            }
+        }
+
+        settings.m_selectedProviderId = json["selectedProviderId"].toString(settings.m_selectedProviderId);
+        settings.m_selectedModel = json["selectedModel"].toString(settings.m_selectedModel);
+        settings.m_systemPrompt = json["systemPrompt"].toString(settings.m_systemPrompt);
+
+        return settings;
+    }
+
+    [[nodiscard]] static UserSettings createDefault()
+    {
+        UserSettings defaults;
+
+        defaults.m_appSettings.theme = AppSettings::Theme::Light;
+
+        defaults.m_modelParams.temperature = 0.7;
+        defaults.m_modelParams.max_tokens = 2048;
+        defaults.m_modelParams.top_p = 1.0;
+
+        Provider defaultProvider;
+        defaultProvider.id = "DeepSeek";
+        defaultProvider.baseUrl = "https://api.deepseek.com";
+        defaultProvider.apiKey = "";
+        defaultProvider.models.reserve(2);
+
+        Model deepseekChat;
+        deepseekChat.name = "deepseek-chat";
+        deepseekChat.endpoint = "/chat/completions";
+        defaultProvider.models.append(deepseekChat);
+
+        Model deepseekReasoner;
+        deepseekReasoner.name = "deepseek-reasoner";
+        deepseekReasoner.endpoint = "/chat/completions";
+        defaultProvider.models.append(deepseekReasoner);
+
+        defaults.m_providers.append(defaultProvider);
+
+        defaults.m_selectedProviderId = "DeepSeek";
+        defaults.m_selectedModel = "deepseek-chat";
+        defaults.m_systemPrompt = "You are a helpful assistant.";
+
+        return defaults;
+    }
+
+    bool operator==(const UserSettings& rhs) const
+    {
+        return std::tie(m_appSettings, m_providers, m_selectedProviderId, m_selectedModel, m_systemPrompt) ==
+                std::tie(rhs.m_appSettings, rhs.m_providers, rhs.m_selectedProviderId, rhs.m_selectedModel, rhs.m_systemPrompt);
+    }
+
+    bool operator!=(const UserSettings& rhs) const
+    {
+        return !(*this == rhs);
+    }
 };
 
 } // namespace QA::Service

@@ -10,6 +10,18 @@ struct Message
 {
     QString role;
     QString content;
+    [[nodiscard]] QJsonObject toJson() const
+    {
+        return {{"role", role}, {"content", content}};
+    }
+
+    static Message fromJson(const QJsonObject& json)
+    {
+        Message msg;
+        msg.role = json["role"].toString(msg.role);
+        msg.content = json["content"].toString(msg.content);
+        return msg;
+    }
 };
 
 struct ModelParams
@@ -20,6 +32,29 @@ struct ModelParams
     double temperature = 0.0;
     double top_p = 1.0;
     bool stream = false;
+
+    static ModelParams fromJson(const QJsonObject& json)
+    {
+        ModelParams p;
+        p.temperature = json["temperature"].toDouble(p.temperature);
+        p.top_p = json["topP"].toDouble(p.top_p);
+        p.max_tokens = json["maxTokens"].toInt(p.max_tokens);
+        p.frequency_penalty =
+                json["frequencyPenalty"].toInt(p.frequency_penalty);
+        p.presence_penalty = json["presencePenalty"].toInt(p.presence_penalty);
+        p.stream = json["stream"].toBool(p.stream);
+        return p;
+    }
+
+    [[nodiscard]] QJsonObject toJson() const
+    {
+        return {{"frequencyPenalty", frequency_penalty},
+                {"maxTokens", max_tokens},
+                {"presencePenalty", presence_penalty},
+                {"temperature", temperature},
+                {"topP", top_p},
+                {"stream", stream}};
+    }
 
     bool operator==(const ModelParams& rhs) const
     {

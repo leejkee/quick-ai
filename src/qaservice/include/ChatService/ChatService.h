@@ -29,6 +29,5 @@ public Q_SLOTS:
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;
     std::unique_ptr<Core::LLMClientBase> m_client;
-    QPointer<ParamsConfig> m_params;
 };
 } // namespace QA::Service

@@ -36,11 +36,11 @@ Q_SIGNALS:
     void signalSelectedModelChanged(const QString& model);
 
 private:
-    QList<ConfigProvider> m_providers;
+    QList<Provider> m_providers;
     QString m_selectedProviderId;
     QString m_selectedModel;
 
-    [[nodiscard]] ConfigProvider getSelectedProvider() const;
+    [[nodiscard]] Provider getSelectedProvider() const;
 };
 
 
