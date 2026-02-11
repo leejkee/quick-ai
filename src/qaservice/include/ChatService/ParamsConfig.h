@@ -4,6 +4,7 @@
 #pragma once
 #include <QObject>
 #include <UserSettings/UserSettings.h>
+#include <llm/LLMModels.h>
 namespace QA::Service
 {
 class ParamsConfig : public QObject
@@ -15,7 +16,7 @@ class ParamsConfig : public QObject
     Q_PROPERTY(int maxTokens READ getMaxTokens WRITE setMaxTokens NOTIFY
                        signalMaxTokensChanged)
 public:
-    explicit ParamsConfig(const ConfigModelParams& params,
+    explicit ParamsConfig(const Core::ModelParams& params,
                           QObject* parent = nullptr);
 
     [[nodiscard]] double getTemp() const { return m_params.data.temperature; }
@@ -35,6 +36,6 @@ Q_SIGNALS:
     void signalMaxTokensChanged(int tokens);
 
 private:
-    ConfigModelParams m_params;
+    Core::ModelParams m_params;
 };
 } // namespace QA::Service

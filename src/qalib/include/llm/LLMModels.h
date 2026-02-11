@@ -4,6 +4,7 @@
 #pragma once
 #include <QString>
 #include <QtGlobal>
+#include <QJsonObject>
 namespace QA::Core
 {
 struct Message

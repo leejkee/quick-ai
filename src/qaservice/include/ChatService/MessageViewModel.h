@@ -2,14 +2,14 @@
 // Created by 31305 on 2025/11/9.
 //
 #pragma once
-#include <ChatService/ChatService.h>
-#include <MessageListModel/MessageListModel.h>
+#include "ChatService.h"
+#include "MessageListModel.h"
 #include <QObject>
 #include <QPointer>
 
 namespace QA::Service
 {
-class ChatViewModel : public QObject
+class MessageViewModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QObject* messageListModel READ getMessageListModel CONSTANT)
@@ -17,7 +17,7 @@ class ChatViewModel : public QObject
                        signalStatusMessageChanged)
 
 public:
-    explicit ChatViewModel(MessageListModel* model,
+    explicit MessageViewModel(MessageListModel* model,
                            const ChatService* service,
                            QObject* parent = nullptr);
 

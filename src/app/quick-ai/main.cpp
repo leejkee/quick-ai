@@ -13,8 +13,8 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    auto* paramsConfigManager = new QA::Service::ParamsConfig(QA::Service::ConfigModelParams(), &app);
-    auto* selectionConfigManager = new QA::Service::SelectionConfig(&app);
+    // auto* paramsConfigManager = new QA::Service::ParamsConfig(QA::Service::ConfigModelParams(), &app);
+    // auto* selectionConfigManager = new QA::Service::SelectionConfig(&app);
     auto* service = new QA::Service::ChatService(paramsConfigManager);
     service->init();
     const auto model = new QA::Service::MessageListModel(&app);
@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
             }
         }, Qt::QueuedConnection);
     engine.rootContext()->setContextProperty("chatViewModel", chatViewModel);
-    engine.rootContext()->setContextProperty("paramsConfigManager", paramsConfigManager);
-    engine.rootContext()->setContextProperty("selectionConfigManager", selectionConfigManager);
+    // engine.rootContext()->setContextProperty("paramsConfigManager", paramsConfigManager);
+    // engine.rootContext()->setContextProperty("selectionConfigManager", selectionConfigManager);
 
     engine.loadFromModule("qaui.sessionwindow", "Main");
     // engine.loadFromModule("qaui.settingswindow", "MainView");

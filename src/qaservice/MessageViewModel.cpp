@@ -1,27 +1,27 @@
 //
 // Created by 31305 on 2025/11/9.
 //
-#include <ChatViewModel/ChatViewModel.h>
+#include <MessageViewModel/MessageViewModel.h>
 #include <QDebug>
 
 namespace QA::Service
 {
-ChatViewModel::ChatViewModel(MessageListModel* model,
+MessageViewModel::MessageViewModel(MessageListModel* model,
                              const ChatService* service,
                              QObject* parent)
     : QObject(parent), m_messageListModel(model)
 {
     connect(this,
-            &ChatViewModel::signalSendPrompt,
+            &MessageViewModel::signalSendPrompt,
             service,
             &ChatService::postPrompt);
     connect(service,
             &ChatService::signalLLMResponse,
             this,
-            &ChatViewModel::handleLLMResponse);
+            &MessageViewModel::handleLLMResponse);
 }
 
-void ChatViewModel::handleUserRequest(const QString& prompt)
+void MessageViewModel::handleUserRequest(const QString& prompt)
 {
     if (prompt.isEmpty())
     {
@@ -64,7 +64,7 @@ void ChatViewModel::handleUserRequest(const QString& prompt)
     Q_EMIT signalSendPrompt(promptMsg);
 }
 
-void ChatViewModel::handleLLMResponse(const MessageBody& message)
+void MessageViewModel::handleLLMResponse(const MessageBody& message)
 {
     m_messageListModel->pushMessage(message);
     if (message.role == "assistant" && message.tokens.has_value())
@@ -73,12 +73,12 @@ void ChatViewModel::handleLLMResponse(const MessageBody& message)
     }
 }
 
-void ChatViewModel::handleClearSession()
+void MessageViewModel::handleClearSession()
 {
     m_messageListModel.clear();
 }
 
-void ChatViewModel::setStatusMessage(const QString& message)
+void MessageViewModel::setStatusMessage(const QString& message)
 {
     if (m_statusMessage != message)
     {

@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "ChatService.h"
+#include <UserSettings/UserSettings.h>
 #include <QObject>
 
 namespace QA::Service
