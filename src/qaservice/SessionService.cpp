@@ -6,9 +6,15 @@
 namespace QA::Service
 {
 
- SessionService::SessionService(ChatService* chatService, QObject* parent) : QObject(parent), m_chatService(chatService)
- {
-
- }
-
+SessionService::SessionService(ChatService* chatService,
+                               SettingsRepository* settingsRepo,
+                               QObject* parent)
+    : QObject(parent), m_chatService(chatService), m_settings(settingsRepo)
+{
+    const auto settings = m_settings->getSettings();
+    m_selectedProviderId = settings.m_selectedProviderId;
+    m_selectedModel = settings.m_selectedModel;
+    m_messageModel = new MessageModel(this);
 }
+
+} // namespace QA::Service

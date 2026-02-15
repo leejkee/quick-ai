@@ -1,22 +1,22 @@
 //
 // Created by 31305 on 2025/11/9.
 //
-#include <MessageListModel/MessageListModel.h>
+#include <ChatService/MessageModel.h>
 namespace QA::Service
 {
 
-MessageListModel::MessageListModel(QObject* parent) : QAbstractListModel(parent)
+MessageModel::MessageModel(QObject* parent) : QAbstractListModel(parent)
 {
 }
 
-int MessageListModel::rowCount(const QModelIndex& parent) const
+int MessageModel::rowCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
         return 0;
     return static_cast<int>(m_messages.count());
 }
 
-QVariant MessageListModel::data(const QModelIndex& index, const int role) const
+QVariant MessageModel::data(const QModelIndex& index, const int role) const
 {
     if (!index.isValid() || index.row() >= m_messages.count())
     {
@@ -36,7 +36,7 @@ QVariant MessageListModel::data(const QModelIndex& index, const int role) const
     }
 }
 
-QHash<int, QByteArray> MessageListModel::roleNames() const
+QHash<int, QByteArray> MessageModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[RoleRole] = STR_ROLE.toUtf8();
@@ -45,7 +45,7 @@ QHash<int, QByteArray> MessageListModel::roleNames() const
     return roles;
 }
 
-void MessageListModel::pushMessage(const MessageBody& message)
+void MessageModel::pushMessage(const MessageBody& message)
 {
     const int newIndex = static_cast<int>(m_messages.count());
     beginInsertRows(QModelIndex(), newIndex, newIndex);

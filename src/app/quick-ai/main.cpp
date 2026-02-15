@@ -4,7 +4,7 @@
 #include <QQmlApplicationEngine>
 #include <QGuiApplication>
 #include <QQmlContext>
-#include <ChatViewModel/ChatViewModel.h>
+#include <ChatService/MessageViewModel.h>
 #include <ChatService/ChatService.h>
 #include <ChatService/ParamsConfig.h>
 #include <ChatService/SelectionConfig.h>
@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     // auto* paramsConfigManager = new QA::Service::ParamsConfig(QA::Service::ConfigModelParams(), &app);
     // auto* selectionConfigManager = new QA::Service::SelectionConfig(&app);
-    auto* service = new QA::Service::ChatService(paramsConfigManager);
+    auto* service = new QA::Service::ChatService(&app);
     service->init();
-    const auto model = new QA::Service::MessageListModel(&app);
-    auto* chatViewModel = new QA::Service::ChatViewModel(model, service, &app);
+    const auto model = new QA::Service::MessageModel(&app);
+    auto* chatViewModel = new QA::Service::MessageViewModel(model, service, &app);
 
     QQmlApplicationEngine engine;
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

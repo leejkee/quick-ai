@@ -18,7 +18,7 @@ void ChatService::init()
     //     return;
     // }
     const QString APIKey{"sk-1d00763b38184cfaafb5b3ea8cfd3b7e"};
-    const Core::PostBody postBody{"qwen3-max", APIKey, "https://api.deepseek.com/chat/completions"};
+    const Core::PostBody postBody{"deepseek-chat", APIKey, "https://api.deepseek.com/chat/completions"};
     m_client = Core::LLMClientFactory::createLLMClient(postBody);
     m_conversation = std::make_unique<Core::LLMConversation>();
 }
@@ -39,6 +39,7 @@ void ChatService::postPrompt(const Core::ModelParams& params, const MessageBody&
                 message.content,
                 tokens};
         m_conversation->pushMessage(message);
+
         Q_EMIT signalLLMResponse(responseMessageBody);
     }
 }

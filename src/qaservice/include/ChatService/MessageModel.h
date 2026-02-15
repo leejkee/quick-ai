@@ -16,11 +16,11 @@ struct MessageBody
     std::optional<int> tokens;
 };
 
-class MessageListModel final : public QAbstractListModel
+class MessageModel final : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit MessageListModel(QObject* parent = nullptr);
+    explicit MessageModel(QObject* parent = nullptr);
 
     enum MessageRoles
     {

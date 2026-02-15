@@ -31,6 +31,8 @@ public:
 
     void generateSettingsFile(const QString& filePath);
 
+    Q_SIGNALS:
+    void signalSettingsChanged();
 
 private:
     UserSettings m_settings;

@@ -2,10 +2,10 @@
 // Created by 31305 on 2025/11/9.
 //
 #pragma once
-#include "ChatService.h"
-#include "MessageListModel.h"
 #include <QObject>
 #include <QPointer>
+#include "MessageModel.h"
+#include "SessionService.h"
 
 namespace QA::Service
 {
@@ -17,8 +17,7 @@ class MessageViewModel : public QObject
                        signalStatusMessageChanged)
 
 public:
-    explicit MessageViewModel(MessageListModel* model,
-                           const ChatService* service,
+    explicit MessageViewModel(SessionService* service,
                            QObject* parent = nullptr);
 
     Q_INVOKABLE [[nodiscard]] QString getStatusMessage() const
@@ -28,7 +27,7 @@ public:
 
     Q_INVOKABLE [[nodiscard]] QObject* getMessageListModel() const
     {
-        return m_messageListModel.data();
+        return m_service->getMessageModel();
     };
 
 Q_SIGNALS:
@@ -44,11 +43,13 @@ public Q_SLOTS:
     void handleLLMResponse(const QA::Service::MessageBody& message);
 
 private:
-    QPointer<MessageListModel> m_messageListModel;
 
     QString m_statusMessage;
 
     void setStatusMessage(const QString& message);
+
+    QPointer<SessionService> m_service;
+
 };
 
 } // namespace QA::Service
