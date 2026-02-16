@@ -71,13 +71,13 @@ private:
     bool m_bufferFull = false;
 };
 
-#define QA_LOG_INFO(msg)                                                       \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).info() << msg
-#define QA_LOG_WARN(msg)                                                       \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).warning() << msg
-#define QA_LOG_ERR(msg)                                                        \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).critical() << msg
-#define QA_LOG_DEBUG(msg)                                                      \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).debug() << msg
+#define QA_LOG_INFO \
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).info()
+#define QA_LOG_WARN \
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).warning()
+#define QA_LOG_ERR \
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).critical()
+#define QA_LOG_DEBUG \
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).debug()
 
 } // namespace QA::Log
