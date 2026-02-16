@@ -31,13 +31,12 @@ void ChatService::postPrompt(const Core::ModelParams& params, const MessageBody&
     if (const auto r =
                 m_client->noStreamingChat(params, m_conversation->getContext()))
     {
-        QA_LOG_DEBUG(QString("Temperature: %1").arg(params.temperature, 0, 'f', 1));
-        const auto& [message, total_tokens] = r.value();
-        const int tokens = total_tokens;
+        QA_LOG_DEBUG << "Temperature: " << params.temperature;
+        const auto& [role, content, totalTokens] = r.value();
         const MessageBody responseMessageBody{
                 message.role,
                 message.content,
-                tokens};
+                totalTokens};
         m_conversation->pushMessage(message);
 
         Q_EMIT signalLLMResponse(responseMessageBody);

@@ -7,10 +7,16 @@
 #include <llm/LLMClientBase.h>
 #include <llm/LLMConversation.h>
 #include <memory>
-#include "MessageModel.h"
 
 namespace QA::Service
 {
+struct MessageBody
+{
+    QString role;
+    QString content;
+    int tokens;
+};
+
 class ChatService final : public QObject
 {
     Q_OBJECT
@@ -20,10 +26,10 @@ public:
     void init();
 
 Q_SIGNALS:
-    void signalLLMResponse(const QA::Service::MessageBody& message);
+    void signalLLMResponse(const MessageBody& message);
 
 public Q_SLOTS:
-    void postPrompt(const QA::Core::ModelParams& params, const QA::Service::MessageBody& message);
+     postPrompt(const QA::Core::ModelParams& params, const MessageBody& message);
 
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;

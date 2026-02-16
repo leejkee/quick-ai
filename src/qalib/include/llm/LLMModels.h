@@ -71,7 +71,8 @@ struct ModelParams
 
 struct ChatResponseBody
 {
-    Message message;
+    QString role;
+    QString content;
     int totalTokens = 0;
 };
 

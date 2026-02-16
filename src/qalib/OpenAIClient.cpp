@@ -44,19 +44,21 @@ QMap<QByteArray, QByteArray> OpenAIClient::getRequestHeader() const
 std::optional<ChatResponseBody>
 OpenAIClient::parseResponse(const QByteArray& responseData) const
 {
+    ChatResponseBody response;
+    response.role = QStringLiteral("assistant");
     QJsonParseError parseError;
     const QJsonDocument doc =
             QJsonDocument::fromJson(responseData, &parseError);
 
     if (parseError.error != QJsonParseError::NoError)
     {
-        QA_LOG_WARN("JSON Parse Exception:" + parseError.errorString());
+        QA_LOG_WARN << "JSON Parse Exception:" << parseError.errorString();
         return std::nullopt;
     }
 
     if (!doc.isObject())
     {
-        QA_LOG_WARN("Response is not a JSON object");
+        QA_LOG_WARN << "Response is not a JSON object";
         return std::nullopt;
     }
 
@@ -66,15 +68,15 @@ OpenAIClient::parseResponse(const QByteArray& responseData) const
     {
         const QJsonObject errorObj =
                 root.value(QStringLiteral("error")).toObject();
-        QA_LOG_WARN("API Error:" +
-                    errorObj.value(QStringLiteral("message")).toString());
+        QA_LOG_WARN << "API Error:" <<
+                    errorObj.value(QStringLiteral("message")).toString();
         return std::nullopt;
     }
 
     if (!root.contains(QStringLiteral("choices")) ||
         root.value(QStringLiteral("choices")).toArray().isEmpty())
     {
-        QA_LOG_WARN("Parse Error: 'choices' is missing or empty.");
+        QA_LOG_WARN << "Parse Error: 'choices' is missing or empty.";
         return std::nullopt;
     }
 
@@ -82,23 +84,18 @@ OpenAIClient::parseResponse(const QByteArray& responseData) const
     const QJsonObject firstChoice = choices.first().toObject();
     const QJsonObject messageObj =
             firstChoice.value(QStringLiteral("message")).toObject();
-    const QString content =
+    response.content =
             messageObj.value(QStringLiteral("content")).toString();
 
-    int totalTokens = 0;
     if (root.contains(QStringLiteral("usage")))
     {
         if (const QJsonObject usage =
                     root.value(QStringLiteral("usage")).toObject();
             usage.contains(QStringLiteral("total_tokens")))
         {
-            totalTokens = usage.value(QStringLiteral("total_tokens")).toInt();
+            response.totalTokens = usage.value(QStringLiteral("total_tokens")).toInt();
         }
     }
-
-    ChatResponseBody response;
-    response.message = {QStringLiteral("assistant"), content};
-    response.totalTokens = totalTokens;
 
     return response;
 }

@@ -51,9 +51,9 @@ LLMClientBase::noStreamingChat(const ModelParams& modelParams,
 
     if (reply->error() != QNetworkReply::NoError)
     {
-        QA_LOG_WARN("Request failed. Error:" + reply->error());
-        QA_LOG_WARN("Error message:" + reply->errorString());
-        QA_LOG_WARN("Server response:" + reply->readAll());
+        QA_LOG_WARN << "Request failed. Error:" << reply->error();
+        QA_LOG_WARN << "Error message:" << reply->errorString();
+        QA_LOG_WARN << "Server response:" << reply->readAll();
     }
     else
     {

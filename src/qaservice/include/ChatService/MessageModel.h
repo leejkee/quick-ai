@@ -5,16 +5,10 @@
 #include <QAbstractListModel>
 #include <QVector>
 #include <optional>
+#include <llm/LLMModels.h>
 
 namespace QA::Service
 {
-
-struct MessageBody
-{
-    QString role;
-    QString content;
-    std::optional<int> tokens;
-};
 
 class MessageModel final : public QAbstractListModel
 {
@@ -42,9 +36,9 @@ public:
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-    Q_SLOT void pushMessage(const MessageBody& message);
+    Q_SLOT void pushMessage(const Core::ChatResponseBody& message);
 
 private:
-    QVector<MessageBody> m_messages;
+    QVector<Core::ChatResponseBody> m_messages;
 };
 } // namespace QA::Service
