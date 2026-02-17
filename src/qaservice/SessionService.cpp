@@ -6,10 +6,9 @@
 namespace QA::Service
 {
 
-SessionService::SessionService(ChatService* chatService,
-                               SettingsRepository* settingsRepo,
+SessionService::SessionService(SettingsRepository* settingsRepo,
                                QObject* parent)
-    : QObject(parent), m_chatService(chatService), m_settings(settingsRepo)
+    : QObject(parent), m_settings(settingsRepo)
 {
     const auto settings = m_settings->getSettings();
     m_selectedProviderId = settings.m_selectedProviderId;
@@ -17,4 +16,7 @@ SessionService::SessionService(ChatService* chatService,
     m_messageModel = new MessageModel(this);
 }
 
+void SessionService::chatNoStreaming()
+{
+}
 } // namespace QA::Service

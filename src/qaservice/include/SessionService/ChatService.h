@@ -7,6 +7,7 @@
 #include <llm/LLMClientBase.h>
 #include <llm/LLMConversation.h>
 #include <memory>
+#include <optional>
 
 namespace QA::Service
 {
@@ -29,7 +30,7 @@ Q_SIGNALS:
     void signalLLMResponse(const MessageBody& message);
 
 public Q_SLOTS:
-     postPrompt(const QA::Core::ModelParams& params, const MessageBody& message);
+    std::optional<MessageBody> postPrompt(const QA::Core::ModelParams& params, const MessageBody& message);
 
 private:
     std::unique_ptr<Core::LLMConversation> m_conversation;

@@ -4,8 +4,9 @@
 #pragma once
 #include <QAbstractListModel>
 #include <QVector>
-#include <optional>
+#include <memory>
 #include <llm/LLMModels.h>
+#include <llm/LLMConversation.h>
 
 namespace QA::Service
 {
@@ -14,7 +15,8 @@ class MessageModel final : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit MessageModel(QObject* parent = nullptr);
+    explicit MessageModel(std::shared_ptr<Core::LLMConversation> conversation,
+                          QObject* parent = nullptr);
 
     enum MessageRoles
     {
@@ -39,6 +41,6 @@ public:
     Q_SLOT void pushMessage(const Core::ChatResponseBody& message);
 
 private:
-    QVector<Core::ChatResponseBody> m_messages;
+    std::shared_ptr<Core::LLMConversation> m_conversation;
 };
 } // namespace QA::Service
