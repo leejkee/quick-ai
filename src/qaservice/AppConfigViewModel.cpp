@@ -1,28 +1,44 @@
 //
 // Created by 31305 on 2025/12/24.
 //
-#include <ConfigService/ConfigService.h>
-#include <ConfigViewModel/AppConfigViewModel.h>
+#include <SessionService/MessageModel.h>
+#include <UserSettings/AppConfigViewModel.h>
+#include <UserSettings/SettingsRepository.h>
+#include <UserSettings/UserSettings.h>
 
 namespace QA::Service
 {
-AppConfigViewModel::AppConfigViewModel(ConfigService* service, QObject* parent)
-    : QObject(parent), m_service(service)
+AppConfigViewModel::AppConfigViewModel(SettingsRepository* settingsRepo,
+                                       QObject* parent)
+    : QObject(parent), m_settingsRepo(settingsRepo)
 {
 }
 
-void AppConfigViewModel::setTheme(const QString& themeMode)
+QStringList AppConfigViewModel::getThemeList()
 {
-    m_service->setThemeMode(themeMode);
+    return AppSettings::getAvailableThemeNames();
 }
 
 QString AppConfigViewModel::getTheme() const
 {
-    return m_service->getCurrentTheme();
+    if (!m_settingsRepo)
+        return {};
+    return AppSettings::enumToString(
+            m_settingsRepo->getSettings().m_appSettings.theme);
 }
 
-QStringList AppConfigViewModel::getThemeList() const
+void AppConfigViewModel::setTheme(const QString& themeMode)
 {
-    return m_service->getThemeList();
+    if (getTheme() == themeMode)
+        return;
+
+    auto newTheme = AppSettings::stringToEnum(themeMode);
+
+    if (m_settingsRepo)
+    {
+        m_settingsRepo->updateSettings([newTheme](UserSettings& s)
+                                       { s.m_appSettings.theme = newTheme; });
+        Q_EMIT signalThemeChanged(themeMode);
+    }
 }
 } // namespace QA::Service

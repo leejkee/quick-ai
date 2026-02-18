@@ -4,14 +4,14 @@
 #pragma once
 #include <QObject>
 #include <QPointer>
-#include <UserSettings/SettingsRepository.h>
 #include <llm/LLMClientBase.h>
+#include <llm/LLMConversation.h>
 #include <memory>
-#include "MessageModel.h"
-#include "llm/LLMConversation.h"
 
 namespace QA::Service
 {
+class SettingsRepository;
+class MessageModel;
 
 class SessionService final : public QObject
 {
@@ -40,7 +40,7 @@ private:
     std::unique_ptr<Core::LLMClientBase> m_client;
     std::shared_ptr<Core::LLMConversation> m_conversation;
 
-    QPointer<SettingsRepository> m_settings;
+    QPointer<SettingsRepository> m_settingsRepo;
     MessageModel* m_messageModel;
 
     QString m_selectedProviderId;

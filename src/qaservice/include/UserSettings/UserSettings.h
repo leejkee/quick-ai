@@ -112,7 +112,6 @@ struct Provider
     }
 };
 
-
 struct AppSettings
 {
     enum class Theme
@@ -122,6 +121,48 @@ struct AppSettings
     };
 
     Theme theme = Theme::Light;
+
+    static const QList<QPair<Theme, QString>>& getThemeMap()
+    {
+        static const QList<QPair<Theme, QString>> map = {
+                {Theme::Light, QStringLiteral("Light")},
+                {Theme::Dark, QStringLiteral("Dark")}};
+        return map;
+    }
+
+    static QStringList getAvailableThemeNames()
+    {
+        QStringList names;
+        for (const auto& pair : getThemeMap())
+        {
+            names.append(pair.second);
+        }
+        return names;
+    }
+
+    static Theme stringToEnum(const QString& str)
+    {
+        for (const auto& pair : getThemeMap())
+        {
+            if (pair.second.compare(str, Qt::CaseInsensitive) == 0)
+            {
+                return pair.first;
+            }
+        }
+        return Theme::Light;
+    }
+
+    static QString enumToString(Theme t)
+    {
+        for (const auto& pair : getThemeMap())
+        {
+            if (pair.first == t)
+            {
+                return pair.second;
+            }
+        }
+        return QStringLiteral("Light");
+    }
 
     [[nodiscard]] QJsonObject toJson() const
     {
@@ -192,12 +233,16 @@ struct UserSettings
     {
         UserSettings settings;
 
-        if (json.contains("appSettings")) {
-            settings.m_appSettings = AppSettings::fromJson(json["appSettings"].toObject());
+        if (json.contains("appSettings"))
+        {
+            settings.m_appSettings =
+                    AppSettings::fromJson(json["appSettings"].toObject());
         }
 
-        if (json.contains("modelParams")) {
-            settings.m_modelParams = Core::ModelParams::fromJson(json["modelParams"].toObject());
+        if (json.contains("modelParams"))
+        {
+            settings.m_modelParams =
+                    Core::ModelParams::fromJson(json["modelParams"].toObject());
         }
 
         if (json.contains("providers") && json["providers"].isArray())
@@ -207,15 +252,20 @@ struct UserSettings
 
             for (const auto& val : providersArray)
             {
-                if (val.isObject()) {
-                    settings.m_providers.append(Provider::fromJson(val.toObject()));
+                if (val.isObject())
+                {
+                    settings.m_providers.append(
+                            Provider::fromJson(val.toObject()));
                 }
             }
         }
 
-        settings.m_selectedProviderId = json["selectedProviderId"].toString(settings.m_selectedProviderId);
-        settings.m_selectedModel = json["selectedModel"].toString(settings.m_selectedModel);
-        settings.m_systemPrompt = json["systemPrompt"].toString(settings.m_systemPrompt);
+        settings.m_selectedProviderId = json["selectedProviderId"].toString(
+                settings.m_selectedProviderId);
+        settings.m_selectedModel =
+                json["selectedModel"].toString(settings.m_selectedModel);
+        settings.m_systemPrompt =
+                json["systemPrompt"].toString(settings.m_systemPrompt);
 
         return settings;
     }
@@ -257,14 +307,19 @@ struct UserSettings
 
     bool operator==(const UserSettings& rhs) const
     {
-        return std::tie(m_appSettings, m_providers, m_selectedProviderId, m_selectedModel, m_systemPrompt) ==
-                std::tie(rhs.m_appSettings, rhs.m_providers, rhs.m_selectedProviderId, rhs.m_selectedModel, rhs.m_systemPrompt);
+        return std::tie(m_appSettings,
+                        m_providers,
+                        m_selectedProviderId,
+                        m_selectedModel,
+                        m_systemPrompt) ==
+                std::tie(rhs.m_appSettings,
+                         rhs.m_providers,
+                         rhs.m_selectedProviderId,
+                         rhs.m_selectedModel,
+                         rhs.m_systemPrompt);
     }
 
-    bool operator!=(const UserSettings& rhs) const
-    {
-        return !(*this == rhs);
-    }
+    bool operator!=(const UserSettings& rhs) const { return !(*this == rhs); }
 };
 
 } // namespace QA::Service

@@ -6,7 +6,7 @@
 
 namespace QA::Service
 {
-class SettingsRepository : public QObject
+class SettingsRepository final : public QObject
 {
     Q_OBJECT
 public:

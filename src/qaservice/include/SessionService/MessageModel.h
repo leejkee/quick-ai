@@ -5,12 +5,13 @@
 #include <QAbstractListModel>
 #include <QVector>
 #include <memory>
-#include <llm/LLMModels.h>
-#include <llm/LLMConversation.h>
 
+namespace QA::Core
+{
+class LLMConversation;
+}
 namespace QA::Service
 {
-
 class MessageModel final : public QAbstractListModel
 {
     Q_OBJECT

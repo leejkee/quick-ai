@@ -26,7 +26,12 @@ void MessageViewModel::handleUserRequest(const QString& prompt)
     // 多行代码作为prompt输入，对话框显示不完整
 
     m_service->pushMessage(promptMsg);
-    m_service->chatNoStreaming();
+    const auto r = m_service->chatNoStreaming();
+
+    Core::Message responseMsg;
+    responseMsg.role = r.role;
+    responseMsg.content = r.content;
+    m_service->pushMessage(responseMsg);
 }
 
 void MessageViewModel::handleClearSession() { m_service->clearMessage(); }
@@ -40,5 +45,9 @@ void MessageViewModel::setStatusMessage(const QString& message)
     }
 }
 
+QObject* MessageViewModel::getMessageListModel() const
+{
+    return m_service->getMessageModel();
+};
 
 } // namespace QA::Service

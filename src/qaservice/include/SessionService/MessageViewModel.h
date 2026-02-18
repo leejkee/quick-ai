@@ -4,11 +4,10 @@
 #pragma once
 #include <QObject>
 #include <QPointer>
-#include "MessageModel.h"
-#include "SessionService.h"
 
 namespace QA::Service
 {
+class SessionService;
 class MessageViewModel : public QObject
 {
     Q_OBJECT
@@ -25,10 +24,7 @@ public:
         return m_statusMessage;
     }
 
-    Q_INVOKABLE [[nodiscard]] QObject* getMessageListModel() const
-    {
-        return m_service->getMessageModel();
-    };
+    Q_INVOKABLE [[nodiscard]] QObject* getMessageListModel() const;
 
 Q_SIGNALS:
     void signalStatusMessageChanged();

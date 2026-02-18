@@ -3,15 +3,17 @@
 //
 #include <SessionService/SessionService.h>
 #include <llm/LLMClientFactory.h>
+#include <UserSettings/SettingsRepository.h>
+#include <SessionService/MessageModel.h>
 
 namespace QA::Service
 {
 
-SessionService::SessionService(SettingsRepository* settingsRepo,
+SessionService::SessionService(SettingsRepository* configService,
                                QObject* parent)
-    : QObject(parent), m_settings(settingsRepo)
+    : QObject(parent), m_settingsRepo(configService)
 {
-    const auto settings = m_settings->getSettings();
+    const auto settings = m_settingsRepo->getSettings();
     m_modelParams = settings.m_modelParams;
     m_selectedModel = settings.m_selectedModel;
     m_selectedProviderId = settings.m_selectedProviderId;

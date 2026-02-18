@@ -1,6 +1,7 @@
 //
 // Created by 31305 on 2025/11/9.
 //
+#include <llm/LLMConversation.h>
 #include <SessionService/MessageModel.h>
 namespace QA::Service
 {

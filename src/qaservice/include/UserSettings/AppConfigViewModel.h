@@ -8,7 +8,8 @@
 
 namespace QA::Service
 {
-class ConfigService;
+class SettingsRepository;
+
 }
 
 namespace QA::Service
@@ -20,15 +21,17 @@ class AppConfigViewModel : public QObject
     Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY
                        signalThemeChanged)
 public:
-    explicit AppConfigViewModel(ConfigService* service, QObject* parent = nullptr);
-    ~AppConfigViewModel() override = default;
+    explicit AppConfigViewModel(SettingsRepository* settingsRepo,
+                                QObject* parent = nullptr);
 
     [[nodiscard]] QString getTheme() const;
-    [[nodiscard]] QStringList getThemeList() const;
+    [[nodiscard]] static QStringList getThemeList();
 
     void setTheme(const QString& themeMode);
+Q_SIGNALS:
+    void signalThemeChanged(const QString& theme);
 
 private:
-    QPointer<ConfigService> m_service;
+    QPointer<SettingsRepository> m_settingsRepo;
 };
-}
+} // namespace QA::Service
