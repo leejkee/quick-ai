@@ -3,16 +3,17 @@
 //
 #pragma once
 #include <QObject>
-#include <llm/LLMClientBase.h>
+#include <QPointer>
 #include <UserSettings/SettingsRepository.h>
+#include <llm/LLMClientBase.h>
 #include <memory>
-#include "llm/LLMConversation.h"
 #include "MessageModel.h"
+#include "llm/LLMConversation.h"
 
 namespace QA::Service
 {
 
-class SessionService : public QObject
+class SessionService final : public QObject
 {
     Q_OBJECT
 public:
@@ -21,15 +22,19 @@ public:
 
     Core::ChatResponseBody chatNoStreaming();
 
-    MessageModel* getMessageModel() const
+    [[nodiscard]] MessageModel* getMessageModel() const
     {
         return m_messageModel;
     };
 
+    void pushMessage(const Core::Message& msg);
+
+    void clearMessage();
 
     Q_SIGNALS:
     void signalLLMResponse(const QString& response);
-public Q_SLOTS:
+
+    void signalConversationChanged();
 
 private:
     std::unique_ptr<Core::LLMClientBase> m_client;

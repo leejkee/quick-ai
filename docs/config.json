@@ -11,7 +11,7 @@
         "id": "DeepSeek",
         "protocol": "OpenAI",
         "baseUrl": "https://api.deepseek.com",
-        "apiKey": "sk-1d00763b38184cfaafb5b3ea8cfd3b7e",
+        "apiKey": "",
         "models": [
           {
             "name": "deepseek-chat",
@@ -27,7 +27,7 @@
         "id": "Qwen",
         "protocol": "OpenAI",
         "baseUrl": "https://dashscope.aliyuncs.com",
-        "apiKey": "sk-c14ea95925184cf2a4609f0931a1a9c4",
+        "apiKey": "",
         "models": [
           {
             "name": "qwen3-max",

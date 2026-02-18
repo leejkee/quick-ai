@@ -4,11 +4,6 @@ file(GLOB_RECURSE QASERVICE_SRC CONFIGURE_DEPENDS
        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
 )
 
-list(REMOVE_ITEM QASERVICE_SRC
-       "${CMAKE_CURRENT_SOURCE_DIR}/include/ConfigService/ConfigService.h"
-       "${CMAKE_CURRENT_SOURCE_DIR}/ConfigService.cpp"
-)
-
 
 # set(QASERVICE_SRC
 #         "${CMAKE_CURRENT_SOURCE_DIR}/include/ChatService/ChatService.h"

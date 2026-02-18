@@ -10,7 +10,8 @@ class SettingsRepository : public QObject
 {
     Q_OBJECT
 public:
-    explicit SettingsRepository(const QString& filePath, QObject* parent = nullptr);
+    explicit SettingsRepository(const QString& filePath,
+                                QObject* parent = nullptr);
 
     [[nodiscard]] std::optional<UserSettings> loadSettingsFromFile();
 
@@ -18,7 +19,7 @@ public:
 
     UserSettings getSettings() const { return m_settings; }
 
-    template<typename Func>
+    template <typename Func>
     void updateSettings(Func&& modifier)
     {
         UserSettings copy = m_settings;
@@ -31,12 +32,11 @@ public:
 
     void generateSettingsFile(const QString& filePath);
 
-    Q_SIGNALS:
+Q_SIGNALS:
     void signalSettingsChanged();
 
 private:
     UserSettings m_settings;
     QString m_filePath;
-
 };
-}
+} // namespace QA::Service

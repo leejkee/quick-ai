@@ -22,14 +22,13 @@ public:
     {
         RoleRole = Qt::UserRole + 1,
         ContentRole,
-        TokensRole
     };
 
     inline static const auto STR_ROLE = QStringLiteral("role");
 
     inline static const auto STR_Content = QStringLiteral("content");
 
-    inline static const auto STR_TOKENS = QStringLiteral("tokens");
+    // inline static const auto STR_TOKENS = QStringLiteral("tokens");
 
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
 
@@ -38,7 +37,8 @@ public:
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-    Q_SLOT void pushMessage(const Core::ChatResponseBody& message);
+public Q_SLOTS:
+    void updateData();
 
 private:
     std::shared_ptr<Core::LLMConversation> m_conversation;

@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QList>
 #include <QString>
-#include <llm/LLMModels.h>
+#include "LLMModels.h"
 
 namespace QA::Core
 {
@@ -13,17 +13,36 @@ namespace QA::Core
 class LLMConversation
 {
 public:
-    explicit LLMConversation(const Message& systemPrompt = {});
+    explicit LLMConversation(const QString& systemPrompt = {});
 
     void pushMessage(const Message& message);
 
-    [[nodiscard]] const QList<Message>& getMessages() const;
+    Message at(qsizetype index) const;
+
+    [[nodiscard]] const QList<Message>& getMessages() const
+    {
+        return m_messagesHistory;
+    }
 
     [[nodiscard]] QList<Message> getContext() const;
 
-    [[nodiscard]] QString getStartTimeStr() const;
+    [[nodiscard]] QString getStartTimeStr() const
+    {
+        return m_startTime.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    }
 
-    [[nodiscard]] QDateTime getStartTime() const;
+    [[nodiscard]] QDateTime getStartTime() const { return m_startTime; }
+
+    [[nodiscard]] qsizetype getMessageSize() const
+    {
+        return m_messagesHistory.size();
+    }
+
+    [[nodiscard]] Message getSystemPrompt() const;
+
+    void clearHistory();
+
+    Message operator[](const qsizetype index) const { return at(index); }
 
 private:
     static constexpr int MAX_CONTEXT_WINDOW = 3;

@@ -15,7 +15,7 @@ SettingsRepository::SettingsRepository(const QString& filePath, QObject* parent)
 {
     if (m_filePath.isEmpty())
     {
-        QA_LOG_ERR("Settings file is empty");
+        QA_LOG_ERR << "Settings file is empty";
         return;
     }
 
@@ -29,13 +29,11 @@ SettingsRepository::SettingsRepository(const QString& filePath, QObject* parent)
         if (const auto r = loadSettingsFromFile(); r.has_value())
         {
             m_settings = r.value();
-            QA_LOG_INFO(QString("Load settings from file: [%1] successfully.")
-                                .arg(m_filePath));
+            QA_LOG_INFO << "Load settings from file: " << m_filePath;
         }
         else
         {
-            QA_LOG_ERR(QString("Load settings from file: [%1] failed.")
-                               .arg(m_filePath));
+            QA_LOG_ERR << "Failed to load settings from file: " << m_filePath;
         }
     }
 }
@@ -44,13 +42,13 @@ std::optional<UserSettings> SettingsRepository::loadSettingsFromFile()
 {
     if (m_filePath.isEmpty())
     {
-        QA_LOG_ERR("Settings file is empty: " + m_filePath);
+        QA_LOG_ERR << "Settings file is empty: " << m_filePath;
         return std::nullopt;
     }
     QFile file(m_filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        QA_LOG_ERR("Failed to open config file");
+        QA_LOG_ERR << "Failed to open config file";
         return std::nullopt;
     }
     UserSettings settings;
@@ -61,10 +59,10 @@ std::optional<UserSettings> SettingsRepository::loadSettingsFromFile()
             QJsonDocument::fromJson(jsonData, &parseError);
     if (jsonDoc.isNull() || !jsonDoc.isObject())
     {
-        QA_LOG_ERR("Failed to parse JSON" + parseError.errorString());
+        QA_LOG_ERR << "Failed to parse JSON" << parseError.errorString();
         return std::nullopt;
     }
-    QA_LOG_INFO("Parse JSON successfully");
+    QA_LOG_INFO << "Parse JSON successfully";
     const QJsonObject jsonObj = jsonDoc.object();
     m_settings = UserSettings::fromJson(jsonObj);
     return settings;
@@ -74,7 +72,7 @@ bool SettingsRepository::saveSettingsToFile()
 {
     if (m_filePath.isEmpty())
     {
-        QA_LOG_ERR("Settings file is empty: " + m_filePath);
+        QA_LOG_ERR << "Settings file is empty: " << m_filePath;
         return false;
     }
 
@@ -85,10 +83,10 @@ bool SettingsRepository::saveSettingsToFile()
         const QJsonDocument doc(rootObj);
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();
-        QA_LOG_INFO("Config saved to" + m_filePath);
+        QA_LOG_INFO << "Config saved to" + m_filePath;
         return true;
     }
-    QA_LOG_ERR("Failed to save config file");
+    QA_LOG_ERR << "Failed to save config file";
     return false;
 }
 
@@ -96,8 +94,7 @@ void SettingsRepository::generateSettingsFile(const QString& filePath)
 {
     if (filePath.isEmpty())
     {
-        QA_LOG_ERR(QString(
-                "Config file path is empty, cannot generate settings."));
+        QA_LOG_ERR << "Config file path is empty, cannot generate settings.";
         return;
     }
 
@@ -106,8 +103,7 @@ void SettingsRepository::generateSettingsFile(const QString& filePath)
     {
         if (!dir.mkpath("."))
         {
-            QA_LOG_ERR(QString("Failed to create directory: %1")
-                               .arg(dir.absolutePath()));
+            QA_LOG_ERR << "Failed to create directory: " << dir.absolutePath();
             return;
         }
     }
@@ -122,21 +118,19 @@ void SettingsRepository::generateSettingsFile(const QString& filePath)
                     file.write(doc.toJson(QJsonDocument::Indented));
             bytesWritten == -1)
         {
-            QA_LOG_ERR(QString("Failed to write to config file: %1")
-                               .arg(file.errorString()));
+            QA_LOG_ERR << "Failed to write to config file: "
+                       << file.errorString();
         }
         else
         {
-            QA_LOG_INFO(QString("Generated default settings file at: %1")
-                                .arg(filePath));
+            QA_LOG_INFO << "Generated default settings file at: %1" << filePath;
         }
         file.close();
     }
     else
     {
-        QA_LOG_ERR(
-                QString("Failed to open config file for writing: %1. Error: %2")
-                        .arg(filePath, file.errorString()));
+        QA_LOG_ERR << "Failed to open config file for writing: " << filePath
+                   << ", Error: " << file.errorString();
     }
 }
 

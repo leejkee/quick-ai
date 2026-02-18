@@ -6,14 +6,20 @@
 namespace QA::Core
 {
 
-LLMConversation::LLMConversation(const Message& systemPrompt)
+LLMConversation::LLMConversation(const QString& systemPrompt)
 {
     m_startTime = QDateTime::currentDateTime();
 
-    if (!systemPrompt.content.isEmpty())
+    if (!systemPrompt.isEmpty())
     {
-        pushMessage(systemPrompt);
+        const Message sysPrompt{"system", systemPrompt};
+        pushMessage(sysPrompt);
     }
+}
+
+Message LLMConversation::at(const qsizetype index) const
+{
+    return m_messagesHistory.at(index);
 }
 
 void LLMConversation::pushMessage(const Message& message)
@@ -21,9 +27,9 @@ void LLMConversation::pushMessage(const Message& message)
     m_messagesHistory.append(message);
 }
 
-const QList<Message>& LLMConversation::getMessages() const
+Message LLMConversation::getSystemPrompt() const
 {
-    return m_messagesHistory;
+    return m_messagesHistory.first();
 }
 
 QList<Message> LLMConversation::getContext() const
@@ -56,11 +62,9 @@ QList<Message> LLMConversation::getContext() const
     return context;
 }
 
-QString LLMConversation::getStartTimeStr() const
+void LLMConversation::clearHistory()
 {
-    return m_startTime.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    m_messagesHistory.clear();
 }
-
-QDateTime LLMConversation::getStartTime() const { return m_startTime; }
 
 } // namespace QA::Core

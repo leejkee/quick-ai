@@ -33,14 +33,10 @@ public:
 Q_SIGNALS:
     void signalStatusMessageChanged();
 
-    void signalSendPrompt(const QA::Service::MessageBody& prompt);
-
 public Q_SLOTS:
     void handleUserRequest(const QString& prompt);
 
     void handleClearSession();
-
-    void handleLLMResponse(const QA::Service::MessageBody& message);
 
 private:
 
