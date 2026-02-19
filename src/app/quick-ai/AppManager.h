@@ -14,10 +14,10 @@ class ModelParamsViewModel;
 class LLMRuntimeViewModel;
 class AppConfigViewModel;
 class LLMInitViewModel;
-}
+} // namespace QA::Service
 namespace QA::App
 {
-class AppManager final: public QObject
+class AppManager final : public QObject
 {
     Q_OBJECT
 public:
@@ -36,4 +36,4 @@ private:
     QQmlApplicationEngine* m_qmlEngine;
 };
 
-}
+} // namespace QA::App

@@ -6,7 +6,6 @@ target_link_libraries(QuickAIApp PRIVATE
         Qt6::Qml
         Qt6::Quick
         QuickAIUiSessionplugin
-#        QuickAIUiSettingsplugin
         QuickAIService
         QuickAILog
         Qt6::QuickControls2
