@@ -48,17 +48,6 @@ Rectangle {
                     width: messageListView.width
                     wrapMode: Text.WordWrap
                 }
-                Text {
-                    id: tokensText
-                    anchors.left: parent.left
-                    anchors.margins: 10
-                    anchors.top: messageText.bottom
-                    anchors.topMargin: 5
-                    color: "#2dad6f"
-                    font.pixelSize: 20
-                    text: "Tokens: " + model.tokens
-                    visible: model.role === "assistant" && model.tokens !== null
-                }
             }
 
             onCountChanged: {

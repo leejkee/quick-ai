@@ -1,9 +1,9 @@
 //
 // Created by 31305 on 2025/11/9.
 //
-#include <QDebug>
 #include <SessionService/MessageViewModel.h>
 #include <SessionService/SessionService.h>
+#include <SessionService/MessageModel.h>
 
 
 namespace QA::Service

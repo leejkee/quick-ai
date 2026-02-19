@@ -16,20 +16,20 @@ ApplicationWindow {
             id: inputView
 
             Layout.fillWidth: true
-            onSendMessage: text => chatViewModel.handleUserRequest(text)
+            onSendMessage: text => messageViewModel.handleUserRequest(text)
         }
         SessionView {
             id: sessionView
 
             Layout.fillHeight: true
             Layout.fillWidth: true
-            chatModel: chatViewModel.messageListModel
+            chatModel: messageViewModel.messageListModel
         }
         StatusBar {
             id: statusBar
 
             Layout.fillWidth: true
-            leftText: chatViewModel.statusMessage
+            leftText: messageViewModel.statusMessage
         }
         ParamsConfig {
             id: paramsConfig
