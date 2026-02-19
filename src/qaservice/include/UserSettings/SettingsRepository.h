@@ -17,7 +17,7 @@ public:
 
     bool saveSettingsToFile();
 
-    UserSettings getSettings() const { return m_settings; }
+    [[nodiscard]] UserSettings getSettings() const { return m_settings; }
 
     template <typename Func>
     void updateSettings(Func&& modifier)

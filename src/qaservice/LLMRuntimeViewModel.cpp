@@ -1,11 +1,11 @@
 //
 // Created by 31305 on 2026/1/29.
 //
-#include <ChatService/SelectionConfig.h>
-
+#include <SessionService/LLMRuntimeViewModel.h>
+#include <UserSettings/SettingsRepository.h>
 namespace QA::Service
 {
-SelectionConfig::SelectionConfig(QObject* parent) : QObject(parent)
+LLMRuntimeViewModel::LLMRuntimeViewModel(SettingsRepository* settingsRepo, QObject* parent) : QObject(parent), m_settingsRepo(settingsRepo)
 {
     Provider provider_deepseek = {
             "DeepSeek",
@@ -26,7 +26,7 @@ SelectionConfig::SelectionConfig(QObject* parent) : QObject(parent)
 }
 
 
-Provider SelectionConfig::getSelectedProvider() const
+Provider LLMRuntimeViewModel::getSelectedProvider() const
 {
     if (const auto r = getDataFromVector(
                 m_providers,
@@ -39,17 +39,17 @@ Provider SelectionConfig::getSelectedProvider() const
     return {};
 }
 
-QString SelectionConfig::getAPIKey() const
+QString LLMRuntimeViewModel::getAPIKey() const
 {
     return getSelectedProvider().apiKey;
 }
 
-QString SelectionConfig::getBaseURL() const
+QString LLMRuntimeViewModel::getBaseURL() const
 {
     return getSelectedProvider().baseUrl;
 }
 
-QStringList SelectionConfig::getModelList() const
+QStringList LLMRuntimeViewModel::getModelList() const
 {
     auto models = getSelectedProvider().models;
     QStringList modelNameList;
@@ -60,7 +60,7 @@ QStringList SelectionConfig::getModelList() const
     return modelNameList;
 }
 
-QStringList SelectionConfig::getProviderList() const
+QStringList LLMRuntimeViewModel::getProviderList() const
 {
     QStringList providerIdList;
     for (const auto& provider : m_providers)
@@ -70,7 +70,7 @@ QStringList SelectionConfig::getProviderList() const
     return providerIdList;
 }
 
-void SelectionConfig::setSelectedModel(const QString& model)
+void LLMRuntimeViewModel::setSelectedModel(const QString& model)
 {
     if (m_selectedModel != model)
     {
@@ -79,7 +79,7 @@ void SelectionConfig::setSelectedModel(const QString& model)
     }
 }
 
-void SelectionConfig::setSelectedProviderId(const QString& providerId)
+void LLMRuntimeViewModel::setSelectedProviderId(const QString& providerId)
 {
     if (m_selectedProviderId != providerId)
     {
@@ -96,7 +96,7 @@ void SelectionConfig::setSelectedProviderId(const QString& providerId)
     }
 }
 
-QString SelectionConfig::getUrl() const
+QString LLMRuntimeViewModel::getUrl() const
 {
     return getSelectedProvider().getUrl(m_selectedModel);
 }
