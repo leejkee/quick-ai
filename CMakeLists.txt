@@ -13,6 +13,7 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
 		Core
 		Network
 		Gui
+		Widgets
 		Qml
 		Quick
 		QuickControls2

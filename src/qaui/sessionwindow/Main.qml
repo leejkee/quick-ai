@@ -1,11 +1,22 @@
+import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
 ApplicationWindow {
     height: 480
     title: "QML Chat UI"
-    visible: true
+    visible: false
     width: 640
+
+    onActiveFocusItemChanged: {
+        if (!activeFocusItem) {
+            visible = false
+        }
+    }
+
+    Keys.onEscapePressed: {
+        visible = false
+    }
 
     ColumnLayout {
         anchors.fill: parent
