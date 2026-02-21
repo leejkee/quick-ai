@@ -10,7 +10,8 @@ ScrollView {
     contentWidth: availableWidth
     clip: true
 
-    property var viewModel
+    property var runtimeViewModel
+    property var paramsViewModel
 
     readonly property color textColor: "#1e1e1e"
 
@@ -34,13 +35,13 @@ ScrollView {
         }
 
         SettingsItem {
-            text: ":"
+            text: "Provider:"
 
             ComboBox {
                 Layout.preferredWidth: 160
-                model: viewModel ? viewModel.providers : []
-                currentIndex: viewModel ? viewModel.providerIndex : 0
-                onActivated: if(viewModel) viewModel.providerIndex = currentIndex
+                model: runtimeViewModel ? runtimeViewModel.providerList : []
+                currentIndex: runtimeViewModel ? runtimeViewModel.providerList.indexOf(runtimeViewModel.selectedProviderId) : 0
+                onActivated: if(runtimeViewModel) runtimeViewModel.selectedProviderId = currentText
             }
         }
 
@@ -56,9 +57,9 @@ ScrollView {
             ComboBox {
                 id: modelCombo
                 Layout.preferredWidth: 160
-                model: viewModel ? viewModel.models : []
-                currentIndex: viewModel ? viewModel.modelIndex : 0
-                onActivated: if(viewModel) viewModel.modelIndex = currentIndex
+                model: runtimeViewModel ? runtimeViewModel.modelList : []
+                currentIndex: runtimeViewModel ? runtimeViewModel.modelList.indexOf(runtimeViewModel.selectedModel) : 0
+                onActivated: if(runtimeViewModel) runtimeViewModel.selectedModel = currentText
             }
         }
 
@@ -79,8 +80,8 @@ ScrollView {
                     from: 0.0
                     to: 2.0
                     stepSize: 0.1
-                    value: viewModel ? viewModel.temperature : 0.7
-                    onMoved: if(viewModel) viewModel.temperature = value
+                    value: paramsViewModel ? paramsViewModel.temperature : 0.7
+                    onMoved: if(paramsViewModel) paramsViewModel.temperature = value
 
                     Layout.fillWidth: true
                 }
@@ -106,8 +107,8 @@ ScrollView {
                     from: 512
                     to: 8192
                     stepSize: 128
-                    value: viewModel ? viewModel.maxTokens : 2048
-                    onMoved: if(viewModel) viewModel.maxTokens = value
+                    value: paramsViewModel ? paramsViewModel.maxTokens : 2048
+                    onMoved: if(paramsViewModel) paramsViewModel.maxTokens = value
 
                     Layout.fillWidth: true
                 }
@@ -118,13 +119,42 @@ ScrollView {
                     stepSize: 128
                     value: tokenSlider.value
                     editable: true
-                    onValueModified: if(viewModel) viewModel.maxTokens = value
+                    onValueModified: if(paramsViewModel) paramsViewModel.maxTokens = value
                     Layout.preferredWidth: 160
                 }
             }
         }
 
         Divider {}
+
+        SectionHeader {
+            text: "Additional Parameters"
+        }
+
+        SettingsItem {
+            text: "Top P:"
+            description: "Nucleus sampling probability (0.0 to 1.0)"
+            vertical: true
+            RowLayout {
+                Layout.fillWidth: true
+                Slider {
+                    id: topPSlider
+                    from: 0.0
+                    to: 1.0
+                    stepSize: 0.05
+                    value: paramsViewModel ? paramsViewModel.topP : 1.0
+                    onMoved: if(paramsViewModel) paramsViewModel.topP = value
+                    Layout.fillWidth: true
+                }
+                Label {
+                    text: topPSlider.value.toFixed(2)
+                    color: root.textColor
+                    font.bold: true
+                    Layout.preferredWidth: 40
+                    horizontalAlignment: Text.AlignRight
+                }
+            }
+        }
 
         // SettingsItem {
         //     text: "Interface Font Size"
@@ -141,45 +171,45 @@ ScrollView {
         //
         // Divider {}
 
-        SectionHeader {
-            text: "AI Behavior"
-        }
-
-        SettingsItem {
-            text: "System Prompt"
-            description: "Define the AI's persona and constraints."
-            vertical: true
-            Frame {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 150
-                padding: 0
-                Layout.topMargin: 10
-                ScrollView {
-                    anchors.fill: parent
-                    TextArea {
-                        text: viewModel ? viewModel.systemPrompt : ""
-                        placeholderText: "e.g. You are a helpful assistant..."
-                        color: root.textColor
-                        selectByMouse: true
-                        wrapMode: Text.Wrap
-
-                        leftPadding: 12
-                        rightPadding: 12
-                        topPadding: 12
-                        bottomPadding: 12
-
-                        background: null
-                        onTextChanged: if(viewModel) viewModel.systemPrompt = text
-                    }
-                }
-            }
-        }
-
-        SettingsItem {
-            text: "Launch"
-            description: "启动加载的默认参数"
-            vertical: true
-        }
+        // SectionHeader {
+        //     text: "AI Behavior"
+        // }
+        // 
+        // SettingsItem {
+        //     text: "System Prompt"
+        //     description: "Define the AI's persona and constraints."
+        //     vertical: true
+        //     Frame {
+        //         Layout.fillWidth: true
+        //         Layout.preferredHeight: 150
+        //         padding: 0
+        //         Layout.topMargin: 10
+        //         ScrollView {
+        //             anchors.fill: parent
+        //             TextArea {
+        //                 text: viewModel ? viewModel.systemPrompt : ""
+        //                 placeholderText: "e.g. You are a helpful assistant..."
+        //                 color: root.textColor
+        //                 selectByMouse: true
+        //                 wrapMode: Text.Wrap
+        // 
+        //                 leftPadding: 12
+        //                 rightPadding: 12
+        //                 topPadding: 12
+        //                 bottomPadding: 12
+        // 
+        //                 background: null
+        //                 onTextChanged: if(viewModel) viewModel.systemPrompt = text
+        //             }
+        //         }
+        //     }
+        // }
+        // 
+        // SettingsItem {
+        //     text: "Launch"
+        //     description: "启动加载的默认参数"
+        //     vertical: true
+        // }
         Item {
             Layout.fillHeight: true
         }

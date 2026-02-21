@@ -30,7 +30,8 @@ Window {
                 focus: true
                 model: ListModel {
                     ListElement { name: "General Settings"; icon: "⚙️"; pageIndex: 0 }
-                    ListElement { name: "LLM Configuration"; icon: "🤖"; pageIndex: 1 }
+                    ListElement { name: "LLM Runtime Config"; icon: "🤖"; pageIndex: 1 }
+                    ListElement { name: "User Configuration"; icon: "📝"; pageIndex: 2 }
                 }
 
                 delegate: Rectangle {
@@ -89,7 +90,12 @@ Window {
                 }
 
                 LLMConfigPage {
-                    viewModel:
+                    runtimeViewModel: llmRuntimeViewModel
+                    paramsViewModel: modelParamsViewModel
+                }
+
+                UserConfigPage {
+                    viewModel: llmInitViewModel
                 }
             }
         }

@@ -38,7 +38,7 @@ ScrollView {
 
             ComboBox {
                 Layout.preferredWidth: 160
-                model: viewModel.themeList
+                model: viewModel ? viewModel.themeList : []
                 currentIndex: viewModel ? viewModel.themeList.indexOf(viewModel.theme) : 0
                 onActivated: if(viewModel) viewModel.theme = currentText
             }

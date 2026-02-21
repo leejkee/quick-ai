@@ -42,17 +42,5 @@ ApplicationWindow {
             Layout.fillWidth: true
             leftText: messageViewModel.statusMessage
         }
-        ParamsConfig {
-            id: paramsConfig
-
-            paramsManager: paramsConfigManager
-            Layout.fillWidth: true
-        }
-
-        SelectionConfig {
-            id: selectionConfig
-            selectionManager: selectionConfigManager
-            Layout.fillWidth: true
-        }
     }
 }

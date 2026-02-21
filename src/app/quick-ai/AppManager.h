@@ -36,6 +36,8 @@ private Q_SLOTS:
     void toggleWindow();
     void hideWindow();
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void showSettingsWindow();
+    void closeSettingsWindow();
 
 private:
     static QString getDefaultConfigPath();
@@ -55,6 +57,9 @@ private:
     QSystemTrayIcon* m_trayIcon;
     QQuickWindow* m_window;
     int m_hotkeyId;
+    
+    QQuickWindow* m_settingsWindow;
+    QQmlComponent* m_settingsComponent;
 };
 
 } // namespace QA::App

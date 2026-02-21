@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QQmlContext>
 #include <QQuickWindow>
+#include <QQmlComponent>
 #include <QMenu>
 #include <QAction>
 #include <qalog/Log.h>
@@ -44,6 +45,8 @@ AppManager::AppManager(QObject* parent) : QObject(parent)
     m_trayIcon = nullptr;
     m_window = nullptr;
     m_hotkeyId = 0;
+    m_settingsWindow = nullptr;
+    m_settingsComponent = nullptr;
 }
 
 AppManager::~AppManager()
@@ -53,6 +56,12 @@ AppManager::~AppManager()
     if (m_trayIcon) {
         m_trayIcon->hide();
         delete m_trayIcon;
+    }
+    if (m_settingsWindow) {
+        m_settingsWindow->deleteLater();
+    }
+    if (m_settingsComponent) {
+        delete m_settingsComponent;
     }
 }
 
@@ -83,6 +92,10 @@ void AppManager::initApp()
                                                    m_appConfigViewModel);
     m_qmlEngine->rootContext()->setContextProperty("llmInitViewModel",
                                                    m_llmInitViewModel);
+    
+    // Preload settings window component
+    m_settingsComponent = new QQmlComponent(m_qmlEngine, QUrl("qrc:/qt/qml/qaui/settingswindow/MainView.qml"), this);
+    
     m_qmlEngine->loadFromModule("qaui.sessionwindow", "Main");
 }
 
@@ -105,9 +118,11 @@ void AppManager::setupTrayAndWindow(QObject* rootObject)
 
     QMenu* trayMenu = new QMenu();
     QAction* showAction = trayMenu->addAction("显示窗口");
+    QAction* settingsAction = trayMenu->addAction("Quick AI Settings");
     QAction* quitAction = trayMenu->addAction("退出");
 
     QObject::connect(showAction, &QAction::triggered, this, &AppManager::toggleWindow);
+    QObject::connect(settingsAction, &QAction::triggered, this, &AppManager::showSettingsWindow);
     QObject::connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
     QObject::connect(m_trayIcon, &QSystemTrayIcon::activated, this, &AppManager::onTrayIconActivated);
 
@@ -171,6 +186,59 @@ bool AppManager::nativeEventFilter(const QByteArray &eventType, void *message, q
     Q_UNUSED(message);
     Q_UNUSED(result);
     return false;
+}
+
+void AppManager::showSettingsWindow()
+{
+    if (!m_settingsComponent) {
+        QA_LOG_WARN << "Settings component not initialized";
+        return;
+    }
+    if (m_settingsComponent->status() == QQmlComponent::Error) {
+        QA_LOG_WARN << "QML Component load errors:";
+        for (const QQmlError &error : m_settingsComponent->errors()) {
+            QA_LOG_WARN << error.toString();
+        }
+        return;
+    }
+    if (m_settingsWindow) {
+        // Window already exists, bring to front
+        m_settingsWindow->show();
+        m_settingsWindow->raise();
+        m_settingsWindow->requestActivate();
+        return;
+    }
+    
+    // Create window instance
+    QObject* object = m_settingsComponent->create();
+    m_settingsWindow = qobject_cast<QQuickWindow*>(object);
+    
+    if (!m_settingsWindow) {
+        QA_LOG_WARN << "Failed to create settings window";
+        delete object;
+        return;
+    }
+    
+    // Connect close signal to cleanup
+    QObject::connect(m_settingsWindow, &QQuickWindow::visibleChanged, this,
+        [this](bool visible) {
+            if (!visible) {
+                closeSettingsWindow();
+            }
+        });
+    
+    m_settingsWindow->setTitle("Quick AI Settings");
+    m_settingsWindow->show();
+    m_settingsWindow->raise();
+    m_settingsWindow->requestActivate();
+}
+
+void AppManager::closeSettingsWindow()
+{
+    if (m_settingsWindow) {
+        m_settingsWindow->deleteLater();
+        m_settingsWindow = nullptr;
+    }
 }
 
 QString AppManager::getDefaultConfigPath()
