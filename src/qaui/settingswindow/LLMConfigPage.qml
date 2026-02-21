@@ -34,7 +34,7 @@ ScrollView {
         }
 
         SettingsItem {
-            text: "Service Provider:"
+            text: ":"
 
             ComboBox {
                 Layout.preferredWidth: 160
@@ -44,7 +44,7 @@ ScrollView {
             }
         }
 
-        AppDivider {}
+        Divider {}
 
         SectionHeader {
             text: "Model Settings"
@@ -62,7 +62,7 @@ ScrollView {
             }
         }
 
-        AppDivider {}
+        Divider {}
 
         SectionHeader {
             text: "Inference Parameters"
@@ -124,6 +124,62 @@ ScrollView {
             }
         }
 
+        Divider {}
+
+        // SettingsItem {
+        //     text: "Interface Font Size"
+        //     description: "Adjust the base text size."
+        //
+        //     SpinBox {
+        //         Layout.preferredWidth: 160
+        //         from: 10; to: 32
+        //         value: viewModel ? viewModel.fontSize : 14
+        //         onValueModified: if(viewModel) viewModel.fontSize = value
+        //         editable: true
+        //     }
+        // }
+        //
+        // Divider {}
+
+        SectionHeader {
+            text: "AI Behavior"
+        }
+
+        SettingsItem {
+            text: "System Prompt"
+            description: "Define the AI's persona and constraints."
+            vertical: true
+            Frame {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 150
+                padding: 0
+                Layout.topMargin: 10
+                ScrollView {
+                    anchors.fill: parent
+                    TextArea {
+                        text: viewModel ? viewModel.systemPrompt : ""
+                        placeholderText: "e.g. You are a helpful assistant..."
+                        color: root.textColor
+                        selectByMouse: true
+                        wrapMode: Text.Wrap
+
+                        leftPadding: 12
+                        rightPadding: 12
+                        topPadding: 12
+                        bottomPadding: 12
+
+                        background: null
+                        onTextChanged: if(viewModel) viewModel.systemPrompt = text
+                    }
+                }
+            }
+        }
+
+        SettingsItem {
+            text: "Launch"
+            description: "启动加载的默认参数"
+            vertical: true
+        }
         Item {
             Layout.fillHeight: true
         }

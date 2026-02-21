@@ -38,61 +38,11 @@ ScrollView {
 
             ComboBox {
                 Layout.preferredWidth: 160
-                model: ["System", "Light", "Dark" ]
-                currentIndex: viewModel ? viewModel.themeIndex : 0
-                onActivated: if(viewModel) viewModel.themeIndex = currentIndex
+                model: viewModel.themeList
+                currentIndex: viewModel ? viewModel.themeList.indexOf(viewModel.theme) : 0
+                onActivated: if(viewModel) viewModel.theme = currentText
             }
         }
-
-        AppDivider {}
-
-        SettingsItem {
-            text: "Interface Font Size"
-            description: "Adjust the base text size."
-
-            SpinBox {
-                Layout.preferredWidth: 160
-                from: 10; to: 32
-                value: viewModel ? viewModel.fontSize : 14
-                onValueModified: if(viewModel) viewModel.fontSize = value
-                editable: true
-            }
-        }
-
-        AppDivider {}
-
-        SectionHeader { text: "AI Behavior" }
-
-        SettingsItem {
-            text: "System Prompt"
-            description: "Define the AI's persona and constraints."
-            vertical: true
-            Frame {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 150
-                padding: 0
-                Layout.topMargin: 10
-                ScrollView {
-                    anchors.fill: parent
-                    TextArea {
-                        text: viewModel ? viewModel.systemPrompt : ""
-                        placeholderText: "e.g. You are a helpful assistant..."
-                        color: root.textColor
-                        selectByMouse: true
-                        wrapMode: Text.Wrap
-
-                        leftPadding: 12
-                        rightPadding: 12
-                        topPadding: 12
-                        bottomPadding: 12
-
-                        background: null
-                        onTextChanged: if(viewModel) viewModel.systemPrompt = text
-                    }
-                }
-            }
-        }
-
 
         Item {
             Layout.fillHeight: true

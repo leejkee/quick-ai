@@ -23,7 +23,7 @@ ColumnLayout {
         font.pixelSize: 20
     }
 
-    AppDivider {}
+    Divider {}
 
     // 2. Capabilities (Checkbox 组)
     GroupBox {

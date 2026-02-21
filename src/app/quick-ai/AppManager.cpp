@@ -81,7 +81,7 @@ void AppManager::initApp()
                                                    m_llmRuntimeViewModel);
     m_qmlEngine->rootContext()->setContextProperty("appConfigViewModel",
                                                    m_appConfigViewModel);
-    m_qmlEngine->rootContext()->setContextProperty("llmRuntimeViewModel",
+    m_qmlEngine->rootContext()->setContextProperty("llmInitViewModel",
                                                    m_llmInitViewModel);
     m_qmlEngine->loadFromModule("qaui.sessionwindow", "Main");
 }

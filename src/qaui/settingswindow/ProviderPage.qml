@@ -45,7 +45,7 @@ ColumnLayout {
     }
 
     // 分割线
-    AppDivider {}
+    Divider {}
 
     // 主内容区
     Item {
