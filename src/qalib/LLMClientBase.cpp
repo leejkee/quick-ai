@@ -17,8 +17,6 @@ LLMClientBase::LLMClientBase(QObject* parent)
 {
 }
 
-LLMClientBase::~LLMClientBase() = default;
-
 std::optional<ChatResponseBody>
 LLMClientBase::noStreamingChat(const ModelParams& modelParams,
                                const QList<Message>& userPrompt)

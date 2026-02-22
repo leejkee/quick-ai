@@ -17,8 +17,7 @@ SessionService::SessionService(SettingsRepository* configService,
     m_modelParams = settings.m_modelParams;
     m_selectedModel = settings.m_selectedModel;
     m_selectedProviderId = settings.m_selectedProviderId;
-    m_conversation =
-            std::make_shared<Core::LLMConversation>(settings.m_systemPrompt);
+    m_conversation = new Core::LLMConversation(settings.m_systemPrompt, this);
 
     m_selectedProviderId = settings.m_selectedProviderId;
     m_selectedModel = settings.m_selectedModel;
@@ -34,7 +33,7 @@ SessionService::SessionService(SettingsRepository* configService,
         body.apiKey = r.value().apiKey;
         body.url = r.value().getUrl(m_selectedModel);
     }
-    m_client = Core::LLMClientFactory::createLLMClient(body);
+    m_client = Core::LLMClientFactory::createLLMClient(body, this);
 
     connect(this,
             &SessionService::signalConversationChanged,

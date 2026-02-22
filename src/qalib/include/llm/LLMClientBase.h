@@ -16,10 +16,8 @@ namespace QA::Core
 
 class LLMClientBase : public QObject
 {
-    Q_OBJECT
 public:
     explicit LLMClientBase(QObject* parent = nullptr);
-    ~LLMClientBase() override;
 
     virtual std::optional<ChatResponseBody>
     noStreamingChat(const ModelParams& modelParams,

@@ -10,14 +10,14 @@
 namespace QA::Core
 {
 
-class LLMConversation
+class LLMConversation final : public QObject
 {
 public:
-    explicit LLMConversation(const QString& systemPrompt = {});
+    explicit LLMConversation(const QString& systemPrompt = {}, QObject* parent = nullptr);
 
     void pushMessage(const Message& message);
 
-    Message at(qsizetype index) const;
+    [[nodiscard]] Message at(qsizetype index) const;
 
     [[nodiscard]] const QList<Message>& getMessages() const
     {

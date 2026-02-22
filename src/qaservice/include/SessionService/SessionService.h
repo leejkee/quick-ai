@@ -37,8 +37,8 @@ public:
     void signalConversationChanged();
 
 private:
-    std::unique_ptr<Core::LLMClientBase> m_client;
-    std::shared_ptr<Core::LLMConversation> m_conversation;
+    Core::LLMClientBase* m_client;
+    Core::LLMConversation* m_conversation;
 
     QPointer<SettingsRepository> m_settingsRepo;
     MessageModel* m_messageModel;

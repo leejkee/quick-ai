@@ -9,7 +9,6 @@ namespace QA::Core
 
 class OpenAIClient final : public LLMClientBase
 {
-    Q_OBJECT
 public:
     explicit OpenAIClient(const PostBody& modelMeta, QObject* parent = nullptr);
 

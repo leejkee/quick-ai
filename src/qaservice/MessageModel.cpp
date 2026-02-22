@@ -6,7 +6,7 @@
 namespace QA::Service
 {
 
-MessageModel::MessageModel(std::shared_ptr<Core::LLMConversation> conversation,
+MessageModel::MessageModel(Core::LLMConversation* conversation,
                            QObject* parent)
     : QAbstractListModel(parent), m_conversation(conversation)
 {

@@ -30,15 +30,15 @@ static ProviderType inferProvider(QStringView name)
     return ProviderType::Unknown;
 }
 
-std::unique_ptr<LLMClientBase>
-LLMClientFactory::createLLMClient(const PostBody& postBody)
+LLMClientBase* LLMClientFactory::createLLMClient(const PostBody& postBody,
+                                                 QObject* parent)
 {
     switch (inferProvider(postBody.model))
     {
     case ProviderType::OpenAI:
     default:
         {
-            return std::make_unique<OpenAIClient>(postBody);
+            return new OpenAIClient(postBody, parent);
         }
     }
 }

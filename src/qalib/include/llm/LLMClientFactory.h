@@ -3,7 +3,6 @@
 //
 #pragma once
 #include "LLMClientBase.h"
-#include <memory>
 
 namespace QA::Core
 {
@@ -11,8 +10,8 @@ namespace QA::Core
 class LLMClientFactory
 {
 public:
-    static std::unique_ptr<LLMClientBase>
-    createLLMClient(const PostBody& postBody);
+    static LLMClientBase* createLLMClient(const PostBody& postBody,
+                                          QObject* parent = nullptr);
 };
 
 } // namespace QA::Core

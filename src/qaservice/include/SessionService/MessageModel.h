@@ -3,8 +3,7 @@
 //
 #pragma once
 #include <QAbstractListModel>
-#include <QVector>
-#include <memory>
+#include <QPointer>
 
 namespace QA::Core
 {
@@ -16,7 +15,7 @@ class MessageModel final : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit MessageModel(std::shared_ptr<Core::LLMConversation> conversation,
+    explicit MessageModel(Core::LLMConversation* conversation,
                           QObject* parent = nullptr);
 
     enum MessageRoles
@@ -42,6 +41,6 @@ public Q_SLOTS:
     void updateData();
 
 private:
-    std::shared_ptr<Core::LLMConversation> m_conversation;
+    QPointer<Core::LLMConversation> m_conversation;
 };
 } // namespace QA::Service
