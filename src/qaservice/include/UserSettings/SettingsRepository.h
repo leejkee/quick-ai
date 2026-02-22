@@ -13,11 +13,11 @@ public:
     explicit SettingsRepository(const QString& filePath,
                                 QObject* parent = nullptr);
 
-    [[nodiscard]] std::optional<UserSettings> loadSettingsFromFile();
+    bool loadSettingsFromFile();
 
     bool saveSettingsToFile();
 
-    [[nodiscard]] UserSettings getSettings() const { return m_settings; }
+    [[nodiscard]]const UserSettings& getSettings() const { return m_settings; }
 
     template <typename Func>
     void updateSettings(Func&& modifier)
@@ -27,6 +27,8 @@ public:
         if (copy != m_settings)
         {
             m_settings = std::move(copy);
+            saveSettingsToFile();
+            Q_EMIT signalSettingsChanged();
         }
     }
 

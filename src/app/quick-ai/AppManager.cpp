@@ -2,13 +2,16 @@
 // Created by 31305 on 2026/2/19.
 //
 #include "AppManager.h"
+#include <QApplication>
 #include <QCoreApplication>
+#include <QDir>
+#include <QFileInfo>
+#include <QIcon>
+#include <QMenu>
+#include <QQmlComponent>
 #include <QQmlContext>
 #include <QQuickWindow>
-#include <QQmlComponent>
-#include <QMenu>
-#include <QAction>
-#include <qalog/Log.h>
+#include <QStyle>
 #include <SessionService/LLMRuntimeViewModel.h>
 #include <SessionService/MessageViewModel.h>
 #include <SessionService/ModelParamsViewModel.h>
@@ -16,11 +19,7 @@
 #include <UserSettings/AppConfigViewModel.h>
 #include <UserSettings/LLMInitViewModel.h>
 #include <UserSettings/SettingsRepository.h>
-#include <QIcon>
-#include <QApplication>
-#include <QStyle>
-#include <QDir>
-#include <QFileInfo>
+#include <qalog/Log.h>
 
 #ifdef Q_OS_WIN
 #include "WinGlobalShortcut.h"
@@ -30,7 +29,17 @@ namespace QA::App
 {
 AppManager::AppManager(QObject* parent) : QObject(parent)
 {
-    m_settingsRepo = new Service::SettingsRepository(getDefaultConfigPath(), this);
+    try
+    {
+        m_settingsRepo = new QA::Service::SettingsRepository(
+                getDefaultConfigPath(), this);
+    } catch (const std::exception& e)
+    {
+        QA_LOG_ERR << "Fatal error during App initialization:" << e.what();
+        std::exit(EXIT_FAILURE);
+    }
+    m_settingsRepo =
+            new Service::SettingsRepository(getDefaultConfigPath(), this);
     m_sessionService = new Service::SessionService(m_settingsRepo, this);
     m_messageViewModel = new Service::MessageViewModel(m_sessionService, this);
     m_modelParamsViewModel =
@@ -53,14 +62,17 @@ AppManager::~AppManager()
 {
     resetHotkey();
     qApp->removeNativeEventFilter(this);
-    if (m_trayIcon) {
+    if (m_trayIcon)
+    {
         m_trayIcon->hide();
         delete m_trayIcon;
     }
-    if (m_settingsWindow) {
+    if (m_settingsWindow)
+    {
         m_settingsWindow->deleteLater();
     }
-    if (m_settingsComponent) {
+    if (m_settingsComponent)
+    {
         delete m_settingsComponent;
     }
 }
@@ -92,10 +104,13 @@ void AppManager::initApp()
                                                    m_appConfigViewModel);
     m_qmlEngine->rootContext()->setContextProperty("llmInitViewModel",
                                                    m_llmInitViewModel);
-    
+
     // Preload settings window component
-    m_settingsComponent = new QQmlComponent(m_qmlEngine, QUrl("qrc:/qt/qml/qaui/settingswindow/MainView.qml"), this);
-    
+    m_settingsComponent = new QQmlComponent(
+            m_qmlEngine,
+            QUrl("qrc:/qt/qml/qaui/settingswindow/MainView.qml"),
+            this);
+
     m_qmlEngine->loadFromModule("qaui.sessionwindow", "Main");
 }
 
@@ -103,7 +118,8 @@ void AppManager::initApp()
 void AppManager::setupTrayAndWindow(QObject* rootObject)
 {
     m_window = qobject_cast<QQuickWindow*>(rootObject);
-    if (!m_window) {
+    if (!m_window)
+    {
         QA_LOG_WARN << "Root object is not a QQuickWindow";
         return;
     }
@@ -111,20 +127,32 @@ void AppManager::setupTrayAndWindow(QObject* rootObject)
     m_window->setVisible(false);
     m_window->setFlags(m_window->flags() | Qt::WindowStaysOnTopHint);
 
-    QObject::connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &AppManager::hideWindow);
+    QObject::connect(m_window,
+                     &QQuickWindow::activeFocusItemChanged,
+                     this,
+                     &AppManager::hideWindow);
 
     m_trayIcon = new QSystemTrayIcon(this);
-    m_trayIcon->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
+    m_trayIcon->setIcon(
+            QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
 
     QMenu* trayMenu = new QMenu();
     QAction* showAction = trayMenu->addAction("显示窗口");
     QAction* settingsAction = trayMenu->addAction("Quick AI Settings");
     QAction* quitAction = trayMenu->addAction("退出");
 
-    QObject::connect(showAction, &QAction::triggered, this, &AppManager::toggleWindow);
-    QObject::connect(settingsAction, &QAction::triggered, this, &AppManager::showSettingsWindow);
-    QObject::connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-    QObject::connect(m_trayIcon, &QSystemTrayIcon::activated, this, &AppManager::onTrayIconActivated);
+    QObject::connect(
+            showAction, &QAction::triggered, this, &AppManager::toggleWindow);
+    QObject::connect(settingsAction,
+                     &QAction::triggered,
+                     this,
+                     &AppManager::showSettingsWindow);
+    QObject::connect(
+            quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+    QObject::connect(m_trayIcon,
+                     &QSystemTrayIcon::activated,
+                     this,
+                     &AppManager::onTrayIconActivated);
 
     m_trayIcon->setContextMenu(trayMenu);
     m_trayIcon->show();
@@ -134,11 +162,15 @@ void AppManager::setupTrayAndWindow(QObject* rootObject)
 
 void AppManager::toggleWindow()
 {
-    if (!m_window) return;
-    
-    if (m_window->isVisible()) {
+    if (!m_window)
+        return;
+
+    if (m_window->isVisible())
+    {
         m_window->hide();
-    } else {
+    }
+    else
+    {
         m_window->show();
         m_window->raise();
         m_window->requestActivate();
@@ -147,16 +179,19 @@ void AppManager::toggleWindow()
 
 void AppManager::hideWindow()
 {
-    if (!m_window) return;
-    
-    if (!m_window->activeFocusItem()) {
+    if (!m_window)
+        return;
+
+    if (!m_window->activeFocusItem())
+    {
         m_window->hide();
     }
 }
 
 void AppManager::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    if (reason == QSystemTrayIcon::Trigger) {
+    if (reason == QSystemTrayIcon::Trigger)
+    {
         toggleWindow();
     }
 }
@@ -165,22 +200,26 @@ void AppManager::registerHotkey()
 {
 #ifdef Q_OS_WIN
     m_hotkeyId = WinGlobalShortcut::instance().registerShortcut(
-        Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_Return,
-        [this]() { toggleWindow(); });
+            Qt::ControlModifier | Qt::ShiftModifier,
+            Qt::Key_Return,
+            [this]() { toggleWindow(); });
 #endif
 }
 
 void AppManager::resetHotkey()
 {
 #ifdef Q_OS_WIN
-    if (m_hotkeyId != 0) {
+    if (m_hotkeyId != 0)
+    {
         WinGlobalShortcut::instance().unregisterShortcut(m_hotkeyId);
         m_hotkeyId = 0;
     }
 #endif
 }
 
-bool AppManager::nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result)
+bool AppManager::nativeEventFilter(const QByteArray& eventType,
+                                   void* message,
+                                   qintptr* result)
 {
     Q_UNUSED(eventType);
     Q_UNUSED(message);
@@ -190,43 +229,52 @@ bool AppManager::nativeEventFilter(const QByteArray &eventType, void *message, q
 
 void AppManager::showSettingsWindow()
 {
-    if (!m_settingsComponent) {
+    if (!m_settingsComponent)
+    {
         QA_LOG_WARN << "Settings component not initialized";
         return;
     }
-    if (m_settingsComponent->status() == QQmlComponent::Error) {
+    if (m_settingsComponent->status() == QQmlComponent::Error)
+    {
         QA_LOG_WARN << "QML Component load errors:";
-        for (const QQmlError &error : m_settingsComponent->errors()) {
+        for (const QQmlError& error : m_settingsComponent->errors())
+        {
             QA_LOG_WARN << error.toString();
         }
         return;
     }
-    if (m_settingsWindow) {
+    if (m_settingsWindow)
+    {
         // Window already exists, bring to front
         m_settingsWindow->show();
         m_settingsWindow->raise();
         m_settingsWindow->requestActivate();
         return;
     }
-    
+
     // Create window instance
     QObject* object = m_settingsComponent->create();
     m_settingsWindow = qobject_cast<QQuickWindow*>(object);
-    
-    if (!m_settingsWindow) {
+
+    if (!m_settingsWindow)
+    {
         QA_LOG_WARN << "Failed to create settings window";
         delete object;
         return;
     }
-    
+
     // Connect close signal to cleanup
-    QObject::connect(m_settingsWindow, &QQuickWindow::visibleChanged, this,
-        [this](bool visible) {
-            if (!visible) {
-                closeSettingsWindow();
-            }
-        });
-    
+    QObject::connect(m_settingsWindow,
+                     &QQuickWindow::visibleChanged,
+                     this,
+                     [this](bool visible)
+                     {
+                         if (!visible)
+                         {
+                             closeSettingsWindow();
+                         }
+                     });
+
     m_settingsWindow->setTitle("Quick AI Settings");
     m_settingsWindow->show();
     m_settingsWindow->raise();
@@ -235,7 +283,8 @@ void AppManager::showSettingsWindow()
 
 void AppManager::closeSettingsWindow()
 {
-    if (m_settingsWindow) {
+    if (m_settingsWindow)
+    {
         m_settingsWindow->deleteLater();
         m_settingsWindow = nullptr;
     }
@@ -247,7 +296,7 @@ QString AppManager::getDefaultConfigPath()
     const QFileInfo exeInfo(exePath);
     const QString dirPath = exeInfo.absoluteDir().absolutePath();
     QString configPath = QDir(dirPath).filePath("config.json");
-    
+
     QA_LOG_INFO << "Default config path: " << configPath;
     return configPath;
 }

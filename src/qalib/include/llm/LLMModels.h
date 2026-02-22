@@ -41,8 +41,8 @@ struct ModelParams
         p.top_p = json["topP"].toDouble(p.top_p);
         p.max_tokens = json["maxTokens"].toInt(p.max_tokens);
         p.frequency_penalty =
-                json["frequencyPenalty"].toInt(p.frequency_penalty);
-        p.presence_penalty = json["presencePenalty"].toInt(p.presence_penalty);
+                json["frequencyPenalty"].toDouble(p.frequency_penalty);
+        p.presence_penalty = json["presencePenalty"].toDouble(p.presence_penalty);
         p.stream = json["stream"].toBool(p.stream);
         return p;
     }

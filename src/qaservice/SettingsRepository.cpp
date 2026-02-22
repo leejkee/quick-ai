@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <UserSettings/SettingsRepository.h>
 #include <qalog/Log.h>
+#include <stdexcept>
 
 namespace QA::Service
 {
@@ -16,7 +17,7 @@ SettingsRepository::SettingsRepository(const QString& filePath, QObject* parent)
     if (m_filePath.isEmpty())
     {
         QA_LOG_ERR << "Settings file is empty";
-        return;
+        throw std::invalid_argument("Settings file path cannot be empty.");
     }
 
     if (const QFileInfo fileInfo(m_filePath); !fileInfo.exists())
@@ -26,32 +27,32 @@ SettingsRepository::SettingsRepository(const QString& filePath, QObject* parent)
     }
     else
     {
-        if (const auto r = loadSettingsFromFile(); r.has_value())
+        if (loadSettingsFromFile())
         {
-            m_settings = r.value();
             QA_LOG_INFO << "Load settings from file: " << m_filePath;
         }
         else
         {
             QA_LOG_ERR << "Failed to load settings from file: " << m_filePath;
+            throw std::runtime_error(
+                    "Failed to load settings file. JSON might be corrupted.");
         }
     }
 }
 
-std::optional<UserSettings> SettingsRepository::loadSettingsFromFile()
+bool SettingsRepository::loadSettingsFromFile()
 {
     if (m_filePath.isEmpty())
     {
         QA_LOG_ERR << "Settings file is empty: " << m_filePath;
-        return std::nullopt;
+        return false;
     }
     QFile file(m_filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
         QA_LOG_ERR << "Failed to open config file";
-        return std::nullopt;
+        return false;
     }
-    UserSettings settings;
     const QByteArray jsonData = file.readAll();
     file.close();
     QJsonParseError parseError;
@@ -60,12 +61,12 @@ std::optional<UserSettings> SettingsRepository::loadSettingsFromFile()
     if (jsonDoc.isNull() || !jsonDoc.isObject())
     {
         QA_LOG_ERR << "Failed to parse JSON" << parseError.errorString();
-        return std::nullopt;
+        return false;
     }
     QA_LOG_INFO << "Parse JSON successfully";
     const QJsonObject jsonObj = jsonDoc.object();
     m_settings = UserSettings::fromJson(jsonObj);
-    return settings;
+    return true;
 }
 
 bool SettingsRepository::saveSettingsToFile()
@@ -111,8 +112,7 @@ void SettingsRepository::generateSettingsFile(const QString& filePath)
     if (QFile file(filePath);
         file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
-        const UserSettings defaultSettings = UserSettings::createDefault();
-        const QJsonObject rootObj = defaultSettings.toJson();
+        const QJsonObject rootObj = m_settings.toJson();
         const QJsonDocument doc(rootObj);
         if (const qint64 bytesWritten =
                     file.write(doc.toJson(QJsonDocument::Indented));

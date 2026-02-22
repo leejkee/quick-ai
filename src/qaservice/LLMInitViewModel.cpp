@@ -110,7 +110,7 @@ void LLMInitViewModel::setFrequencyPenalty(const double value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_modelParams.frequency_penalty = value; });
-        Q_EMIT signalFrequencyPenaltyChanged(value);
+        Q_EMIT signalFrequencyPenaltyChanged(getFrequencyPenalty());
     }
 }
 
@@ -121,7 +121,7 @@ void LLMInitViewModel::setMaxTokens(int value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_modelParams.max_tokens = value; });
-        Q_EMIT signalMaxTokensChanged(value);
+        Q_EMIT signalMaxTokensChanged(getMaxTokens());
     }
 }
 
@@ -132,7 +132,7 @@ void LLMInitViewModel::setPresencePenalty(const double value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_modelParams.presence_penalty = value; });
-        Q_EMIT signalPresencePenaltyChanged(value);
+        Q_EMIT signalPresencePenaltyChanged(getPresencePenalty());
     }
 }
 
@@ -143,7 +143,7 @@ void LLMInitViewModel::setTemperature(double value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_modelParams.temperature = value; });
-        Q_EMIT signalTemperatureChanged(value);
+        Q_EMIT signalTemperatureChanged(getTemperature());
     }
 }
 
@@ -154,7 +154,7 @@ void LLMInitViewModel::setTopP(double value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_modelParams.top_p = value; });
-        Q_EMIT signalTopPChanged(value);
+        Q_EMIT signalTopPChanged(getTopP());
     }
 }
 
@@ -165,7 +165,7 @@ void LLMInitViewModel::setStream(bool value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_modelParams.stream = value; });
-        Q_EMIT signalStreamChanged(value);
+        Q_EMIT signalStreamChanged(getStream());
     }
 }
 
@@ -175,7 +175,7 @@ void LLMInitViewModel::setSystemPrompt(const QString& value)
     {
         m_settingsRepo->updateSettings([value](UserSettings& settings)
                                        { settings.m_systemPrompt = value; });
-        Q_EMIT signalSystemPromptChanged(value);
+        Q_EMIT signalSystemPromptChanged(getSystemPrompt());
     }
 }
 
@@ -185,7 +185,7 @@ void LLMInitViewModel::setSelectedModel(const QString& value)
     {
         m_settingsRepo->updateSettings([value](UserSettings& settings)
                                        { settings.m_selectedModel = value; });
-        Q_EMIT signalSelectedModelChanged(value);
+        Q_EMIT signalSelectedModelChanged(getSelectedModel());
     }
 }
 
@@ -196,7 +196,7 @@ void LLMInitViewModel::setSelectedProvider(const QString& value)
         m_settingsRepo->updateSettings(
                 [value](UserSettings& settings)
                 { settings.m_selectedProviderId = value; });
-        Q_EMIT signalSelectedProviderChanged(value);
+        Q_EMIT signalSelectedProviderChanged(getSelectedProvider());
     }
 }
 

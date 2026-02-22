@@ -34,7 +34,7 @@ Rectangle {
             delegate: Rectangle {
                 color: model.role === "user" ? "#E3F2FD" : "#FFFFFF"
 
-                height: messageText.height + (tokensText.visible ? (tokensText.height + 5) : 0) + 20
+                height: messageText.height +  20
                 width: messageListView.width
 
                 Text {

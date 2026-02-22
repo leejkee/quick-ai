@@ -307,18 +307,12 @@ struct UserSettings
 
     bool operator==(const UserSettings& rhs) const
     {
-        return std::tie(m_appSettings,
-                        m_providers,
-                        m_selectedProviderId,
-                        m_modelParams,
-                        m_selectedModel,
-                        m_systemPrompt) ==
-                std::tie(rhs.m_appSettings,
-                         rhs.m_providers,
-                         rhs.m_selectedProviderId,
-                         rhs.m_modelParams,
-                         rhs.m_selectedModel,
-                         rhs.m_systemPrompt);
+        return m_appSettings == rhs.m_appSettings &&
+                m_modelParams == rhs.m_modelParams &&
+                m_providers == rhs.m_providers &&
+                m_selectedProviderId == rhs.m_selectedProviderId &&
+                m_selectedModel == rhs.m_selectedModel &&
+                m_systemPrompt == rhs.m_systemPrompt;
     }
 
     bool operator!=(const UserSettings& rhs) const { return !(*this == rhs); }
