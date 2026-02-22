@@ -137,9 +137,9 @@ void AppManager::setupTrayAndWindow(QObject* rootObject)
             QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
 
     QMenu* trayMenu = new QMenu();
-    QAction* showAction = trayMenu->addAction("显示窗口");
+    QAction* showAction = trayMenu->addAction("Show Chat Window");
     QAction* settingsAction = trayMenu->addAction("Quick AI Settings");
-    QAction* quitAction = trayMenu->addAction("退出");
+    QAction* quitAction = trayMenu->addAction("Exit");
 
     QObject::connect(
             showAction, &QAction::triggered, this, &AppManager::toggleWindow);
