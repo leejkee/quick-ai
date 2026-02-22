@@ -310,11 +310,13 @@ struct UserSettings
         return std::tie(m_appSettings,
                         m_providers,
                         m_selectedProviderId,
+                        m_modelParams,
                         m_selectedModel,
                         m_systemPrompt) ==
                 std::tie(rhs.m_appSettings,
                          rhs.m_providers,
                          rhs.m_selectedProviderId,
+                         rhs.m_modelParams,
                          rhs.m_selectedModel,
                          rhs.m_systemPrompt);
     }

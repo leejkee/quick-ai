@@ -13,7 +13,7 @@ LLMInitViewModel::LLMInitViewModel(SettingsRepository* settingsRepo,
 {
 }
 
-int LLMInitViewModel::getFrequencyPenalty() const
+double LLMInitViewModel::getFrequencyPenalty() const
 {
     if (!m_settingsRepo)
     {
@@ -31,7 +31,7 @@ int LLMInitViewModel::getMaxTokens() const
     return m_settingsRepo->getSettings().m_modelParams.max_tokens;
 }
 
-int LLMInitViewModel::getPresencePenalty() const
+double LLMInitViewModel::getPresencePenalty() const
 {
     if (!m_settingsRepo)
     {
@@ -103,7 +103,7 @@ double LLMInitViewModel::getTopP() const
     return m_settingsRepo->getSettings().m_modelParams.top_p;
 }
 
-void LLMInitViewModel::setFrequencyPenalty(int value)
+void LLMInitViewModel::setFrequencyPenalty(const double value)
 {
     if (m_settingsRepo && value != getFrequencyPenalty())
     {
@@ -125,7 +125,7 @@ void LLMInitViewModel::setMaxTokens(int value)
     }
 }
 
-void LLMInitViewModel::setPresencePenalty(int value)
+void LLMInitViewModel::setPresencePenalty(const double value)
 {
     if (m_settingsRepo && value != getPresencePenalty())
     {
@@ -169,7 +169,7 @@ void LLMInitViewModel::setStream(bool value)
     }
 }
 
-void LLMInitViewModel::setSystemPrompt(QString value)
+void LLMInitViewModel::setSystemPrompt(const QString& value)
 {
     if (m_settingsRepo && value != getSystemPrompt())
     {
@@ -179,7 +179,7 @@ void LLMInitViewModel::setSystemPrompt(QString value)
     }
 }
 
-void LLMInitViewModel::setSelectedModel(QString value)
+void LLMInitViewModel::setSelectedModel(const QString& value)
 {
     if (m_settingsRepo && value != getSelectedModel())
     {
@@ -189,7 +189,7 @@ void LLMInitViewModel::setSelectedModel(QString value)
     }
 }
 
-void LLMInitViewModel::setSelectedProvider(QString value)
+void LLMInitViewModel::setSelectedProvider(const QString& value)
 {
     if (m_settingsRepo && value != getSelectedProvider())
     {

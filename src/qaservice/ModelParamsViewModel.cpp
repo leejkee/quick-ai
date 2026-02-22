@@ -19,14 +19,14 @@ ModelParamsViewModel::ModelParamsViewModel(SettingsRepository* settingsRepo,
 
 Core::ModelParams ModelParamsViewModel::getParams() const { return m_params; }
 
-int ModelParamsViewModel::getFrequencyPenalty() const
+double ModelParamsViewModel::getFrequencyPenalty() const
 {
     return m_params.frequency_penalty;
 }
 
 int ModelParamsViewModel::getMaxTokens() const { return m_params.max_tokens; }
 
-int ModelParamsViewModel::getPresencePenalty() const
+double ModelParamsViewModel::getPresencePenalty() const
 {
     return m_params.presence_penalty;
 }
@@ -40,7 +40,7 @@ double ModelParamsViewModel::getTopP() const { return m_params.top_p; }
 
 bool ModelParamsViewModel::getStream() const { return m_params.stream; }
 
-void ModelParamsViewModel::setFrequencyPenalty(const int value)
+void ModelParamsViewModel::setFrequencyPenalty(double value)
 {
     if (value < -2 || value > 2)
         return;
@@ -64,7 +64,7 @@ void ModelParamsViewModel::setMaxTokens(const int value)
     }
 }
 
-void ModelParamsViewModel::setPresencePenalty(const int value)
+void ModelParamsViewModel::setPresencePenalty(const double value)
 {
     if (value < -2 || value > 2)
         return;

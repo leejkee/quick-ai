@@ -13,11 +13,11 @@ class SettingsRepository;
 class ModelParamsViewModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int frequencyPenalty READ getFrequencyPenalty WRITE
+    Q_PROPERTY(double frequencyPenalty READ getFrequencyPenalty WRITE
                        setFrequencyPenalty NOTIFY signalFrequencyPenaltyChanged)
     Q_PROPERTY(int maxTokens READ getMaxTokens WRITE setMaxTokens NOTIFY
                        signalMaxTokensChanged)
-    Q_PROPERTY(int presencePenalty READ getPresencePenalty WRITE
+    Q_PROPERTY(double presencePenalty READ getPresencePenalty WRITE
                        setPresencePenalty NOTIFY signalPresencePenaltyChanged)
     Q_PROPERTY(double temperature READ getTemperature WRITE setTemperature
                        NOTIFY signalTemperatureChanged)
@@ -31,17 +31,17 @@ public:
 
     [[nodiscard]] Core::ModelParams getParams() const;
 
-    [[nodiscard]] int getFrequencyPenalty() const;
+    [[nodiscard]] double getFrequencyPenalty() const;
     [[nodiscard]] int getMaxTokens() const;
-    [[nodiscard]] int getPresencePenalty() const;
+    [[nodiscard]] double getPresencePenalty() const;
     [[nodiscard]] double getTemperature() const;
     [[nodiscard]] double getTopP() const;
     [[nodiscard]] bool getStream() const;
 
 public Q_SLOTS:
-    void setFrequencyPenalty(int value);
+    void setFrequencyPenalty(double value);
     void setMaxTokens(int value);
-    void setPresencePenalty(int value);
+    void setPresencePenalty(double value);
     void setTemperature(double value);
     void setTopP(double value);
     void setStream(bool value);
@@ -49,9 +49,9 @@ public Q_SLOTS:
     void resetToDefaults();
 
 Q_SIGNALS:
-    void signalFrequencyPenaltyChanged(int value);
+    void signalFrequencyPenaltyChanged(double value);
     void signalMaxTokensChanged(int value);
-    void signalPresencePenaltyChanged(int value);
+    void signalPresencePenaltyChanged(double value);
     void signalTemperatureChanged(double value);
     void signalTopPChanged(double value);
     void signalStreamChanged(bool value);

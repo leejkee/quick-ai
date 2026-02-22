@@ -27,9 +27,9 @@ struct Message
 
 struct ModelParams
 {
-    int frequency_penalty = 0;
+    double frequency_penalty = 0.0;
     int max_tokens = 4096;
-    int presence_penalty = 0;
+    double presence_penalty = 0.0;
     double temperature = 0.0;
     double top_p = 1.0;
     bool stream = false;

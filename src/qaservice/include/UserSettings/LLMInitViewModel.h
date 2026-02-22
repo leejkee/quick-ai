@@ -20,11 +20,11 @@ class LLMInitViewModel : public QObject
                        setSelectedModel NOTIFY signalSelectedModelChanged)
     Q_PROPERTY(QString selectedProvider READ getSelectedProvider WRITE
                        setSelectedProvider NOTIFY signalSelectedProviderChanged)
-    Q_PROPERTY(int frequencyPenalty READ getFrequencyPenalty WRITE
+    Q_PROPERTY(double frequencyPenalty READ getFrequencyPenalty WRITE
                        setFrequencyPenalty NOTIFY signalFrequencyPenaltyChanged)
     Q_PROPERTY(int maxTokens READ getMaxTokens WRITE setMaxTokens NOTIFY
                        signalMaxTokensChanged)
-    Q_PROPERTY(int presencePenalty READ getPresencePenalty WRITE
+    Q_PROPERTY(double presencePenalty READ getPresencePenalty WRITE
                        setPresencePenalty NOTIFY signalPresencePenaltyChanged)
     Q_PROPERTY(double temperature READ getTemperature WRITE setTemperature
                        NOTIFY signalTemperatureChanged)
@@ -40,19 +40,19 @@ public:
     [[nodiscard]] QString getSystemPrompt() const;
     [[nodiscard]] QString getSelectedModel() const;
     [[nodiscard]] QString getSelectedProvider() const;
-    [[nodiscard]] int getFrequencyPenalty() const;
+    [[nodiscard]] double getFrequencyPenalty() const;
     [[nodiscard]] int getMaxTokens() const;
-    [[nodiscard]] int getPresencePenalty() const;
+    [[nodiscard]] double getPresencePenalty() const;
     [[nodiscard]] double getTemperature() const;
     [[nodiscard]] double getTopP() const;
     [[nodiscard]] bool getStream() const;
 
-    void setSystemPrompt(QString value);
-    void setSelectedModel(QString value);
-    void setSelectedProvider(QString value);
-    void setFrequencyPenalty(int value);
+    void setSystemPrompt(const QString& value);
+    void setSelectedModel(const QString& value);
+    void setSelectedProvider(const QString& value);
+    void setFrequencyPenalty(double value);
     void setMaxTokens(int value);
-    void setPresencePenalty(int value);
+    void setPresencePenalty(double value);
     void setTemperature(double value);
     void setTopP(double value);
     void setStream(bool value);
