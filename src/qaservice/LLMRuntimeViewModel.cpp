@@ -7,22 +7,23 @@ namespace QA::Service
 {
 LLMRuntimeViewModel::LLMRuntimeViewModel(SettingsRepository* settingsRepo, QObject* parent) : QObject(parent), m_settingsRepo(settingsRepo)
 {
-    Provider provider_deepseek = {
-            "DeepSeek",
-            "https://api.deepseek.com",
-            "sk-1d00763b38184cfaafb5b3ea8cfd3b7e",
-            {{"deepseek-chat", "/chat/completions"},
-             {"deepseek-reasoner", "/chat/completions"}}};
-
-    Provider provider_qwen = {
-            "Qwen3",
-            "https://dashscope.aliyuncs.com",
-            "sk-c14ea95925184cf2a4609f0931a1a9c4",
-            {{"qwen3-max", "/compatible-mode/v1/chat/completions/test"}}};
-
-    m_providers = {provider_deepseek, provider_qwen};
-    m_selectedProviderId = "Qwen3";
-    m_selectedModel = "qwen3-max";
+    // Provider provider_deepseek = {
+    //         "DeepSeek",
+    //         "https://api.deepseek.com",
+    //         "sk-1d00763b38184cfaafb5b3ea8cfd3b7e",
+    //         {{"deepseek-chat", "/chat/completions"},
+    //          {"deepseek-reasoner", "/chat/completions"}}};
+    //
+    // Provider provider_qwen = {
+    //         "Qwen3",
+    //         "https://dashscope.aliyuncs.com",
+    //         "sk-c14ea95925184cf2a4609f0931a1a9c4",
+    //         {{"qwen3-max", "/compatible-mode/v1/chat/completions/test"}}};
+    //
+    // m_providers = {provider_deepseek, provider_qwen};
+    m_providers = m_settingsRepo->getSettings().m_providers;
+    m_selectedProviderId = m_settingsRepo->getSettings().m_selectedProviderId;
+    m_selectedModel = m_settingsRepo->getSettings().m_selectedModel;
 }
 
 
