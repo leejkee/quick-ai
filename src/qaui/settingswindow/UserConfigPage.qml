@@ -16,7 +16,7 @@ ScrollView {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Math.max(24, window.width * 0.05)
+        anchors.margins: Math.max(24, root.width * 0.05)
         spacing: 0
 
         Label {
@@ -33,81 +33,12 @@ ScrollView {
         }
 
         SettingsItem {
-            text: "Temperature:"
-            description: "Higher values (e.g., 1.5) make output more random, while lower values (e.g., 0.2) make it more focused."
+            text: "Model Params:"
+            description: "启动时程序会加载这里的参数作为默认参数"
             vertical: true
-            RowLayout {
+            ModelParamsEditor{
                 Layout.fillWidth: true
-                Slider {
-                    id: tempSlider
-                    from: 0.0
-                    to: 2.0
-                    stepSize: 0.1
-                    value: viewModel ? viewModel.temperature : 0.7
-                    onMoved: if(viewModel) viewModel.temperature = value
-                    Layout.fillWidth: true
-                }
-                Label {
-                    text: tempSlider.value.toFixed(1)
-                    color: root.textColor
-                    font.bold: true
-                    Layout.preferredWidth: 40
-                    horizontalAlignment: Text.AlignRight
-                }
-            }
-        }
-
-        SettingsItem {
-            text: "Max Tokens:"
-            vertical: true
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 10
-
-                Slider {
-                    id: tokenSlider
-                    from: 512
-                    to: 8192
-                    stepSize: 128
-                    value: viewModel ? viewModel.maxTokens : 2048
-                    onMoved: if(viewModel) viewModel.maxTokens = value
-                    Layout.fillWidth: true
-                }
-
-                SpinBox {
-                    from: 512
-                    to: 8192
-                    stepSize: 128
-                    value: tokenSlider.value
-                    editable: true
-                    onValueModified: if(viewModel) viewModel.maxTokens = value
-                    Layout.preferredWidth: 160
-                }
-            }
-        }
-
-        SettingsItem {
-            text: "Top P:"
-            description: "Nucleus sampling probability (0.0 to 1.0)"
-            vertical: true
-            RowLayout {
-                Layout.fillWidth: true
-                Slider {
-                    id: topPSlider
-                    from: 0.0
-                    to: 1.0
-                    stepSize: 0.05
-                    value: viewModel ? viewModel.topP : 1.0
-                    onMoved: if(viewModel) viewModel.topP = value
-                    Layout.fillWidth: true
-                }
-                Label {
-                    text: topPSlider.value.toFixed(2)
-                    color: root.textColor
-                    font.bold: true
-                    Layout.preferredWidth: 40
-                    horizontalAlignment: Text.AlignRight
-                }
+                viewModel: root.viewModel
             }
         }
 
@@ -129,7 +60,7 @@ ScrollView {
                 ScrollView {
                     anchors.fill: parent
                     TextArea {
-                        text: viewModel ? viewModel.systemPrompt : ""
+                        text: root.viewModel ? root.viewModel.systemPrompt : ""
                         placeholderText: "e.g. You are a helpful assistant..."
                         color: root.textColor
                         selectByMouse: true
@@ -141,7 +72,7 @@ ScrollView {
                         bottomPadding: 12
 
                         background: null
-                        onTextChanged: if(viewModel) viewModel.systemPrompt = text
+                        onTextChanged: if(root.viewModel) root.viewModel.systemPrompt = text
                     }
                 }
             }

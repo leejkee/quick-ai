@@ -10,4 +10,5 @@ qt_add_qml_module(QuickAIUISettings
             "UserConfigPage.qml"
             "SectionHeader.qml"
             "SettingsItem.qml"
+            "ModelParamsEditor.qml"
 )

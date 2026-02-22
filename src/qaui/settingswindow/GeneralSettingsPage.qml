@@ -16,7 +16,7 @@ ScrollView {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Math.max(24, window.width * 0.05)
+        anchors.margins: Math.max(24, root.width * 0.05)
         spacing: 0
 
         Label {
