@@ -12,7 +12,8 @@ class QQmlComponent;
 class QQuickWindow;
 class QMenu;
 
-namespace QA::Service {
+namespace QA::Service
+{
 class SessionService;
 class SettingsRepository;
 class MessageViewModel;
@@ -22,7 +23,8 @@ class AppConfigViewModel;
 class LLMInitViewModel;
 } // namespace QA::Service
 
-namespace QA::App {
+namespace QA::App
+{
 
 class AppManager final : public QObject
 {

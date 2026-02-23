@@ -28,24 +28,67 @@ ScrollView {
             Layout.topMargin: 10
         }
 
-        SectionHeader {
-            text: "Default Inference Parameters"
+        SettingsItem {
+            text: "Launch Selection"
+            description: "启动时默认选择的模型"
+            vertical: true
+            GridLayout {
+                columns: 2
+                rowSpacing: 10
+                columnSpacing: 10
+                Label {
+                    text: "Selected Provider:"
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                }
+                TextField {
+                    Layout.fillWidth: true
+                    selectByMouse: true
+                    placeholderText: "Enter default provider..."
+
+                    text: root.viewModel ? root.viewModel.selectedProvider : ""
+
+                    onTextEdited: {
+                        if (root.viewModel) {
+                            root.viewModel.selectedProvider = text
+                        }
+                    }
+                    onEditingFinished: if (root.viewModel) root.viewModel.selectedProvider = text
+                }
+
+                Label {
+                    text: "Selected Model:"
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                }
+                TextField {
+                    Layout.fillWidth: true
+                    selectByMouse: true
+                    placeholderText: "Enter default model..."
+
+                    text: root.viewModel ? root.viewModel.selectedModel : ""
+
+                    onTextEdited: {
+                        if (root.viewModel) {
+                            root.viewModel.selectedModel = text
+                        }
+                    }
+                }
+            }
+        }
+
+        Divider {
         }
 
         SettingsItem {
             text: "Model Params:"
             description: "启动时程序会加载这里的参数作为默认参数"
             vertical: true
-            ModelParamsEditor{
+            ModelParamsEditor {
                 Layout.fillWidth: true
                 viewModel: root.viewModel
             }
         }
 
-        Divider {}
-
-        SectionHeader {
-            text: "AI Behavior"
+        Divider {
         }
 
         SettingsItem {
@@ -72,7 +115,7 @@ ScrollView {
                         bottomPadding: 12
 
                         background: null
-                        onTextChanged: if(root.viewModel) root.viewModel.systemPrompt = text
+                        onTextChanged: if (root.viewModel) root.viewModel.systemPrompt = text
                     }
                 }
             }

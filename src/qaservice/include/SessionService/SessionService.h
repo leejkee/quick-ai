@@ -6,7 +6,6 @@
 #include <QPointer>
 #include <llm/LLMClientBase.h>
 #include <llm/LLMConversation.h>
-#include <memory>
 
 namespace QA::Service
 {

@@ -37,13 +37,13 @@ ApplicationWindow {
 
             Layout.fillHeight: true
             Layout.fillWidth: true
-            chatModel: messageViewModel.messageListModel
+            chatModel: messageViewModel?.messageListModel
         }
         StatusBar {
             id: statusBar
 
             Layout.fillWidth: true
-            leftText: messageViewModel.statusMessage
+            leftText: messageViewModel?.statusMessage ?? ""
         }
     }
 }
