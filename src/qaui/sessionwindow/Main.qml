@@ -14,8 +14,11 @@ ApplicationWindow {
         }
     }
 
-    Keys.onEscapePressed: {
-        visible = false
+    Shortcut {
+        sequence: "Escape"
+        onActivated: {
+            visible = false
+        }
     }
 
     ColumnLayout {

@@ -17,7 +17,7 @@ namespace QA::Service
 class AppConfigViewModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList themeList READ getThemeList)
+    Q_PROPERTY(QStringList themeList READ getThemeList CONSTANT)
     Q_PROPERTY(QString theme READ getTheme WRITE setTheme NOTIFY
                        signalThemeChanged)
 public:
