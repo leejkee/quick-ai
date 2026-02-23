@@ -8,6 +8,8 @@
 #include <QFileInfo>
 #include <QIcon>
 #include <QMenu>
+#include <QQmlEngine>
+#include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQuickWindow>
@@ -27,19 +29,19 @@
 
 namespace QA::App
 {
+using namespace Qt::StringLiterals;
+
 AppManager::AppManager(QObject* parent) : QObject(parent)
 {
     try
     {
-        m_settingsRepo = new QA::Service::SettingsRepository(
+        m_settingsRepo = new Service::SettingsRepository(
                 getDefaultConfigPath(), this);
     } catch (const std::exception& e)
     {
         QA_LOG_ERR << "Fatal error during App initialization:" << e.what();
         std::exit(EXIT_FAILURE);
     }
-    m_settingsRepo =
-            new Service::SettingsRepository(getDefaultConfigPath(), this);
     m_sessionService = new Service::SessionService(m_settingsRepo, this);
     m_messageViewModel = new Service::MessageViewModel(m_sessionService, this);
     m_modelParamsViewModel =
@@ -51,114 +53,101 @@ AppManager::AppManager(QObject* parent) : QObject(parent)
     m_llmInitViewModel = new Service::LLMInitViewModel(m_settingsRepo, this);
 
     m_qmlEngine = new QQmlApplicationEngine(this);
-    m_trayIcon = nullptr;
-    m_window = nullptr;
-    m_hotkeyId = 0;
-    m_settingsWindow = nullptr;
-    m_settingsComponent = nullptr;
 }
 
 AppManager::~AppManager()
 {
     resetHotkey();
-    qApp->removeNativeEventFilter(this);
     if (m_trayIcon)
     {
         m_trayIcon->hide();
-        delete m_trayIcon;
     }
     if (m_settingsWindow)
     {
         m_settingsWindow->deleteLater();
     }
-    if (m_settingsComponent)
+    if (m_window)
     {
-        delete m_settingsComponent;
+        m_window->deleteLater();
     }
 }
 
 void AppManager::initApp()
 {
-    connect(
-            m_qmlEngine,
-            &QQmlApplicationEngine::objectCreated,
-            this,
-            [this](QObject* obj, const QUrl&)
-            {
-                if (!obj)
-                {
-                    QA_LOG_WARN << "Failed to load QML from module. Exiting.";
-                    QCoreApplication::exit(-1);
-                    return;
-                }
-                setupTrayAndWindow(obj);
-            },
-            Qt::QueuedConnection);
-    m_qmlEngine->rootContext()->setContextProperty("messageViewModel",
-                                                   m_messageViewModel);
-    m_qmlEngine->rootContext()->setContextProperty("modelParamsViewModel",
-                                                   m_modelParamsViewModel);
-    m_qmlEngine->rootContext()->setContextProperty("llmRuntimeViewModel",
-                                                   m_llmRuntimeViewModel);
-    m_qmlEngine->rootContext()->setContextProperty("appConfigViewModel",
-                                                   m_appConfigViewModel);
-    m_qmlEngine->rootContext()->setContextProperty("llmInitViewModel",
-                                                   m_llmInitViewModel);
+    auto* rootContext = m_qmlEngine->rootContext();
+    rootContext->setContextProperty(u"messageViewModel"_s, m_messageViewModel);
+    rootContext->setContextProperty(u"modelParamsViewModel"_s, m_modelParamsViewModel);
+    rootContext->setContextProperty(u"llmRuntimeViewModel"_s, m_llmRuntimeViewModel);
+    rootContext->setContextProperty(u"appConfigViewModel"_s, m_appConfigViewModel);
+    rootContext->setContextProperty(u"llmInitViewModel"_s, m_llmInitViewModel);
 
-    // Preload settings window component
+    setupTray();
+    registerHotkey();
+
     m_settingsComponent = new QQmlComponent(
-            m_qmlEngine,
-            QUrl("qrc:/qt/qml/qaui/settingswindow/MainView.qml"),
-            this);
+            m_qmlEngine, QUrl(u"qrc:/qt/qml/qaui/settingswindow/MainView.qml"_s), this);
 
-    m_qmlEngine->loadFromModule("qaui.sessionwindow", "Main");
+    initMainWindow();
 }
 
-
-void AppManager::setupTrayAndWindow(QObject* rootObject)
+void AppManager::setupTray()
 {
-    m_window = qobject_cast<QQuickWindow*>(rootObject);
-    if (!m_window)
-    {
-        QA_LOG_WARN << "Root object is not a QQuickWindow";
+    m_trayIcon = new QSystemTrayIcon(this);
+    m_trayIcon->setIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
+    m_trayMenu = std::make_unique<QMenu>();
+
+
+    QAction* showAction = m_trayMenu->addAction(u"Show Chat Window"_s);
+    QAction* settingsAction = m_trayMenu->addAction(u"Quick AI Settings"_s);
+    m_trayMenu->addSeparator();
+    QAction* quitAction = m_trayMenu->addAction(u"Exit"_s);
+
+    connect(showAction, &QAction::triggered, this, &AppManager::toggleWindow);
+    connect(settingsAction, &QAction::triggered, this, &AppManager::showSettingsWindow);
+
+    connect(quitAction, &QAction::triggered, this, [this]() {
+        if (m_trayIcon)
+        {
+            m_trayIcon->hide();
+        }
+        qApp->quit();
+    });
+
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &AppManager::onTrayIconActivated);
+
+    m_trayIcon->setContextMenu(m_trayMenu.get());
+    m_trayIcon->show();
+}
+
+void AppManager::initMainWindow()
+{
+    m_chatComponent = new QQmlComponent(m_qmlEngine, this);
+    m_chatComponent->loadFromModule(u"qaui.sessionwindow"_s, u"Main"_s);
+
+    if (m_chatComponent->status() == QQmlComponent::Error) {
+        QA_LOG_WARN << "Failed to load Main QML:";
+        for (const auto& err : m_chatComponent->errors()) {
+            QA_LOG_WARN << err.toString();
+        }
         return;
     }
 
-    m_window->setVisible(false);
+
+
+    QObject* rootObject = m_chatComponent->create();
+    m_window = qobject_cast<QQuickWindow*>(rootObject);
+
+    if (!m_window) {
+        QA_LOG_WARN << "Root object is not a QQuickWindow";
+        if (rootObject) rootObject->deleteLater();
+        return;
+    }
+
     m_window->setFlags(m_window->flags() | Qt::WindowStaysOnTopHint);
 
-    QObject::connect(m_window,
-                     &QQuickWindow::activeFocusItemChanged,
-                     this,
-                     &AppManager::hideWindow);
-
-    m_trayIcon = new QSystemTrayIcon(this);
-    m_trayIcon->setIcon(
-            QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
-
-    QMenu* trayMenu = new QMenu();
-    QAction* showAction = trayMenu->addAction("Show Chat Window");
-    QAction* settingsAction = trayMenu->addAction("Quick AI Settings");
-    QAction* quitAction = trayMenu->addAction("Exit");
-
-    QObject::connect(
-            showAction, &QAction::triggered, this, &AppManager::toggleWindow);
-    QObject::connect(settingsAction,
-                     &QAction::triggered,
-                     this,
-                     &AppManager::showSettingsWindow);
-    QObject::connect(
-            quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-    QObject::connect(m_trayIcon,
-                     &QSystemTrayIcon::activated,
-                     this,
-                     &AppManager::onTrayIconActivated);
-
-    m_trayIcon->setContextMenu(trayMenu);
-    m_trayIcon->show();
-
-    registerHotkey();
+    connect(m_window, &QQuickWindow::activeFocusItemChanged, this, &AppManager::hideWindow);
 }
+
 
 void AppManager::toggleWindow()
 {
@@ -188,7 +177,8 @@ void AppManager::hideWindow()
     }
 }
 
-void AppManager::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+void AppManager::onTrayIconActivated(
+        const QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::Trigger)
     {
@@ -217,15 +207,6 @@ void AppManager::resetHotkey()
 #endif
 }
 
-bool AppManager::nativeEventFilter(const QByteArray& eventType,
-                                   void* message,
-                                   qintptr* result)
-{
-    Q_UNUSED(eventType);
-    Q_UNUSED(message);
-    Q_UNUSED(result);
-    return false;
-}
 
 void AppManager::showSettingsWindow()
 {

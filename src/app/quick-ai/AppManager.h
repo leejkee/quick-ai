@@ -3,13 +3,16 @@
 //
 #pragma once
 #include <QObject>
-#include <QAbstractNativeEventFilter>
-#include <QQmlApplicationEngine>
 #include <QSystemTrayIcon>
-#include <QQuickWindow>
+#include <memory>
 
-namespace QA::Service
-{
+
+class QQmlApplicationEngine;
+class QQmlComponent;
+class QQuickWindow;
+class QMenu;
+
+namespace QA::Service {
 class SessionService;
 class SettingsRepository;
 class MessageViewModel;
@@ -18,9 +21,10 @@ class LLMRuntimeViewModel;
 class AppConfigViewModel;
 class LLMInitViewModel;
 } // namespace QA::Service
-namespace QA::App
-{
-class AppManager final : public QObject, public QAbstractNativeEventFilter
+
+namespace QA::App {
+
+class AppManager final : public QObject
 {
     Q_OBJECT
 public:
@@ -28,9 +32,6 @@ public:
     ~AppManager() override;
 
     void initApp();
-
-protected:
-    bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) override;
 
 private Q_SLOTS:
     void toggleWindow();
@@ -41,25 +42,28 @@ private Q_SLOTS:
 
 private:
     static QString getDefaultConfigPath();
-    
     void registerHotkey();
     void resetHotkey();
-    void setupTrayAndWindow(QObject* rootObject);
+    void setupTray();
+    void initMainWindow();
 
-    Service::SessionService* m_sessionService;
-    Service::SettingsRepository* m_settingsRepo;
-    Service::MessageViewModel* m_messageViewModel;
-    Service::ModelParamsViewModel* m_modelParamsViewModel;
-    Service::LLMRuntimeViewModel* m_llmRuntimeViewModel;
-    Service::AppConfigViewModel* m_appConfigViewModel;
-    Service::LLMInitViewModel* m_llmInitViewModel;
-    QQmlApplicationEngine* m_qmlEngine;
-    QSystemTrayIcon* m_trayIcon;
-    QQuickWindow* m_window;
-    int m_hotkeyId;
-    
-    QQuickWindow* m_settingsWindow;
-    QQmlComponent* m_settingsComponent;
+    Service::SessionService* m_sessionService = nullptr;
+    Service::SettingsRepository* m_settingsRepo = nullptr;
+    Service::MessageViewModel* m_messageViewModel = nullptr;
+    Service::ModelParamsViewModel* m_modelParamsViewModel = nullptr;
+    Service::LLMRuntimeViewModel* m_llmRuntimeViewModel = nullptr;
+    Service::AppConfigViewModel* m_appConfigViewModel = nullptr;
+    Service::LLMInitViewModel* m_llmInitViewModel = nullptr;
+
+    QQmlApplicationEngine* m_qmlEngine = nullptr;
+    QSystemTrayIcon* m_trayIcon = nullptr;
+    std::unique_ptr<QMenu> m_trayMenu;
+    QQuickWindow* m_window = nullptr;
+    int m_hotkeyId = 0;
+
+    QQuickWindow* m_settingsWindow = nullptr;
+    QQmlComponent* m_settingsComponent = nullptr;
+    QQmlComponent* m_chatComponent = nullptr;
 };
 
 } // namespace QA::App
