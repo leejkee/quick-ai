@@ -11,7 +11,7 @@
 namespace QA::Core
 {
 
-OpenAIClient::OpenAIClient(const PostBody& modelMeta, QObject* parent)
+OpenAIClient::OpenAIClient(const ModelInitData& modelMeta, QObject* parent)
     : LLMClientBase(parent), m_model(modelMeta.model),
       m_apiKey(modelMeta.apiKey), m_modelUrl(modelMeta.url)
 {

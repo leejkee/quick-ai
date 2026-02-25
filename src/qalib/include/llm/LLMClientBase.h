@@ -3,10 +3,7 @@
 //
 #pragma once
 #include <QByteArray>
-#include <QJsonObject>
-#include <QList>
 #include <QMap>
-#include <QNetworkAccessManager>
 #include <QObject>
 #include <optional>
 #include "LLMModels.h"
@@ -35,9 +32,6 @@ protected:
     parseResponse(const QByteArray& responseData) const = 0;
 
     [[nodiscard]] virtual QString getModelUrl() const = 0;
-
-private:
-    QNetworkAccessManager* m_networkManager;
 };
 
 } // namespace QA::Core

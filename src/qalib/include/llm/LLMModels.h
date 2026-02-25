@@ -76,18 +76,18 @@ struct ChatResponseBody
     int totalTokens = 0;
 };
 
-struct PostBody
+struct ModelInitData
 {
     QString model;
     QString apiKey;
     QString url;
 
-    bool operator==(const PostBody& rhs) const
+    bool operator==(const ModelInitData& rhs) const
     {
         return model == rhs.model && apiKey == rhs.apiKey && url == rhs.url;
     }
 
-    bool operator!=(const PostBody& rhs) const { return !(*this == rhs); }
+    bool operator!=(const ModelInitData& rhs) const { return !(*this == rhs); }
 };
 
 } // namespace QA::Core
