@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     const QString api_key{api_key_env};
     const QString api_url = "https://api.deepseek.com/chat/completions";
     QA::Core::LLMConversation conversation;
-    const QA::Core::PostBody model_meta{"deepseek-chat", api_key, api_url};
+    const QA::Core::ModelInitData model_meta{"deepseek-chat", api_key, api_url};
     auto client = QA::Core::OpenAIClient(model_meta);
 
     while (true)
