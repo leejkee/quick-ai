@@ -7,7 +7,7 @@
 
 namespace QA::Service
 {
-class SessionService;
+class MessageModel;
 class MessageViewModel : public QObject
 {
     Q_OBJECT
@@ -16,7 +16,7 @@ class MessageViewModel : public QObject
                        signalStatusMessageChanged)
 
 public:
-    explicit MessageViewModel(SessionService* service,
+    explicit MessageViewModel(MessageModel* model,
                            QObject* parent = nullptr);
 
     Q_INVOKABLE [[nodiscard]] QString getStatusMessage() const
@@ -29,6 +29,10 @@ public:
 Q_SIGNALS:
     void signalStatusMessageChanged();
 
+    void signalMessageAdded(const QString&);
+
+    void signalClearConversation();
+
 public Q_SLOTS:
     void handleUserRequest(const QString& prompt);
 
@@ -40,7 +44,7 @@ private:
 
     void setStatusMessage(const QString& message);
 
-    QPointer<SessionService> m_service;
+    QPointer<MessageModel> m_model;
 
 };
 

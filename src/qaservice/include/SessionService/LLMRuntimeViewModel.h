@@ -7,17 +7,14 @@
 #include <UserSettings/UserSettings.h>
 namespace QA::Service
 {
-class SettingsRepository;
+class SessionService;
 class LLMRuntimeViewModel : public QObject
 {
 
     Q_OBJECT
-    Q_PROPERTY(QStringList providerList READ getProviderList CONSTANT)
+    Q_PROPERTY(QStringList providerList READ getProviderList NOTIFY
+                       signalProviderListChanged)
     Q_PROPERTY(QStringList modelList READ getModelList NOTIFY
-                       signalSelectedProviderIdChanged)
-    Q_PROPERTY(QString APIKey READ getAPIKey NOTIFY
-                       signalSelectedProviderIdChanged)
-    Q_PROPERTY(QString baseURL READ getBaseURL NOTIFY
                        signalSelectedProviderIdChanged)
     Q_PROPERTY(QString selectedProviderId READ getSelectedProviderId WRITE
                        setSelectedProviderId NOTIFY
@@ -25,32 +22,22 @@ class LLMRuntimeViewModel : public QObject
     Q_PROPERTY(QString selectedModel READ getSelectedModel WRITE
                        setSelectedModel NOTIFY signalSelectedModelChanged)
 public:
-    explicit LLMRuntimeViewModel(SettingsRepository* settingsRepo,
+    explicit LLMRuntimeViewModel(SessionService* service,
                                  QObject* parent = nullptr);
     [[nodiscard]] Q_INVOKABLE QStringList getProviderList() const;
     [[nodiscard]] Q_INVOKABLE QStringList getModelList() const;
-    [[nodiscard]] QString getAPIKey() const;
-    [[nodiscard]] QString getBaseURL() const;
-    [[nodiscard]] QString getSelectedProviderId() const
-    {
-        return m_selectedProviderId;
-    }
+    [[nodiscard]] QString getSelectedProviderId() const;
     void setSelectedProviderId(const QString& providerId);
-    [[nodiscard]] QString getSelectedModel() const { return m_selectedModel; }
+    [[nodiscard]] QString getSelectedModel() const;
     void setSelectedModel(const QString& model);
-    [[nodiscard]] QString getUrl() const;
 
 Q_SIGNALS:
-    void signalSelectedProviderIdChanged(const QString& providerId);
-    void signalSelectedModelChanged(const QString& model);
+    void signalSelectedProviderIdChanged();
+    void signalSelectedModelChanged();
+    void signalProviderListChanged();
 
 private:
-    QList<Provider> m_providers;
-    QString m_selectedProviderId;
-    QString m_selectedModel;
-    QPointer<SettingsRepository> m_settingsRepo;
-
-    [[nodiscard]] Provider getSelectedProvider() const;
+    QPointer<SessionService> m_service;
 };
 
 

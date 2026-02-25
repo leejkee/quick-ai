@@ -110,6 +110,28 @@ struct Provider
         }
         return {};
     }
+
+    const Model* getModel(const QString& modelName) const
+    {
+        for (const auto& model: models)
+        {
+            if (model.name == modelName)
+            {
+                return &model;
+            }
+        }
+        return nullptr;
+    }
+
+    QStringList getModelList() const
+    {
+        QStringList names;
+        for (const auto& [name, endpoint] : models)
+        {
+            names.append(name);
+        }
+        return names;
+    }
 };
 
 struct AppSettings
@@ -208,6 +230,54 @@ struct UserSettings
     QString m_selectedModel;
     QString m_systemPrompt;
 
+    const Provider* getProvider(const QString& providerId) const
+    {
+        for (const auto& provider : m_providers)
+        {
+            if (provider.id == providerId)
+            {
+                return &provider;
+            }
+        }
+        return nullptr;
+    }
+
+    QStringList getProviderList() const
+    {
+        QStringList names;
+        for (const auto& provider : m_providers)
+        {
+            names.append(provider.id);
+        }
+        return names;
+    }
+
+    void sanitize()
+    {
+        if (m_providers.isEmpty())
+        {
+            m_selectedProviderId.clear();
+            m_selectedModel.clear();
+            return;
+        }
+
+        const Provider* currentP = getProvider(m_selectedProviderId);
+        if (!currentP)
+        {
+            currentP = &m_providers.first();
+            m_selectedProviderId = currentP->id;
+        }
+
+        if (currentP->models.isEmpty())
+        {
+            m_selectedModel.clear();
+        }
+        else if (!currentP->getModel(m_selectedModel))
+        {
+            m_selectedModel = currentP->models.first().name;
+        }
+    }
+
     [[nodiscard]] QJsonObject toJson() const
     {
         QJsonObject root;
@@ -267,6 +337,7 @@ struct UserSettings
         settings.m_systemPrompt =
                 json["systemPrompt"].toString(settings.m_systemPrompt);
 
+        settings.sanitize();
         return settings;
     }
 

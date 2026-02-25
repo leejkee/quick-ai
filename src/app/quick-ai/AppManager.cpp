@@ -43,16 +43,22 @@ AppManager::AppManager(QObject* parent) : QObject(parent)
         std::exit(EXIT_FAILURE);
     }
     m_sessionService = new Service::SessionService(m_settingsRepo, this);
-    m_messageViewModel = new Service::MessageViewModel(m_sessionService, this);
+
+    m_messageViewModel = new Service::MessageViewModel(
+            m_sessionService->getMessageModel(), this);
     m_modelParamsViewModel =
-            new Service::ModelParamsViewModel(m_settingsRepo, this);
+            new Service::ModelParamsViewModel(m_sessionService, this);
     m_llmRuntimeViewModel =
-            new Service::LLMRuntimeViewModel(m_settingsRepo, this);
+            new Service::LLMRuntimeViewModel(m_sessionService, this);
     m_appConfigViewModel =
             new Service::AppConfigViewModel(m_settingsRepo, this);
     m_llmInitViewModel = new Service::LLMInitViewModel(m_settingsRepo, this);
 
     m_qmlEngine = new QQmlApplicationEngine(this);
+    connect(m_messageViewModel,
+            &QA::Service::MessageViewModel::signalMessageAdded,
+            m_sessionService,
+            &Service::SessionService::handleUserChat);
 }
 
 AppManager::~AppManager()

@@ -8,7 +8,7 @@
 
 namespace QA::Service
 {
-class SettingsRepository;
+class SessionService;
 
 class ModelParamsViewModel : public QObject
 {
@@ -26,10 +26,8 @@ class ModelParamsViewModel : public QObject
                        signalStreamChanged)
 
 public:
-    explicit ModelParamsViewModel(SettingsRepository* settingsRepo,
+    explicit ModelParamsViewModel(SessionService* service,
                                   QObject* parent = nullptr);
-
-    [[nodiscard]] Core::ModelParams getParams() const;
 
     [[nodiscard]] double getFrequencyPenalty() const;
     [[nodiscard]] int getMaxTokens() const;
@@ -49,16 +47,15 @@ public Q_SLOTS:
     void resetToDefaults();
 
 Q_SIGNALS:
-    void signalFrequencyPenaltyChanged(double value);
-    void signalMaxTokensChanged(int value);
-    void signalPresencePenaltyChanged(double value);
-    void signalTemperatureChanged(double value);
-    void signalTopPChanged(double value);
-    void signalStreamChanged(bool value);
+    void signalFrequencyPenaltyChanged();
+    void signalMaxTokensChanged();
+    void signalPresencePenaltyChanged();
+    void signalTemperatureChanged();
+    void signalTopPChanged();
+    void signalStreamChanged();
 
 private:
-    Core::ModelParams m_params;
-    QPointer<SettingsRepository> m_settingsRepo;
+    QPointer<SessionService> m_service;
 };
 
 } // namespace QA::Service

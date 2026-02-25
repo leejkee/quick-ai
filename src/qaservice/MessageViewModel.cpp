@@ -1,15 +1,15 @@
 //
 // Created by 31305 on 2025/11/9.
 //
+#include <SessionService/MessageModel.h>
 #include <SessionService/MessageViewModel.h>
 #include <SessionService/SessionService.h>
-#include <SessionService/MessageModel.h>
 
 
 namespace QA::Service
 {
-MessageViewModel::MessageViewModel(SessionService* service, QObject* parent)
-    : QObject(parent), m_service(service)
+MessageViewModel::MessageViewModel(MessageModel* model, QObject* parent)
+    : QObject(parent), m_model(model)
 {
 }
 
@@ -19,22 +19,21 @@ void MessageViewModel::handleUserRequest(const QString& prompt)
     {
         return;
     }
-    Core::Message promptMsg;
-    promptMsg.role = "user";
-    promptMsg.content = prompt;
-    // TODO
-    // 多行代码作为prompt输入，对话框显示不完整
-
-    m_service->pushMessage(promptMsg);
-    const auto r = m_service->chatNoStreaming();
-
-    Core::Message responseMsg;
-    responseMsg.role = r.role;
-    responseMsg.content = r.content;
-    m_service->pushMessage(responseMsg);
+    Q_EMIT signalMessageAdded(prompt);
+    // Core::Message promptMsg;
+    // promptMsg.role = "user";
+    // promptMsg.content = prompt;
+    // // TODO
+    // // 多行代码作为prompt输入，对话框显示不完整
+    //
+    // m_service->pushMessage(promptMsg);
+    // m_service->chatNoStreaming();
 }
 
-void MessageViewModel::handleClearSession() { m_service->clearMessage(); }
+void MessageViewModel::handleClearSession()
+{
+    Q_EMIT signalClearConversation();
+}
 
 void MessageViewModel::setStatusMessage(const QString& message)
 {
@@ -45,9 +44,6 @@ void MessageViewModel::setStatusMessage(const QString& message)
     }
 }
 
-QObject* MessageViewModel::getMessageListModel() const
-{
-    return m_service->getMessageModel();
-};
+QObject* MessageViewModel::getMessageListModel() const { return m_model; };
 
 } // namespace QA::Service

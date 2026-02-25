@@ -4,6 +4,7 @@
 #pragma once
 #include <QAbstractListModel>
 #include <QPointer>
+#include <llm/LLMModels.h>
 
 namespace QA::Core
 {
@@ -37,8 +38,7 @@ public:
 
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-public Q_SLOTS:
-    void updateData();
+    void appendMessage(const Core::Message& message);
 
 private:
     QPointer<Core::LLMConversation> m_conversation;

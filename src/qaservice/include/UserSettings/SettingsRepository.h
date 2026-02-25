@@ -27,6 +27,7 @@ public:
         if (copy != m_settings)
         {
             m_settings = std::move(copy);
+            m_settings.sanitize();
             saveSettingsToFile();
             Q_EMIT signalSettingsChanged();
         }

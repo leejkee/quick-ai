@@ -47,10 +47,11 @@ QHash<int, QByteArray> MessageModel::roleNames() const
     return roles;
 }
 
-void MessageModel::updateData()
+void MessageModel::appendMessage(const Core::Message& message)
 {
     const int newIndex = static_cast<int>(m_conversation->getMessageSize());
     beginInsertRows(QModelIndex(), newIndex, newIndex);
+    m_conversation->pushMessage(message);
     endInsertRows();
 }
 } // namespace QA::Service

@@ -14,12 +14,14 @@ class LLMInitViewModel : public QObject
     Q_OBJECT
     Q_PROPERTY(QList<QA::Service::Provider> providerList READ getProviderList
                        CONSTANT)
+
     Q_PROPERTY(QString systemPrompt READ getSystemPrompt WRITE setSystemPrompt
                        NOTIFY signalSystemPromptChanged)
     Q_PROPERTY(QString selectedModel READ getSelectedModel WRITE
                        setSelectedModel NOTIFY signalSelectedModelChanged)
     Q_PROPERTY(QString selectedProvider READ getSelectedProvider WRITE
                        setSelectedProvider NOTIFY signalSelectedProviderChanged)
+
     Q_PROPERTY(double frequencyPenalty READ getFrequencyPenalty WRITE
                        setFrequencyPenalty NOTIFY signalFrequencyPenaltyChanged)
     Q_PROPERTY(int maxTokens READ getMaxTokens WRITE setMaxTokens NOTIFY
