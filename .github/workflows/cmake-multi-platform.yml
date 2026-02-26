@@ -61,7 +61,6 @@ jobs:
         with:
           version: '6.8'
           target: 'desktop'
-          modules: 'core network gui widgets qml quick quickcontrols2 quicklayouts'
 
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'
@@ -80,7 +79,6 @@ jobs:
           version: '6.8'
           target: 'desktop'
           arch: 'win64_msvc2019_64'
-          modules: 'core network gui widgets qml quick quickcontrols2 quicklayouts'
 
       - name: Configure CMake (Windows, with Tests)
         if: runner.os == 'Windows'
