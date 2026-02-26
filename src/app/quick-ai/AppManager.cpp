@@ -68,7 +68,7 @@ AppManager::AppManager(QObject* parent) : QObject(parent)
 
     m_qmlEngine = new QQmlApplicationEngine(this);
     connect(m_messageViewModel,
-            &QA::Service::MessageViewModel::signalMessageAdded,
+            &Service::MessageViewModel::signalMessageAdded,
             m_sessionService,
             &Service::SessionService::handleUserChat);
 }

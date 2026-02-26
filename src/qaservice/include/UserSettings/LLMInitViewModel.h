@@ -60,15 +60,15 @@ public:
     void setStream(bool value);
 
 Q_SIGNALS:
-    void signalFrequencyPenaltyChanged(int value);
-    void signalMaxTokensChanged(int value);
-    void signalPresencePenaltyChanged(int value);
-    void signalTemperatureChanged(double value);
-    void signalTopPChanged(double value);
-    void signalStreamChanged(bool value);
-    void signalSystemPromptChanged(const QString& value);
-    void signalSelectedModelChanged(const QString& value);
-    void signalSelectedProviderChanged(const QString& value);
+    void signalFrequencyPenaltyChanged();
+    void signalMaxTokensChanged();
+    void signalPresencePenaltyChanged();
+    void signalTemperatureChanged();
+    void signalTopPChanged();
+    void signalStreamChanged();
+    void signalSystemPromptChanged();
+    void signalSelectedModelChanged();
+    void signalSelectedProviderChanged();
 
 private:
     QPointer<SettingsRepository> m_settingsRepo;
