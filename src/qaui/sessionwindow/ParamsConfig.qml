@@ -1,50 +1,75 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls.Fusion
 
 Rectangle {
     id: root
 
-    implicitWidth: 300
-    implicitHeight: layout.implicitHeight + 20
-
-    color: "#f8f9fa"
-    border.color: "#e0e0e0"
-    radius: 8
-
     property var paramsManager: null
     enabled: paramsManager !== null
+
+    // ============================================
+    // Colors - Fusion Style Palette
+    // ============================================
+    readonly property color backgroundColor: palette.window
+    readonly property color borderColor: palette.mid
+    readonly property color titleColor: palette.text
+    readonly property color dividerColor: palette.midlight
+
+    // ============================================
+    // Dimensions
+    // ============================================
+    readonly property int layoutMargin: 10
+    readonly property int sectionSpacing: 15
+    readonly property int gridSpacing: 10
+    readonly property int titleFontSize: 14
+    readonly property int labelFontSize: 12
+
+    // ============================================
+    // Fusion Style Metrics
+    // ============================================
+    QtObject {
+        id: fusionMetrics
+        readonly property int cornerRadius: 6
+        readonly property int borderWidth: 1
+    }
+
+    color: backgroundColor
+    border.color: borderColor
+    radius: fusionMetrics.cornerRadius
+    border.width: fusionMetrics.borderWidth
 
     ColumnLayout {
         id: layout
         anchors.fill: parent
-        anchors.margins: 10
-        spacing: 15
+        anchors.margins: root.layoutMargin
+        spacing: root.sectionSpacing
 
         Text {
             text: "Model Parameters"
             font.bold: true
-            font.pixelSize: 14
-            color: "#333"
+            font.pixelSize: root.titleFontSize
+            color: root.titleColor
         }
 
-        // 分割线
+        // Divider
         Rectangle {
             Layout.fillWidth: true
             height: 1
-            color: "#ddd"
+            color: root.dividerColor
         }
 
         GridLayout {
             columns: 2
-            columnSpacing: 10
-            rowSpacing: 15
+            columnSpacing: root.gridSpacing
+            rowSpacing: root.sectionSpacing
             Layout.fillWidth: true
 
-            // --- Temperature (温度) --
+            // --- Temperature ---
             Label {
                 text: "Temperature: " + tempSlider.value.toFixed(1)
-                font.pixelSize: 12
+                font.pixelSize: root.labelFontSize
                 Layout.alignment: Qt.AlignVCenter
             }
             Slider {
@@ -53,11 +78,9 @@ Rectangle {
                 from: 0.0
                 to: 2.0
                 stepSize: 0.1
-                // 【核心】双向绑定后端属性
                 value: paramsManager.temperature
                 onMoved: paramsManager.temperature = value
 
-                // 鼠标悬停提示
                 ToolTip.visible: hovered
                 ToolTip.text: "随机性控制 (0.0 精确 - 2.0 创意)"
             }
@@ -65,7 +88,7 @@ Rectangle {
             // --- Top P ---
             Label {
                 text: "Top P: " + topPSlider.value.toFixed(2)
-                font.pixelSize: 12
+                font.pixelSize: root.labelFontSize
                 Layout.alignment: Qt.AlignVCenter
             }
             Slider {
@@ -84,20 +107,19 @@ Rectangle {
             // --- Max Tokens ---
             Label {
                 text: "Max Tokens:"
-                font.pixelSize: 12
+                font.pixelSize: root.labelFontSize
                 Layout.alignment: Qt.AlignVCenter
             }
             RowLayout {
                 Layout.fillWidth: true
 
-                // 使用 SpinBox 精确控制整数
                 SpinBox {
                     id: tokenBox
                     Layout.fillWidth: true
                     from: 128
-                    to: 8192 // 根据模型能力调整
+                    to: 8192
                     stepSize: 128
-                    editable: true // 允许直接输入数字
+                    editable: true
 
                     value: paramsManager.maxTokens
                     onValueModified: paramsManager.maxTokens = value
@@ -105,7 +127,7 @@ Rectangle {
             }
         }
 
-        // 底部重置按钮（可选）
+        // Reset button
         Button {
             text: "Reset Defaults"
             Layout.alignment: Qt.AlignRight

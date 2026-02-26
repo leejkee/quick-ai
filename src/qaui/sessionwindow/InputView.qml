@@ -1,11 +1,34 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
-Item {
+FocusScope {
     id: root
 
     signal sendMessage(string text)
+
+    // ============================================
+    // Colors - Fusion Style Palette
+    // ============================================
+    readonly property color borderColor: palette.mid
+    readonly property color inputBackground: palette.base
+
+    // ============================================
+    // Dimensions
+    // ============================================
+    readonly property int titleFontSize: 20
+    readonly property int inputPadding: 5
+    readonly property int maxInputHeight: 100
+
+    // ============================================
+    // Fusion Style Metrics
+    // ============================================
+    QtObject {
+        id: fusionMetrics
+        readonly property int cornerRadius: 6
+        readonly property int borderWidth: 1
+    }
 
     implicitHeight: mainColumnLayout.implicitHeight
     implicitWidth: mainColumnLayout.implicitWidth
@@ -23,7 +46,7 @@ Item {
             Layout.fillWidth: true
 
             Label {
-                font.pixelSize: 20
+                font.pixelSize: root.titleFontSize
                 text: "Prompt:"
                 Layout.alignment: Qt.AlignVCenter
             }
@@ -48,14 +71,15 @@ Item {
 
         Rectangle {
             id: borderRectangle
-            property int paddingConst: 5
+            property int paddingConst: root.inputPadding
 
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(textInput.implicitHeight + paddingConst * 2, 100)
+            Layout.preferredHeight: Math.min(textInput.implicitHeight + paddingConst * 2, root.maxInputHeight)
 
-            radius: 6
-            border.width: 2
-            border.color: "#323232"
+            radius: fusionMetrics.cornerRadius
+            border.width: fusionMetrics.borderWidth
+            border.color: root.borderColor
+            color: root.inputBackground
             clip: true
 
             Flickable {
@@ -68,6 +92,7 @@ Item {
 
                 TextArea {
                     id: textInput
+                    focus: true
                     width: inputArea.width - borderRectangle.paddingConst * 2
                     height: textInput.implicitHeight
 

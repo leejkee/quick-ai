@@ -1,15 +1,40 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
+import QtQuick.Controls.Fusion
 
 Window {
     id: root
-    width: 1024
-    height: 768
     visible: true
     title: "Quick AI Settings"
-    color: "#f5f5f7"
+
+    // ============================================
+    // Colors - Fusion Style Palette
+    // ============================================
+    readonly property color windowBackground: palette.window
+    readonly property color sidebarBackground: palette.base
+    readonly property color sidebarBorder: palette.mid
+    readonly property color contentAreaBackground: "transparent"
+    readonly property color selectedItemBackground: palette.highlight
+    readonly property color selectedItemText: palette.highlightedText
+    readonly property color hoverItemBackground: palette.midlight
+    readonly property color normalText: palette.text
+    readonly property color selectedText: palette.highlightedText
+    readonly property color accentText: palette.highlight
+
+    // ============================================
+    // Dimensions
+    // ============================================
+    readonly property int sidebarWidth: 240
+    readonly property int sidebarMargin: 20
+    readonly property int itemHeight: 48
+    readonly property int iconSize: 18
+    readonly property int textSize: 14
+    readonly property int iconSpacing: 12
+    readonly property int leftMargin: 20
+    readonly property int borderWidth: 1
+
+    color: windowBackground
 
     RowLayout {
         anchors.fill: parent
@@ -17,16 +42,16 @@ Window {
 
         // 1. Sidebar
         Rectangle {
-            Layout.preferredWidth: 240
+            Layout.preferredWidth: root.sidebarWidth
             Layout.fillHeight: true
-            color: "#ffffff"
-            border.color: "#e5e5e5"
-            border.width: 1
+            color: root.sidebarBackground
+            border.color: root.sidebarBorder
+            border.width: root.borderWidth
 
             ListView {
                 id: navList
                 anchors.fill: parent
-                anchors.topMargin: 20
+                anchors.topMargin: root.sidebarMargin
                 focus: true
                 model: ListModel {
                     ListElement { name: "General Settings"; icon: "⚙️"; pageIndex: 0 }
@@ -37,24 +62,24 @@ Window {
                 delegate: Rectangle {
                     id: delegateItem
                     width: navList.width
-                    height: 48
-                    color: ListView.isCurrentItem ? "#e6f2ff" : (mouseArea.containsMouse ? "#f5f5f5" : "transparent")
+                    height: root.itemHeight
+                    color: ListView.isCurrentItem ? root.selectedItemBackground : (mouseArea.containsMouse ? root.hoverItemBackground : "transparent")
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: 20
-                        spacing: 12
+                        anchors.leftMargin: root.leftMargin
+                        spacing: root.iconSpacing
 
                         Text {
                             text: model.icon
-                            font.pixelSize: 18
+                            font.pixelSize: root.iconSize
                         }
 
                         Text {
                             text: model.name
-                            font.pixelSize: 14
+                            font.pixelSize: root.textSize
                             font.bold: ListView.isCurrentItem
-                            color: ListView.isCurrentItem ? "#0066cc" : "#1e1e1e"
+                            color: ListView.isCurrentItem ? root.selectedItemText : root.normalText
                             Layout.fillWidth: true
                         }
                     }
@@ -76,13 +101,13 @@ Window {
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: "transparent"
+            color: root.contentAreaBackground
             clip: true
 
             StackLayout {
                 id: viewStack
                 anchors.fill: parent
-                anchors.margins: 20
+                // anchors.margins: 20
                 currentIndex: 0
 
                 GeneralSettingsPage {

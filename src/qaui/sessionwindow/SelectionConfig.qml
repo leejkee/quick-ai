@@ -1,34 +1,54 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls.Fusion
 
 Rectangle {
     id: root
-
-    implicitWidth: 400
-    implicitHeight: mainLayout.implicitHeight + 20
-
-    radius: 8
-    color: palette.window
-    border.color: palette.mid
-    border.width: 1
 
     property var selectionManager: null
     enabled: selectionManager !== null
     readonly property bool isProviderSelected: providerComboBox.currentIndex !== -1
 
+    // ============================================
+    // Colors - Fusion Style Palette
+    // ============================================
+    readonly property color backgroundColor: palette.window
+    readonly property color borderColor: palette.mid
+
+    // ============================================
+    // Dimensions
+    // ============================================
+    readonly property int layoutMargin: 10
+    readonly property int rowSpacing: 15
+    readonly property int columnSpacing: 10
+
+    // ============================================
+    // Fusion Style Metrics
+    // ============================================
+    QtObject {
+        id: fusionMetrics
+        readonly property int cornerRadius: 6
+        readonly property int borderWidth: 1
+    }
+
+    radius: fusionMetrics.cornerRadius
+    color: backgroundColor
+    border.color: borderColor
+    border.width: fusionMetrics.borderWidth
+
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
-        anchors.margins: 10
-        spacing: 10
+        anchors.margins: root.layoutMargin
+        spacing: root.layoutMargin
 
         GridLayout {
             anchors.fill: undefined
             width: parent.width
             columns: 2
-            rowSpacing: 15
-            columnSpacing: 10
+            rowSpacing: root.rowSpacing
+            columnSpacing: root.columnSpacing
 
             Label {
                 text: "Provider: "

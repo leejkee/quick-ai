@@ -1,14 +1,23 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls.Fusion
 
 GridLayout {
     id: root
     columns: 2
-    rowSpacing: 10
-    columnSpacing: 10
 
     property var viewModel: null
+
+    // ============================================
+    // Dimensions
+    // ============================================
+    readonly property int rowSpacingValue: 10
+    readonly property int columnSpacingValue: 10
+    readonly property int labelMinWidth: 30
+
+    rowSpacing: rowSpacingValue
+    columnSpacing: columnSpacingValue
 
     // --- Frequency Penalty ---
     Label {
@@ -29,7 +38,7 @@ GridLayout {
         Label {
             // 实时显示数值，保留1位小数
             text: freqSlider.value.toFixed(1)
-            Layout.minimumWidth: 30
+            Layout.minimumWidth: root.labelMinWidth
             horizontalAlignment: Text.AlignRight
         }
     }
@@ -52,7 +61,7 @@ GridLayout {
         }
         Label {
             text: Math.round(tokensSlider.value).toString()
-            Layout.minimumWidth: 30
+            Layout.minimumWidth: root.labelMinWidth
             horizontalAlignment: Text.AlignRight
         }
     }
@@ -75,7 +84,7 @@ GridLayout {
         }
         Label {
             text: presSlider.value.toFixed(1)
-            Layout.minimumWidth: 30
+            Layout.minimumWidth: root.labelMinWidth
             horizontalAlignment: Text.AlignRight
         }
     }
@@ -98,7 +107,7 @@ GridLayout {
         }
         Label {
             text: tempSlider.value.toFixed(1)
-            Layout.minimumWidth: 30
+            Layout.minimumWidth: root.labelMinWidth
             horizontalAlignment: Text.AlignRight
         }
     }
@@ -121,7 +130,7 @@ GridLayout {
         }
         Label {
             text: topPSlider.value.toFixed(2) // 两位小数
-            Layout.minimumWidth: 30
+            Layout.minimumWidth: root.labelMinWidth
             horizontalAlignment: Text.AlignRight
         }
     }

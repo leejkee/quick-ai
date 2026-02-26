@@ -1,31 +1,44 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Controls.Material
+import QtQuick.Controls.Fusion
 
 ScrollView {
     id: root
-    width: 800
-    height: 600
     contentWidth: availableWidth
     clip: true
 
     property var initViewModel: null
     property var providerViewModel: null
 
-    readonly property color textColor: "#1e1e1e"
+    // ============================================
+    // Colors - Fusion Style Palette
+    // ============================================
+    readonly property color textColor: palette.text
+    readonly property color accentColor: palette.highlight
+    readonly property color frameBackground: palette.base
+
+    // ============================================
+    // Dimensions
+    // ============================================
+    readonly property int titleFontSize: 24
+    readonly property int gridSpacing: 10
+    readonly property int systemPromptHeight: 150
+    readonly property int textPadding: 12
+    readonly property int defaultMargin: 24
+    readonly property int sectionSpacing: 20
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Math.max(24, root.width * 0.05)
+        anchors.margins: Math.max(root.defaultMargin, root.width * 0.05)
         spacing: 0
 
         Label {
             text: "User Configuration"
-            font.pixelSize: 24
+            font.pixelSize: root.titleFontSize
             font.bold: true
             color: root.textColor
-            Layout.bottomMargin: 20
+            Layout.bottomMargin: root.sectionSpacing
             Layout.topMargin: 10
         }
 
@@ -35,8 +48,8 @@ ScrollView {
             vertical: true
             GridLayout {
                 columns: 2
-                rowSpacing: 10
-                columnSpacing: 10
+                rowSpacing: root.gridSpacing
+                columnSpacing: root.gridSpacing
                 Label {
                     text: "Selected Provider:"
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
@@ -98,9 +111,9 @@ ScrollView {
             vertical: true
             Frame {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 150
+                Layout.preferredHeight: root.systemPromptHeight
                 padding: 0
-                Layout.topMargin: 10
+                Layout.topMargin: root.gridSpacing
                 ScrollView {
                     anchors.fill: parent
                     TextArea {
@@ -110,10 +123,10 @@ ScrollView {
                         selectByMouse: true
                         wrapMode: Text.Wrap
 
-                        leftPadding: 12
-                        rightPadding: 12
-                        topPadding: 12
-                        bottomPadding: 12
+                        leftPadding: root.textPadding
+                        rightPadding: root.textPadding
+                        topPadding: root.textPadding
+                        bottomPadding: root.textPadding
 
                         background: null
                         onTextChanged: if (root.initViewModel) root.initViewModel.systemPrompt = text
@@ -130,6 +143,7 @@ ScrollView {
             description: "Edit/Add/Remove providers"
             vertical: true
             ProviderEditor{
+                Layout.fillWidth: true
                 viewModel: root.providerViewModel ? root.providerViewModel : null
             }
         }
