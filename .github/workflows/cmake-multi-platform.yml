@@ -55,6 +55,14 @@ jobs:
       - name: Install Meson
         run: pip install meson
 
+      - name: Install Qt 6.8 (Linux)
+        if: runner.os == 'Linux'
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.8'
+          target: 'desktop'
+          modules: 'core network gui widgets qml quick quickcontrols2 quicklayouts'
+
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -65,9 +73,20 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Install Qt 6.8 (Windows)
+        if: runner.os == 'Windows'
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.8'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          modules: 'core network gui widgets qml quick quickcontrols2 quicklayouts'
+
       - name: Configure CMake (Windows, with Tests)
         if: runner.os == 'Windows'
         shell: powershell # Explicitly set the shell to PowerShell
+        env:
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT }};${{ env.CMAKE_PREFIX_PATH }}
         run: |
           mkdir -p ${{ steps.strings.outputs.build-output-dir }}
           cmake -G Ninja -B ${{ steps.strings.outputs.build-output-dir }} `
@@ -81,6 +100,8 @@ jobs:
       # This step runs on Linux (where the shell is bash)
         if: runner.os == 'Linux'
         shell: bash # Explicitly set the shell to Bash (optional, but clearer)
+        env:
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT }}:${{ env.CMAKE_PREFIX_PATH }}
         run: |
           mkdir -p ${{ steps.strings.outputs.build-output-dir }}
           cmake -B ${{ steps.strings.outputs.build-output-dir }} \
