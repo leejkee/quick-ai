@@ -23,7 +23,7 @@ class ProviderEditorViewModel final : public QObject
                        setProviderIndex NOTIFY signalProviderIndexChanged)
     Q_PROPERTY(QString baseURL READ getBaseURL WRITE setBaseURL NOTIFY
                        signalBaseURLChanged)
-    Q_PROPERTY(QString apiKey READ getApiKey WRITE setApiKey NOTIFY
+    Q_PROPERTY(QString APIKey READ getAPIKey WRITE setAPIKey NOTIFY
                        signalApiKeyChanged)
 
     // 2. Model 层级 (第二个 ComboBox 及其内容)
@@ -51,7 +51,7 @@ public:
         return m_curProviderIndex;
     }
     [[nodiscard]] QString getBaseURL() const;
-    [[nodiscard]] QString getApiKey() const;
+    [[nodiscard]] QString getAPIKey() const;
 
     [[nodiscard]] QStringList getModelList() const;
     [[nodiscard]] qsizetype getModelIndex() const { return m_curModelIndex; }
@@ -63,7 +63,7 @@ public:
     // ---- Setters ----
     void setProviderIndex(qsizetype index);
     void setBaseURL(const QString& url);
-    void setApiKey(const QString& key);
+    void setAPIKey(const QString& key);
 
     void setModelIndex(qsizetype index);
     void setModelName(const QString& name);

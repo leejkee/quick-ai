@@ -32,7 +32,7 @@ QString ProviderEditorViewModel::getBaseURL() const
     return {};
 }
 
-QString ProviderEditorViewModel::getApiKey() const
+QString ProviderEditorViewModel::getAPIKey() const
 {
     if (m_curProviderIndex >= 0 && m_curProviderIndex < m_draftProviders.size())
         return m_draftProviders[m_curProviderIndex].apiKey;
@@ -112,7 +112,7 @@ void ProviderEditorViewModel::setBaseURL(const QString& url)
     }
 }
 
-void ProviderEditorViewModel::setApiKey(const QString& key)
+void ProviderEditorViewModel::setAPIKey(const QString& key)
 {
     if (m_curProviderIndex >= 0 && m_curProviderIndex < m_draftProviders.size())
     {
@@ -191,7 +191,7 @@ void ProviderEditorViewModel::addModel(const QString& name)
     {
         Model m;
         m.name = name;
-        m.endpoint = "/chat/completions"; // 给个默认值
+        m.endpoint = "/chat/completions";
         m_draftProviders[m_curProviderIndex].models.append(m);
 
         Q_EMIT signalModelListChanged();
