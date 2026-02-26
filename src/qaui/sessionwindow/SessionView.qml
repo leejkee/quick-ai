@@ -55,7 +55,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.margins: root.messagePadding
 
-                text: model.role === "user" ? "User: " + model.content : "AI: " + model.content
+                text: model.role === "user" ? "User: " + model.content : "Assistant: " + model.content
                 color: model.role === "user" ? root.userMessageTextColor : root.aiMessageTextColor
 
                 textFormat: Text.MarkdownText
