@@ -4,10 +4,9 @@
 #pragma once
 #include <QObject>
 #include <QPointer>
-#include <UserSettings/UserSettings.h>
 namespace QA::Service
 {
-class SessionService;
+class LLMRuntimeContext;
 class LLMRuntimeViewModel : public QObject
 {
 
@@ -22,7 +21,7 @@ class LLMRuntimeViewModel : public QObject
     Q_PROPERTY(QString selectedModel READ getSelectedModel WRITE
                        setSelectedModel NOTIFY signalSelectedModelChanged)
 public:
-    explicit LLMRuntimeViewModel(SessionService* service,
+    explicit LLMRuntimeViewModel(LLMRuntimeContext* context,
                                  QObject* parent = nullptr);
     [[nodiscard]] Q_INVOKABLE QStringList getProviderList() const;
     [[nodiscard]] Q_INVOKABLE QStringList getModelList() const;
@@ -37,7 +36,7 @@ Q_SIGNALS:
     void signalProviderListChanged();
 
 private:
-    QPointer<SessionService> m_service;
+    QPointer<LLMRuntimeContext> m_context;
 };
 
 

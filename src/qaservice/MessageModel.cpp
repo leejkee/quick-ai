@@ -6,9 +6,8 @@
 namespace QA::Service
 {
 
-MessageModel::MessageModel(Core::LLMConversation* conversation,
-                           QObject* parent)
-    : QAbstractListModel(parent), m_conversation(conversation)
+MessageModel::MessageModel(const QString& systemPrompt, QObject* parent)
+    : QAbstractListModel(parent), m_conversation(new Core::LLMConversation(systemPrompt, this))
 {
 }
 
@@ -23,7 +22,7 @@ int MessageModel::rowCount(const QModelIndex& parent) const
 
 QVariant MessageModel::data(const QModelIndex& index, const int role) const
 {
-    if (!index.isValid() || index.row() >= m_conversation->getMessageSize())
+    if (!index.isValid() || index.row() >= static_cast<int>(m_conversation->getMessageSize()))
     {
         return {};
     }
@@ -54,4 +53,17 @@ void MessageModel::appendMessage(const Core::Message& message)
     m_conversation->pushMessage(message);
     endInsertRows();
 }
+
+void MessageModel::clearMessages()
+{
+    beginResetModel();
+    m_conversation->clearHistory();
+    endResetModel();
+}
+
+QList<Core::Message> MessageModel::getContext() const
+{
+    return m_conversation->getContext();
+}
+
 } // namespace QA::Service

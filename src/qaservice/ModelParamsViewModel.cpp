@@ -1,58 +1,72 @@
 //
 // Created by 31305 on 2026/1/26.
 //
+#include <SessionService/LLMRuntimeContext.h>
 #include <SessionService/ModelParamsViewModel.h>
-#include <SessionService/SessionService.h>
 
 namespace QA::Service
 {
 
-ModelParamsViewModel::ModelParamsViewModel(SessionService* service,
+ModelParamsViewModel::ModelParamsViewModel(LLMRuntimeContext* context,
                                            QObject* parent)
-    : QObject(parent), m_service(service)
+    : QObject(parent), m_context(context)
 {
-    connect(m_service, &SessionService::signalModelParamsChanged, this, [this]
+    if (m_context)
     {
-        Q_EMIT signalFrequencyPenaltyChanged();
-        Q_EMIT signalTemperatureChanged();
-        Q_EMIT signalTopPChanged();
-        Q_EMIT signalStreamChanged();
-        Q_EMIT signalTemperatureChanged();
-        Q_EMIT signalPresencePenaltyChanged();
-    });
+        connect(m_context, &LLMRuntimeContext::signalModelParamsChanged, this, [this]
+        {
+            Q_EMIT signalFrequencyPenaltyChanged();
+            Q_EMIT signalTemperatureChanged();
+            Q_EMIT signalTopPChanged();
+            Q_EMIT signalStreamChanged();
+            Q_EMIT signalTemperatureChanged();
+            Q_EMIT signalPresencePenaltyChanged();
+        });
+    }
 }
 
 double ModelParamsViewModel::getFrequencyPenalty() const
 {
-    return m_service->getModelParams().frequency_penalty;
+    return m_context ? m_context->getModelParams().frequency_penalty : 0.0;
 }
 
-int ModelParamsViewModel::getMaxTokens() const { return m_service->getModelParams().max_tokens; }
+int ModelParamsViewModel::getMaxTokens() const
+{
+    return m_context ? m_context->getModelParams().max_tokens : 0;
+}
 
 double ModelParamsViewModel::getPresencePenalty() const
 {
-    return m_service->getModelParams().presence_penalty;
+    return m_context ? m_context->getModelParams().presence_penalty : 0.0;
 }
 
 double ModelParamsViewModel::getTemperature() const
 {
-    return m_service->getModelParams().temperature;
+    return m_context ? m_context->getModelParams().temperature : 0.0;
 }
 
-double ModelParamsViewModel::getTopP() const { return m_service->getModelParams().top_p; }
+double ModelParamsViewModel::getTopP() const
+{
+    return m_context ? m_context->getModelParams().top_p : 0.0;
+}
 
-bool ModelParamsViewModel::getStream() const { return m_service->getModelParams().stream; }
+bool ModelParamsViewModel::getStream() const
+{
+    return m_context ? m_context->getModelParams().stream : false;
+}
 
 void ModelParamsViewModel::setFrequencyPenalty(const double value)
 {
     if (value < -2 || value > 2)
         return;
 
-    m_service->setModelParams([value](Core::ModelParams& modelParams)
+    if (m_context)
     {
-        modelParams.frequency_penalty = value;
-    });
-
+        m_context->setModelParams([value](Core::ModelParams& modelParams)
+        {
+            modelParams.frequency_penalty = value;
+        });
+    }
 }
 
 void ModelParamsViewModel::setMaxTokens(const int value)
@@ -60,10 +74,13 @@ void ModelParamsViewModel::setMaxTokens(const int value)
     if (value < 0 || value > 8192)
         return;
 
-    m_service->setModelParams([value](Core::ModelParams& modelParams)
+    if (m_context)
     {
-        modelParams.max_tokens = value;
-    });
+        m_context->setModelParams([value](Core::ModelParams& modelParams)
+        {
+            modelParams.max_tokens = value;
+        });
+    }
 }
 
 void ModelParamsViewModel::setPresencePenalty(const double value)
@@ -71,10 +88,13 @@ void ModelParamsViewModel::setPresencePenalty(const double value)
     if (value < -2 || value > 2)
         return;
 
-    m_service->setModelParams([value](Core::ModelParams& modelParams)
+    if (m_context)
     {
-        modelParams.presence_penalty = value;
-    });
+        m_context->setModelParams([value](Core::ModelParams& modelParams)
+        {
+            modelParams.presence_penalty = value;
+        });
+    }
 }
 
 void ModelParamsViewModel::setTemperature(const double value)
@@ -82,29 +102,38 @@ void ModelParamsViewModel::setTemperature(const double value)
     if (value < 0.0 || value > 2.0)
         return;
 
-    m_service->setModelParams([value](Core::ModelParams& modelParams)
+    if (m_context)
     {
-        modelParams.temperature = value;
-    });
+        m_context->setModelParams([value](Core::ModelParams& modelParams)
+        {
+            modelParams.temperature = value;
+        });
+    }
 }
 
 void ModelParamsViewModel::setTopP(const double value)
 {
     if (value < 0.0 || value > 1.0)
         return;
-    m_service->setModelParams([value](Core::ModelParams& modelParams)
-    {
-        modelParams.top_p = value;
-    });
 
+    if (m_context)
+    {
+        m_context->setModelParams([value](Core::ModelParams& modelParams)
+        {
+            modelParams.top_p = value;
+        });
+    }
 }
 
 void ModelParamsViewModel::setStream(const bool value)
 {
-    m_service->setModelParams([value](Core::ModelParams& modelParams)
+    if (m_context)
     {
-        modelParams.stream = value;
-    });
+        m_context->setModelParams([value](Core::ModelParams& modelParams)
+        {
+            modelParams.stream = value;
+        });
+    }
 }
 
 void ModelParamsViewModel::resetToDefaults()

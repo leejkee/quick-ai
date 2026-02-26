@@ -8,7 +8,7 @@
 
 namespace QA::Service
 {
-class SessionService;
+class LLMRuntimeContext;
 
 class ModelParamsViewModel : public QObject
 {
@@ -26,7 +26,7 @@ class ModelParamsViewModel : public QObject
                        signalStreamChanged)
 
 public:
-    explicit ModelParamsViewModel(SessionService* service,
+    explicit ModelParamsViewModel(LLMRuntimeContext* context,
                                   QObject* parent = nullptr);
 
     [[nodiscard]] double getFrequencyPenalty() const;
@@ -55,7 +55,7 @@ Q_SIGNALS:
     void signalStreamChanged();
 
 private:
-    QPointer<SessionService> m_service;
+    QPointer<LLMRuntimeContext> m_context;
 };
 
 } // namespace QA::Service

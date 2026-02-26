@@ -16,8 +16,7 @@ class MessageModel final : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit MessageModel(Core::LLMConversation* conversation,
-                          QObject* parent = nullptr);
+    explicit MessageModel(const QString& systemPrompt, QObject* parent = nullptr);
 
     enum MessageRoles
     {
@@ -39,8 +38,10 @@ public:
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
     void appendMessage(const Core::Message& message);
+    void clearMessages();
+    [[nodiscard]] QList<Core::Message> getContext() const;
 
 private:
-    QPointer<Core::LLMConversation> m_conversation;
+    Core::LLMConversation* m_conversation;
 };
 } // namespace QA::Service

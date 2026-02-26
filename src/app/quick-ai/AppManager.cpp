@@ -14,12 +14,15 @@
 #include <QQmlEngine>
 #include <QQuickWindow>
 #include <QStyle>
+#include <SessionService/LLMRuntimeContext.h>
 #include <SessionService/LLMRuntimeViewModel.h>
+#include <SessionService/MessageModel.h>
 #include <SessionService/MessageViewModel.h>
 #include <SessionService/ModelParamsViewModel.h>
 #include <SessionService/SessionService.h>
 #include <UserSettings/AppConfigViewModel.h>
 #include <UserSettings/LLMInitViewModel.h>
+#include <UserSettings/ProviderEditorViewModel.h>
 #include <UserSettings/SettingsRepository.h>
 #include <qalog/Log.h>
 
@@ -42,17 +45,26 @@ AppManager::AppManager(QObject* parent) : QObject(parent)
         QA_LOG_ERR << "Fatal error during App initialization:" << e.what();
         std::exit(EXIT_FAILURE);
     }
-    m_sessionService = new Service::SessionService(m_settingsRepo, this);
 
-    m_messageViewModel = new Service::MessageViewModel(
-            m_sessionService->getMessageModel(), this);
+    // Initialize runtime context and message model first
+    m_llmRuntimeContext = new Service::LLMRuntimeContext(m_settingsRepo, this);
+    m_messageModel = new Service::MessageModel(
+            m_llmRuntimeContext->getSystemPrompt(), this);
+
+    // Inject dependencies into SessionService
+    m_sessionService = new Service::SessionService(
+            m_settingsRepo, m_llmRuntimeContext, m_messageModel, this);
+
+    m_messageViewModel = new Service::MessageViewModel(m_messageModel, this);
     m_modelParamsViewModel =
-            new Service::ModelParamsViewModel(m_sessionService, this);
+            new Service::ModelParamsViewModel(m_llmRuntimeContext, this);
     m_llmRuntimeViewModel =
-            new Service::LLMRuntimeViewModel(m_sessionService, this);
+            new Service::LLMRuntimeViewModel(m_llmRuntimeContext, this);
     m_appConfigViewModel =
             new Service::AppConfigViewModel(m_settingsRepo, this);
     m_llmInitViewModel = new Service::LLMInitViewModel(m_settingsRepo, this);
+    m_providerEditorViewModel =
+            new Service::ProviderEditorViewModel(m_settingsRepo, this);
 
     m_qmlEngine = new QQmlApplicationEngine(this);
     connect(m_messageViewModel,
@@ -89,6 +101,8 @@ void AppManager::initApp()
     rootContext->setContextProperty(u"appConfigViewModel"_s,
                                     m_appConfigViewModel);
     rootContext->setContextProperty(u"llmInitViewModel"_s, m_llmInitViewModel);
+    rootContext->setContextProperty(u"providerEditorViewModel"_s,
+                                    m_providerEditorViewModel);
 
     setupTray();
     registerHotkey();

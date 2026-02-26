@@ -11,4 +11,5 @@ qt_add_qml_module(QuickAIUISettings
             "SectionHeader.qml"
             "SettingsItem.qml"
             "ModelParamsEditor.qml"
+            "ProviderEditor.qml"
 )
