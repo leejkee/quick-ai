@@ -83,4 +83,4 @@ jobs:
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         # Use CTest to run the specific test target
         # We use --build-config for multi-config generators (like on Windows)
-        run: ctest --build-config ${{ matrix.build_type }} -R qalib-test
+        run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
