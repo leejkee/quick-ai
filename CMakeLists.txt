@@ -9,6 +9,18 @@ project(Quick-Ai
 	LANGUAGES CXX
 )
 
+find_package(Qt6 6.8 REQUIRED COMPONENTS
+		Core
+		Network
+		Gui
+		Widgets
+		Qml
+		Quick
+		QuickControls2
+		QuickLayouts
+)
+
+qt_standard_project_setup(REQUIRES 6.8)
 option(QA_BUILD_TESTS "Build tests" OFF)
 option(QA_BUILD_UI "Build the Qt-based UI" OFF)
 

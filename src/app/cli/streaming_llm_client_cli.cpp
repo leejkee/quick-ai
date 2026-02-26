@@ -3,8 +3,8 @@
 //
 #include <cstdlib>
 #include <iostream>
+#include <llm/LLMConversation.h>
 #include <llm/llm_client.h>
-#include <llm/llm_conversation.h>
 #include <string>
 
 int main()
@@ -22,7 +22,7 @@ int main()
     QA::Core::LLMConversation conversation{system_prompt};
     QA::Core::LLMClient client(QA::Core::LLMClient::Model::deepseek_chat,
                                api_key);
-    std::cout << "Time: " << conversation.get_start_time_str() << std::endl;
+    std::cout << "Time: " << conversation.getStartTimeStr() << std::endl;
     std::cout << "Starting chat session (system prompt: '"
               << system_prompt.content << "'). Type 'exit' to end."
               << std::endl;
@@ -40,11 +40,11 @@ int main()
         conversation.push_message({"user", content});
         auto on_content_received = [](const std::string_view content_chunk)
         { std::cout << content_chunk << std::flush; };
-        if (const auto r = client.streaming_request(conversation.get_messages(),
+        if (const auto r = client.streaming_request(conversation.getMessages(),
                                                     on_content_received))
         {
             const auto& assistant_message = r.value();
-            conversation.push_message(assistant_message.message);
+            conversation.pushMessage(assistant_message.message);
             std::cout << "\n[finish_reason]: "
                       << assistant_message.finish_reason << '\n';
             std::cout << "[Model]: " << assistant_message.model_name << '\n';
