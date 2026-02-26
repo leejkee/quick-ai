@@ -1,25 +1,30 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick.Controls.Fusion
 
-Item {
+Rectangle {
     id: root
-
-    signal sendMessage(string text)
+    clip: true
+    color: palette.base
+    radius: fusionMetrics.cornerRadius
+    border.width: fusionMetrics.borderWidth
+    border.color: palette.mid
+    property alias chatModel: messageListView.model
 
     // ============================================
     // Colors - Fusion Style Palette
     // ============================================
-    readonly property color borderColor: palette.mid
-    readonly property color inputBackground: palette.base
+    readonly property color userMessageColor: palette.highlight
+    readonly property color aiMessageColor: palette.base
+    readonly property color userMessageTextColor: palette.highlightedText
+    readonly property color aiMessageTextColor: palette.text
 
     // ============================================
     // Dimensions
     // ============================================
-    readonly property int titleFontSize: 20
-    readonly property int inputPadding: 5
-    readonly property int maxInputHeight: 100
+    readonly property int messageMargin: 8
+    readonly property int messagePadding: 10
+    readonly property int messageSpacing: 20
 
     // ============================================
     // Fusion Style Metrics
@@ -30,119 +35,36 @@ Item {
         readonly property int borderWidth: 1
     }
 
-    implicitHeight: mainColumnLayout.implicitHeight
-    implicitWidth: mainColumnLayout.implicitWidth
+    ListView {
+        id: messageListView
+        anchors.fill: parent
+        anchors.margins: root.messageMargin
+        clip: true
+        ScrollBar.vertical: ScrollBar {}
+        delegate: Rectangle {
+            color: model.role === "user" ? root.userMessageColor : root.aiMessageColor
 
-    ColumnLayout {
-        id: mainColumnLayout
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        // anchors.margins: 10
-        spacing: 5
+            width: ListView.view.width
 
-        RowLayout {
-            id: topBar
-            Layout.fillWidth: true
+            height: messageText.implicitHeight + (root.messagePadding * 2)
 
-            Label {
-                font.pixelSize: root.titleFontSize
-                text: "Prompt:"
-                Layout.alignment: Qt.AlignVCenter
-            }
+            Text {
+                id: messageText
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.margins: root.messagePadding
 
-            Item {
-                Layout.fillWidth: true
-            }
+                text: model.role === "user" ? "User: " + model.content : "AI: " + model.content
+                color: model.role === "user" ? root.userMessageTextColor : root.aiMessageTextColor
 
-            Button {
-                id: sendButton
-                text: "Enter"
-                onClicked: {
-                    if (textInput.text.trim().length > 0) {
-                        root.sendMessage(textInput.text);
-                        textInput.text = "";
-                    } else {
-                        textInput.text = "";
-                    }
-                }
+                textFormat: Text.MarkdownText
+                wrapMode: Text.WordWrap
             }
         }
 
-        Rectangle {
-            id: borderRectangle
-            property int paddingConst: root.inputPadding
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(textInput.implicitHeight + paddingConst * 2, root.maxInputHeight)
-
-            radius: fusionMetrics.cornerRadius
-            border.width: fusionMetrics.borderWidth
-            border.color: root.borderColor
-            color: root.inputBackground
-            clip: true
-
-            Flickable {
-                id: inputArea
-                anchors.fill: parent
-                contentHeight: textInput.height
-                clip: true
-                ScrollBar.vertical: ScrollBar {
-                }
-
-                TextArea {
-                    id: textInput
-                    focus: true
-                    width: inputArea.width - borderRectangle.paddingConst * 2
-                    height: textInput.implicitHeight
-
-                    leftPadding: borderRectangle.paddingConst
-                    rightPadding: borderRectangle.paddingConst
-                    topPadding: borderRectangle.paddingConst
-                    bottomPadding: borderRectangle.paddingConst
-
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-
-                    placeholderText: "Type a message... (Shift + Enter for a new line)"
-                    wrapMode: Text.WordWrap
-                    background: null
-                    onCursorRectangleChanged: {
-                        // 1. 获取光标矩形在 Flickable 内容中的 Y 坐标
-                        const cursorBottomY = textInput.cursorRectangle.y + textInput.cursorRectangle.height
-                        // 2. 获取 Flickable 当前可见区域的底部
-                        const visibleBottomY = inputArea.contentY + inputArea.height
-                        // 3. 如果光标在可见区域 *下方*
-                        if (cursorBottomY > visibleBottomY) {
-                            // 滚动 Flickable，使光标底部与 Flickable 底部对齐
-                            inputArea.contentY = cursorBottomY - inputArea.height
-                        }
-                        // 4. 如果光标在可见区域 *上方* (例如，用方向键向上移动)
-                        if (textInput.cursorRectangle.y < inputArea.contentY) {
-                            // 滚动 Flickable，使光标顶部与 Flickable 顶部对齐
-                            inputArea.contentY = textInput.cursorRectangle.y
-                        }
-                    }
-
-                    Keys.onPressed: event => {
-                        if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (event.modifiers & Qt.ShiftModifier)) {
-                            textInput.insert(textInput.cursorPosition, "\n");
-                            event.accepted = true;
-                        } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-
-                            if (textInput.text.trim().length === 0) {
-                                textInput.text = "";
-                                event.accepted = true;
-                                return;
-                            }
-
-                            root.sendMessage(textInput.text);
-                            textInput.text = "";
-                            event.accepted = true;
-                        }
-                    }
-                } //  TextArea
-            } //  Flickable
-        } //  borderRectangle
-    } //  mainColumnLayout
+        onCountChanged: {
+            positionViewAtEnd();
+        }
+    }
 }
