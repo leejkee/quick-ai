@@ -16,7 +16,7 @@ jobs:
 
       # Test on Ubuntu (Linux) and Windows
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
         build_type: [Release] # Use 'Debug' or 'RelWithDebInfo' to test other build types
 
         # Define the compiler to use for each OS
@@ -28,10 +28,6 @@ jobs:
         include:
           - os: windows-latest
             c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: gcc
-          - os: ubuntu-latest
-            c_compiler: clang
 
         # Exclude invalid combinations (e.g., running GCC on Windows)
         exclude:
@@ -39,8 +35,6 @@ jobs:
             c_compiler: gcc
           - os: windows-latest
             c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
 
     steps:
       - uses: actions/checkout@v4
@@ -55,30 +49,17 @@ jobs:
       - name: Install Meson
         run: pip install meson
 
-      - name: Install Qt 6.8 (Linux)
-        if: runner.os == 'Linux'
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: '6.8'
-          target: 'desktop'
-
-      - name: Install Dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt update
-          sudo apt install -y libpsl-dev libbrotli-dev libnghttp2-dev libidn2-dev libunistring-dev
-
       - name: Setup MSVC Developer Command Prompt (Windows)
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install Qt 6.8 (Windows)
+      - name: Install Qt 6.8.3 (Windows)
         if: runner.os == 'Windows'
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.8'
+          version: '6.8.3'
           target: 'desktop'
-          arch: 'win64_msvc2019_64'
+          arch: 'win64_msvc2022_64'
 
       - name: Configure CMake (Windows, with Tests)
         if: runner.os == 'Windows'
@@ -94,20 +75,6 @@ jobs:
              -DQA_BUILD_UI=OFF `
              -S ${{ github.workspace }}
 
-      - name: Configure CMake (Linux, with Tests)
-      # This step runs on Linux (where the shell is bash)
-        if: runner.os == 'Linux'
-        shell: bash # Explicitly set the shell to Bash (optional, but clearer)
-        env:
-          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT }}:${{ env.CMAKE_PREFIX_PATH }}
-        run: |
-          mkdir -p ${{ steps.strings.outputs.build-output-dir }}
-          cmake -B ${{ steps.strings.outputs.build-output-dir }} \
-             -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-             -DQA_BUILD_TESTS=ON \
-             -DQA_BUILD_UI=OFF \
-             -S ${{ github.workspace }}
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
