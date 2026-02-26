@@ -10,7 +10,8 @@ ScrollView {
     contentWidth: availableWidth
     clip: true
 
-    property var viewModel
+    property var initViewModel: null
+    property var providerViewModel: null
 
     readonly property color textColor: "#1e1e1e"
 
@@ -45,14 +46,14 @@ ScrollView {
                     selectByMouse: true
                     placeholderText: "Enter default provider..."
 
-                    text: root.viewModel ? root.viewModel.selectedProvider : ""
+                    text: root.initViewModel ? root.initViewModel.selectedProvider : ""
 
                     onTextEdited: {
-                        if (root.viewModel) {
-                            root.viewModel.selectedProvider = text
+                        if (root.initViewModel) {
+                            root.initViewModel.selectedProvider = text
                         }
                     }
-                    onEditingFinished: if (root.viewModel) root.viewModel.selectedProvider = text
+                    onEditingFinished: if (root.initViewModel) root.initViewModel.selectedProvider = text
                 }
 
                 Label {
@@ -64,11 +65,11 @@ ScrollView {
                     selectByMouse: true
                     placeholderText: "Enter default model..."
 
-                    text: root.viewModel ? root.viewModel.selectedModel : ""
+                    text: root.initViewModel ? root.initViewModel.selectedModel : ""
 
                     onTextEdited: {
-                        if (root.viewModel) {
-                            root.viewModel.selectedModel = text
+                        if (root.initViewModel) {
+                            root.initViewModel.selectedModel = text
                         }
                     }
                 }
@@ -84,7 +85,7 @@ ScrollView {
             vertical: true
             ModelParamsEditor {
                 Layout.fillWidth: true
-                viewModel: root.viewModel
+                viewModel: root.initViewModel
             }
         }
 
@@ -103,7 +104,7 @@ ScrollView {
                 ScrollView {
                     anchors.fill: parent
                     TextArea {
-                        text: root.viewModel ? root.viewModel.systemPrompt : ""
+                        text: root.initViewModel ? root.initViewModel.systemPrompt : ""
                         placeholderText: "e.g. You are a helpful assistant..."
                         color: root.textColor
                         selectByMouse: true
@@ -115,15 +116,27 @@ ScrollView {
                         bottomPadding: 12
 
                         background: null
-                        onTextChanged: if (root.viewModel) root.viewModel.systemPrompt = text
+                        onTextChanged: if (root.initViewModel) root.initViewModel.systemPrompt = text
                     }
                 }
             }
         }
 
+        Divider {
+        }
+
+        SettingsItem{
+            text: "Provider Config"
+            description: "Edit/Add/Remove providers"
+            vertical: true
+            ProviderEditor{
+                viewModel: root.providerViewModel ? root.providerViewModel : null
+            }
+        }
+
         Item {
             Layout.fillHeight: true
-            Layout.minimumHeight: 30
+            Layout.minimumHeight: 60
         }
     }
 }

@@ -32,7 +32,6 @@ Window {
                     ListElement { name: "General Settings"; icon: "⚙️"; pageIndex: 0 }
                     ListElement { name: "LLM Runtime Config"; icon: "🤖"; pageIndex: 1 }
                     ListElement { name: "User Configuration"; icon: "📝"; pageIndex: 2 }
-                    ListElement { name: "Providers Configuration"; icon: "🏭"; pageIndex: 3 }
                 }
 
                 delegate: Rectangle {
@@ -96,11 +95,8 @@ Window {
                 }
 
                 UserConfigPage {
-                    viewModel: llmInitViewModel
-                }
-
-                ProviderEditor {
-                    viewModel: providerEditorViewModel
+                    initViewModel: llmInitViewModel
+                    providerViewModel: providerEditorViewModel
                 }
             }
         }
