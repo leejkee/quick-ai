@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.23)
-qt_add_executable(QuickAIApp main.cpp AppManager.cpp WinGlobalShortcut.cpp)
+qt_add_executable(QuickAIApp
+    main.cpp
+    AppManager.cpp
+)
+
+if(WIN32)
+    target_sources(QuickAIApp PRIVATE WinGlobalShortcut.cpp)
+endif()
 
 target_link_libraries(QuickAIApp PRIVATE
         Qt6::Core

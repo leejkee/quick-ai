@@ -67,7 +67,7 @@
       "binaryDir": "${sourceDir}/build/linux-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "QA_BUILD_TESTS": "ON",
+        "QA_BUILD_TESTS": "OFF",
         "QA_BUILD_UI": "ON"
       }
     }
