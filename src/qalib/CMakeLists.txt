@@ -11,7 +11,6 @@ target_include_directories(QuickAILib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_compile_features(QuickAILib PUBLIC cxx_std_17)
 
 target_link_libraries(QuickAILib PUBLIC
         Qt6::Core

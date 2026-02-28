@@ -3,13 +3,16 @@
 //
 #include <llm/LLMConversation.h>
 #include <SessionService/MessageModel.h>
+
 namespace QA::Service
 {
 
 MessageModel::MessageModel(const QString& systemPrompt, QObject* parent)
-    : QAbstractListModel(parent), m_conversation(new Core::LLMConversation(systemPrompt, this))
+    : QAbstractListModel(parent), m_conversation(std::make_unique<Core::LLMConversation>(systemPrompt))
 {
 }
+
+MessageModel::~MessageModel() = default;
 
 int MessageModel::rowCount(const QModelIndex& parent) const
 {
