@@ -5,11 +5,9 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <memory>
+#include <qqmlapplicationengine.h>
 
 
-class QQmlApplicationEngine;
-class QQmlComponent;
-class QQuickWindow;
 class QMenu;
 
 namespace QA::Service
@@ -28,7 +26,7 @@ class ProviderEditorViewModel;
 
 namespace QA::App
 {
-
+class WindowManager;
 class AppManager final : public QObject
 {
     Q_OBJECT
@@ -36,21 +34,11 @@ public:
     explicit AppManager(QObject* parent = nullptr);
     ~AppManager() override;
 
-    void initApp();
-
-private Q_SLOTS:
-    void toggleWindow();
-    void hideWindow();
-    void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
-    void showSettingsWindow();
-    void closeSettingsWindow();
-
 private:
     static QString getDefaultConfigPath();
     void registerHotkey();
     void resetHotkey();
     void setupTray();
-    void initMainWindow();
 
     Service::SessionService* m_sessionService = nullptr;
     Service::SettingsRepository* m_settingsRepo = nullptr;
@@ -63,15 +51,11 @@ private:
     Service::LLMInitViewModel* m_llmInitViewModel = nullptr;
     Service::ProviderEditorViewModel* m_providerEditorViewModel = nullptr;
 
+    WindowManager* m_windowManager = nullptr;
     QQmlApplicationEngine* m_qmlEngine = nullptr;
     QSystemTrayIcon* m_trayIcon = nullptr;
     std::unique_ptr<QMenu> m_trayMenu;
-    QQuickWindow* m_window = nullptr;
     int m_hotkeyId = 0;
-
-    QQuickWindow* m_settingsWindow = nullptr;
-    QQmlComponent* m_settingsComponent = nullptr;
-    QQmlComponent* m_chatComponent = nullptr;
 };
 
 } // namespace QA::App

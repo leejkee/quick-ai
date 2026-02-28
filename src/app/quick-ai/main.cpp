@@ -9,6 +9,5 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QApplication::setQuitOnLastWindowClosed(false);
     QA::App::AppManager appManager;
-    appManager.initApp();
     return QApplication::exec();
 }
