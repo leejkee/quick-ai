@@ -1,14 +1,22 @@
 cmake_minimum_required(VERSION 3.23)
 
-set(QUICKAIAPP_SRC
+file(GLOB_RECURSE QUICKAIAPP_SRC CONFIGURE_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/AppManager.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/svg.qrc
+        ${CMAKE_CURRENT_SOURCE_DIR}/SystemTray.cpp
+        
 )
 
 qt_add_executable(quickai_app ${QUICKAIAPP_SRC})
 
 target_compile_features(quickai_app PRIVATE cxx_std_17)
+
+set_target_properties(quickai_app PROPERTIES AUTOMOC ON)
+
+set_property(TARGET quickai_app PROPERTY AUTORCC ON)
 
 target_include_directories(quickai_app PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include

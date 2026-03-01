@@ -4,11 +4,10 @@
 #pragma once
 #include <QObject>
 #include <QSystemTrayIcon>
-#include <memory>
-#include <qqmlapplicationengine.h>
 
 
 class QMenu;
+class QQmlApplicationEngine;
 
 namespace QA::Service
 {
@@ -27,6 +26,7 @@ class ProviderEditorViewModel;
 namespace QA::App
 {
 class WindowManager;
+class SystemTray;
 class AppManager final : public QObject
 {
     Q_OBJECT
@@ -38,7 +38,6 @@ private:
     static QString getDefaultConfigPath();
     void registerHotkey();
     void resetHotkey();
-    void setupTray();
 
     Service::SessionService* m_sessionService = nullptr;
     Service::SettingsRepository* m_settingsRepo = nullptr;
@@ -53,8 +52,7 @@ private:
 
     WindowManager* m_windowManager = nullptr;
     QQmlApplicationEngine* m_qmlEngine = nullptr;
-    QSystemTrayIcon* m_trayIcon = nullptr;
-    std::unique_ptr<QMenu> m_trayMenu;
+    SystemTray* m_systemTray = nullptr;
     int m_hotkeyId = 0;
 };
 

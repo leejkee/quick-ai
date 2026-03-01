@@ -5,6 +5,7 @@
 #include <QQmlEngine>
 #include <QQuickWindow>
 #include <qalog/Log.h>
+#include <stdexcept>
 
 namespace QA::App{
 using namespace Qt::StringLiterals;
@@ -15,7 +16,7 @@ WindowManager::WindowManager(QQmlApplicationEngine* qmlEngine, QObject* parent)
     if (!m_qmlEngine)
     {
         QA_LOG_ERR << "QQmlApplicationEngine pointer is null";
-        return;
+        throw std::invalid_argument("QQmlApplicationEngine cannot be null.");
     }
     m_settingsComponent = new QQmlComponent(
             m_qmlEngine,
