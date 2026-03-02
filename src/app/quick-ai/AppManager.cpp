@@ -2,6 +2,7 @@
 // Created by 31305 on 2026/2/19.
 //
 #include "AppManager.h"
+#include <IPCManager/IPCManager.h>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -20,7 +21,6 @@
 #include <UserSettings/SettingsRepository.h>
 #include <WindowManager/WindowManager.h>
 #include <qalog/Log.h>
-#include <qcoreapplication.h>
 
 #ifdef Q_OS_WIN
 #include "WinGlobalShortcut.h"
@@ -30,6 +30,7 @@ namespace QA::App {
 using namespace Qt::StringLiterals;
 
 AppManager::AppManager(QObject* parent) : QObject(parent) {
+    Log::LogManager::instance().initLogger(Log::LogMode::ConsoleOnly);
     try {
         m_settingsRepo =
             new Service::SettingsRepository(getDefaultConfigPath(), this);
@@ -67,13 +68,25 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
     rootContext->setContextProperty(u"providerEditorViewModel"_s,
                                     m_providerEditorViewModel);
 
-    try{
+    try {
         m_windowManager = new WindowManager(m_qmlEngine, this);
     } catch (const std::exception& e) {
-        QA_LOG_ERR << "Fatal error during WindowManager initialization:" << e.what();
+        QA_LOG_ERR << "Fatal error during WindowManager initialization:"
+                   << e.what();
         std::exit(EXIT_FAILURE);
     }
     m_systemTray = new SystemTray(m_windowManager, this);
+    m_ipcManager = new IPCManager(IPCManager::getDefaultServerName(), this);
+    if (!m_ipcManager->startListening()) {
+        QA_LOG_WARN
+            << "Failed to start IPC Manager, some features may not work.";
+    } else {
+        QA_LOG_INFO << "IPC Manager started successfully.";
+        connect(m_ipcManager, &IPCManager::signalToggle, m_windowManager,
+                &WindowManager::toggleWindow);
+        connect(m_ipcManager, &IPCManager::signalShow, m_windowManager,
+                &WindowManager::showWindow);
+    }
 
 #ifdef Q_OS_WIN
     resetHotkey();
@@ -83,7 +96,8 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
     connect(m_messageViewModel, &Service::MessageViewModel::signalMessageAdded,
             m_sessionService, &Service::SessionService::handleUserChat);
 
-    connect(m_systemTray, &SystemTray::signalExitApp, qApp, &QCoreApplication::quit);
+    connect(m_systemTray, &SystemTray::signalExitApp, qApp,
+            &QCoreApplication::quit);
 }
 
 AppManager::~AppManager() { resetHotkey(); }

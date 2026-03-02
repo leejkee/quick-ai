@@ -27,6 +27,7 @@ namespace QA::App
 {
 class WindowManager;
 class SystemTray;
+class IPCManager;
 class AppManager final : public QObject
 {
     Q_OBJECT
@@ -54,6 +55,7 @@ private:
     QQmlApplicationEngine* m_qmlEngine = nullptr;
     SystemTray* m_systemTray = nullptr;
     int m_hotkeyId = 0;
+    IPCManager* m_ipcManager = nullptr;
 };
 
 } // namespace QA::App
