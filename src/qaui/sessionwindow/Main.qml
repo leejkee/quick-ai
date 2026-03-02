@@ -6,6 +6,7 @@ import QtQuick.Controls.Fusion
 ApplicationWindow {
     id: root
     title: "QML Chat UI"
+    flags: Qt.FramelessWindowHint
     visible: false
     minimumHeight: 300
     minimumWidth: 400

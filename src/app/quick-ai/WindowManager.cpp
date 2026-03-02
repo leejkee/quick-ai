@@ -47,7 +47,9 @@ void WindowManager::initWindow()
     {
         QA_LOG_WARN << "Root object is not a QQuickWindow";
         if (rootObject)
+        {
             rootObject->deleteLater();
+        }
         return;
     }
 
