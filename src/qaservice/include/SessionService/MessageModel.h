@@ -3,8 +3,8 @@
 //
 #pragma once
 #include <QAbstractListModel>
-#include <QPointer>
 #include <llm/LLMModels.h>
+#include <memory>
 
 namespace QA::Core
 {
@@ -17,6 +17,8 @@ class MessageModel final : public QAbstractListModel
     Q_OBJECT
 public:
     explicit MessageModel(const QString& systemPrompt, QObject* parent = nullptr);
+
+    ~MessageModel() override;
 
     enum MessageRoles
     {
@@ -42,6 +44,6 @@ public:
     [[nodiscard]] QList<Core::Message> getContext() const;
 
 private:
-    Core::LLMConversation* m_conversation;
+    std::unique_ptr<Core::LLMConversation> m_conversation;
 };
 } // namespace QA::Service

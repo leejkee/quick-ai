@@ -6,7 +6,7 @@
 namespace QA::Core
 {
 
-LLMConversation::LLMConversation(const QString& systemPrompt, QObject* parent) : QObject(parent)
+LLMConversation::LLMConversation(const QString& systemPrompt)
 {
     m_startTime = QDateTime::currentDateTime();
 
@@ -16,6 +16,7 @@ LLMConversation::LLMConversation(const QString& systemPrompt, QObject* parent) :
         pushMessage(sysPrompt);
     }
 }
+
 
 Message LLMConversation::at(const qsizetype index) const
 {

@@ -1,7 +1,7 @@
 //
 // Created by 31305 on 2026/2/20.
 //
-#include "WinGlobalShortcut.h"
+#include <GlobalShortcut/WinGlobalShortcut.h>
 #include <QAbstractNativeEventFilter>
 #include <QDebug>
 #include <QGuiApplication>

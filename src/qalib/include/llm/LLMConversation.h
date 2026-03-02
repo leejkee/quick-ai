@@ -10,10 +10,10 @@
 namespace QA::Core
 {
 
-class LLMConversation final : public QObject
+class LLMConversation
 {
 public:
-    explicit LLMConversation(const QString& systemPrompt = {}, QObject* parent = nullptr);
+    explicit LLMConversation(const QString& systemPrompt = {});
 
     void pushMessage(const Message& message);
 

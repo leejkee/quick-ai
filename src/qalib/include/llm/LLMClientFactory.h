@@ -12,7 +12,7 @@ class LLMClientFactory
 {
 public:
     static std::unique_ptr<LLMClientBase>
-    createLLMClient(const ModelInitData&, QObject* parent = nullptr);
+    createLLMClient(const ModelInitData&);
 };
 
 } // namespace QA::Core
