@@ -17,6 +17,8 @@ public:
     
     void hideWindow();
 
+    void showWindow();
+
     void toggleWindow();
 
     void handleTrayIconActivated(QSystemTrayIcon::ActivationReason reason);

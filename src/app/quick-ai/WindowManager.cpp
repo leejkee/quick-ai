@@ -66,10 +66,26 @@ void WindowManager::hideWindow()
         return;
     }
 
-    if (!m_window->activeFocusItem())
+    if (m_window->isVisible() && m_window->isActive())
     {
         m_window->hide();
     }
+}
+
+void WindowManager::showWindow()
+{
+    if (!m_window)
+    {
+        return;
+    }
+
+    if (!m_window->isVisible())
+    {
+        m_window->show();
+    }
+
+    m_window->raise();
+    m_window->requestActivate();
 }
 
 void WindowManager::toggleWindow()
@@ -79,7 +95,7 @@ void WindowManager::toggleWindow()
         return;
     }
 
-    if (m_window->isVisible())
+    if (m_window->isVisible() && m_window->isActive())
     {
         m_window->hide();
     }
