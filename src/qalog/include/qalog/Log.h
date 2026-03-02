@@ -2,6 +2,7 @@
 // Created by 31305 on 2025/11/25.
 //
 #pragma once
+#include <QDebug>
 #include <QFile>
 #include <QMessageLogContext>
 #include <QMutex>
@@ -15,9 +16,9 @@ namespace QA::Log
 enum class LogMode
 {
     ConsoleOnly, // print log to console only
-    WriteAll,    // write log to logs/app_xxxxxxxx-120000.log
-    WriteOnFail  // write log generated when the program crashes to
-                 // logs/app_crash_xxxxxx-120000.log
+    WriteAll, // write log to logs/app_xxxxxxxx-120000.log
+    WriteOnFail // write log generated when the program crashes to
+                // logs/app_crash_xxxxxx-120000.log
 };
 
 class LogManager
@@ -34,8 +35,8 @@ public:
      *                   to disk to aid debugging.
      */
     void initLogger(LogMode mode = LogMode::ConsoleOnly,
-              const QString& logBaseName = "log/app",
-              int bufferSize = 10);
+                    const QString& logBaseName = "log/app",
+                    int bufferSize = 10);
 
 private:
     LogManager() = default;
@@ -59,7 +60,7 @@ private:
     LogMode m_mode = LogMode::ConsoleOnly;
     int m_maxBufferSize = 10;
 
-    QString m_baseDir;  // e.g., "logs/"
+    QString m_baseDir; // e.g., "logs/"
     QString m_baseName; // e.g., "app"
 
     QFile m_logFile;
@@ -71,13 +72,9 @@ private:
     bool m_bufferFull = false;
 };
 
-#define QA_LOG_INFO \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).info()
-#define QA_LOG_WARN \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).warning()
-#define QA_LOG_ERR \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).critical()
-#define QA_LOG_DEBUG \
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).debug()
+#define QA_LOG_INFO QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).info()
+#define QA_LOG_WARN QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).warning()
+#define QA_LOG_ERR QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).critical()
+#define QA_LOG_DEBUG QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).debug()
 
 } // namespace QA::Log
