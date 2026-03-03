@@ -17,7 +17,10 @@ public:
 
     bool saveSettingsToFile();
 
-    [[nodiscard]]const UserSettings& getSettings() const { return m_settings; }
+    [[nodiscard]] const UserSettings& getSettings() const noexcept
+    {
+        return m_settings;
+    }
 
     template <typename Func>
     void updateSettings(Func&& modifier)

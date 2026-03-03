@@ -11,14 +11,15 @@
 namespace QA::Log
 {
 
-LogManager& LogManager::instance()
+LogManager& LogManager::instance() noexcept
 {
     static LogManager instance;
     return instance;
 }
 
-void LogManager::initLogger(const LogMode mode, const QString& logBaseName,
-                      const int bufferSize)
+void LogManager::initLogger(const LogMode mode,
+                            const QString& logBaseName,
+                            const int bufferSize)
 {
     QMutexLocker locker(&m_mutex);
     m_mode = mode;
@@ -31,7 +32,7 @@ void LogManager::initLogger(const LogMode mode, const QString& logBaseName,
         if (!dir.mkpath("."))
         {
             std::cerr << "LogManager: Failed to create log directory: "
-                  << m_baseDir.toStdString() << std::endl;
+                      << m_baseDir.toStdString() << std::endl;
         }
     }
 
@@ -75,8 +76,7 @@ QString LogManager::generateLogFileName(const QString& tag) const
 {
     QString timestamp =
             QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss");
-    return QString("%1/%2%3_%4.log")
-            .arg(m_baseDir, m_baseName, tag, timestamp);
+    return QString("%1/%2%3_%4.log").arg(m_baseDir, m_baseName, tag, timestamp);
 }
 
 void LogManager::messageHandler(const QtMsgType type,
@@ -122,9 +122,9 @@ void LogManager::handleLogMessage(const QtMsgType type,
     QString timeStr =
             QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
     const QString formattedMessage = QString("%1 %2 [%3:%4] %5")
-                                       .arg(timeStr, levelStr, fileName)
-                                       .arg(context.line)
-                                       .arg(msg);
+                                             .arg(timeStr, levelStr, fileName)
+                                             .arg(context.line)
+                                             .arg(msg);
 
     fprintf(type >= QtCriticalMsg ? stderr : stdout,
             "%s\n",

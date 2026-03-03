@@ -24,7 +24,7 @@ enum class LogMode
 class LogManager
 {
 public:
-    static LogManager& instance();
+    static LogManager& instance() noexcept;
 
     /**
      * @brief init log manager

@@ -46,7 +46,7 @@ public:
 
     // ---- Getters ----
     [[nodiscard]] QStringList getProviderList() const;
-    [[nodiscard]] qsizetype getProviderIndex() const
+    [[nodiscard]] qsizetype getProviderIndex() const noexcept
     {
         return m_curProviderIndex;
     }
@@ -54,11 +54,14 @@ public:
     [[nodiscard]] QString getAPIKey() const;
 
     [[nodiscard]] QStringList getModelList() const;
-    [[nodiscard]] qsizetype getModelIndex() const { return m_curModelIndex; }
+    [[nodiscard]] qsizetype getModelIndex() const noexcept
+    {
+        return m_curModelIndex;
+    }
     [[nodiscard]] QString getModelName() const;
     [[nodiscard]] QString getEndpoint() const;
 
-    [[nodiscard]] bool getIsModified() const { return m_isModified; }
+    [[nodiscard]] bool getIsModified() const noexcept { return m_isModified; }
 
     // ---- Setters ----
     void setProviderIndex(qsizetype index);

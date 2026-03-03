@@ -19,7 +19,7 @@ public:
 
     [[nodiscard]] Message at(qsizetype index) const;
 
-    [[nodiscard]] const QList<Message>& getMessages() const
+    [[nodiscard]] const QList<Message>& getMessages() const noexcept
     {
         return m_messagesHistory;
     }
@@ -31,9 +31,12 @@ public:
         return m_startTime.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
     }
 
-    [[nodiscard]] QDateTime getStartTime() const { return m_startTime; }
+    [[nodiscard]] QDateTime getStartTime() const noexcept
+    {
+        return m_startTime;
+    }
 
-    [[nodiscard]] qsizetype getMessageSize() const
+    [[nodiscard]] qsizetype getMessageSize() const noexcept
     {
         return m_messagesHistory.size();
     }

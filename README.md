@@ -101,5 +101,6 @@ cmake --build build/windows-release
   - [x] UI - Settings (设置界面)
   - [x] User Configuration (用户配置)
   - [ ] Style switch ()
-
+- [ ] Application icon
+- [ ] Const String
 ---

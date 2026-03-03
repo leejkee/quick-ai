@@ -29,12 +29,12 @@ public:
     explicit ModelParamsViewModel(LLMRuntimeContext* context,
                                   QObject* parent = nullptr);
 
-    [[nodiscard]] double getFrequencyPenalty() const;
-    [[nodiscard]] int getMaxTokens() const;
-    [[nodiscard]] double getPresencePenalty() const;
-    [[nodiscard]] double getTemperature() const;
-    [[nodiscard]] double getTopP() const;
-    [[nodiscard]] bool getStream() const;
+    [[nodiscard]] double getFrequencyPenalty() const noexcept;
+    [[nodiscard]] int getMaxTokens() const noexcept;
+    [[nodiscard]] double getPresencePenalty() const noexcept;
+    [[nodiscard]] double getTemperature() const noexcept;
+    [[nodiscard]] double getTopP() const noexcept;
+    [[nodiscard]] bool getStream() const noexcept;
 
 public Q_SLOTS:
     void setFrequencyPenalty(double value);

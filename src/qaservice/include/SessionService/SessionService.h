@@ -24,7 +24,7 @@ public:
 
     void chatNoStreaming();
 
-    [[nodiscard]] MessageModel* getMessageModel() const
+    [[nodiscard]] MessageModel* getMessageModel() const noexcept
     {
         return m_messageModel;
     };

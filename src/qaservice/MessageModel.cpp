@@ -1,20 +1,21 @@
 //
 // Created by 31305 on 2025/11/9.
 //
-#include <llm/LLMConversation.h>
 #include <SessionService/MessageModel.h>
+#include <llm/LLMConversation.h>
 
 namespace QA::Service
 {
 
 MessageModel::MessageModel(const QString& systemPrompt, QObject* parent)
-    : QAbstractListModel(parent), m_conversation(std::make_unique<Core::LLMConversation>(systemPrompt))
+    : QAbstractListModel(parent),
+      m_conversation(std::make_unique<Core::LLMConversation>(systemPrompt))
 {
 }
 
 MessageModel::~MessageModel() = default;
 
-int MessageModel::rowCount(const QModelIndex& parent) const
+int MessageModel::rowCount(const QModelIndex& parent) const noexcept
 {
     if (parent.isValid())
     {
@@ -23,9 +24,11 @@ int MessageModel::rowCount(const QModelIndex& parent) const
     return static_cast<int>(m_conversation->getMessageSize());
 }
 
-QVariant MessageModel::data(const QModelIndex& index, const int role) const
+QVariant MessageModel::data(const QModelIndex& index,
+                            const int role) const noexcept
 {
-    if (!index.isValid() || index.row() >= static_cast<int>(m_conversation->getMessageSize()))
+    if (!index.isValid() ||
+        index.row() >= static_cast<int>(m_conversation->getMessageSize()))
     {
         return {};
     }
@@ -41,7 +44,7 @@ QVariant MessageModel::data(const QModelIndex& index, const int role) const
     }
 }
 
-QHash<int, QByteArray> MessageModel::roleNames() const
+QHash<int, QByteArray> MessageModel::roleNames() const noexcept
 {
     QHash<int, QByteArray> roles;
     roles[RoleRole] = STR_ROLE.toUtf8();

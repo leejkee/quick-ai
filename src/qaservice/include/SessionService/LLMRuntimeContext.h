@@ -13,17 +13,30 @@ class LLMRuntimeContext final : public QObject
 {
     Q_OBJECT
 public:
-    explicit LLMRuntimeContext(SettingsRepository* repo, QObject* parent = nullptr);
+    explicit LLMRuntimeContext(SettingsRepository* repo,
+                               QObject* parent = nullptr);
 
-    [[nodiscard]] QString getSelectedModel() const { return m_selectedModel; }
+    [[nodiscard]] QString getSelectedModel() const noexcept
+    {
+        return m_selectedModel;
+    }
     void setSelectedModel(const QString& model);
 
-    [[nodiscard]] QString getSelectedProviderId() const { return m_selectedProviderId; }
+    [[nodiscard]] QString getSelectedProviderId() const noexcept
+    {
+        return m_selectedProviderId;
+    }
     void setSelectedProviderId(const QString& providerId);
 
-    [[nodiscard]] QString getSystemPrompt() const { return m_systemPrompt; }
+    [[nodiscard]] QString getSystemPrompt() const noexcept
+    {
+        return m_systemPrompt;
+    }
 
-    [[nodiscard]] Core::ModelParams getModelParams() const { return m_modelParams; }
+    [[nodiscard]] Core::ModelParams getModelParams() const noexcept
+    {
+        return m_modelParams;
+    }
     template <typename Func>
     void setModelParams(Func&& f)
     {

@@ -16,10 +16,9 @@ class MessageViewModel : public QObject
                        signalStatusMessageChanged)
 
 public:
-    explicit MessageViewModel(MessageModel* model,
-                           QObject* parent = nullptr);
+    explicit MessageViewModel(MessageModel* model, QObject* parent = nullptr);
 
-    Q_INVOKABLE [[nodiscard]] QString getStatusMessage() const
+    Q_INVOKABLE [[nodiscard]] QString getStatusMessage() const noexcept
     {
         return m_statusMessage;
     }
@@ -39,13 +38,11 @@ public Q_SLOTS:
     void handleClearSession();
 
 private:
-
     QString m_statusMessage;
 
     void setStatusMessage(const QString& message);
 
     QPointer<MessageModel> m_model;
-
 };
 
 } // namespace QA::Service
