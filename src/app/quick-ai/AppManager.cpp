@@ -38,7 +38,6 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
         QA_LOG_ERR << "Fatal error during App initialization:" << e.what();
         std::exit(EXIT_FAILURE);
     }
-
     m_llmRuntimeContext = new Service::LLMRuntimeContext(m_settingsRepo, this);
     m_messageModel =
         new Service::MessageModel(m_llmRuntimeContext->getSystemPrompt(), this);
@@ -54,7 +53,7 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
     m_llmInitViewModel = new Service::LLMInitViewModel(m_settingsRepo, this);
     m_providerEditorViewModel =
         new Service::ProviderEditorViewModel(m_settingsRepo, this);
-
+    m_systemTray = new SystemTray(this);
     m_qmlEngine = new QQmlApplicationEngine(this);
     auto* rootContext = m_qmlEngine->rootContext();
     rootContext->setContextProperty(u"messageViewModel"_s, m_messageViewModel);
@@ -67,6 +66,8 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
     rootContext->setContextProperty(u"llmInitViewModel"_s, m_llmInitViewModel);
     rootContext->setContextProperty(u"providerEditorViewModel"_s,
                                     m_providerEditorViewModel);
+    rootContext->setContextProperty(u"systemTray"_s, m_systemTray);
+    m_qmlEngine->load(QUrl(u"qrc:/qt/qml/qaui/TrayIcon.qml"_s));
 
     try {
         m_windowManager = new WindowManager(m_qmlEngine, this);
@@ -75,7 +76,6 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
                    << e.what();
         std::exit(EXIT_FAILURE);
     }
-    m_systemTray = new SystemTray(m_windowManager, this);
     m_ipcManager = new IPCManager(IPCManager::getDefaultServerName(), this);
     if (!m_ipcManager->startListening()) {
         QA_LOG_WARN
@@ -87,6 +87,17 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
         connect(m_ipcManager, &IPCManager::signalShow, m_windowManager,
                 &WindowManager::showWindow);
     }
+    connect(m_systemTray, &SystemTray::signalRequestShowChat, m_windowManager,
+            &WindowManager::showWindow);
+
+    connect(m_systemTray, &SystemTray::signalRequestShowSettings,
+            m_windowManager, &WindowManager::showSettingsWindow);
+
+    connect(m_systemTray, &SystemTray::signalTrayActivated, m_windowManager,
+            &WindowManager::handleTrayIconActivated);
+
+    connect(m_systemTray, &SystemTray::signalExitApp, qApp,
+            &QCoreApplication::quit);
 
 #ifdef Q_OS_WIN
     resetHotkey();
@@ -95,7 +106,6 @@ AppManager::AppManager(QObject* parent) : QObject(parent) {
 
     connect(m_messageViewModel, &Service::MessageViewModel::signalMessageAdded,
             m_sessionService, &Service::SessionService::handleUserChat);
-
     connect(m_systemTray, &SystemTray::signalExitApp, qApp,
             &QCoreApplication::quit);
 }
@@ -129,4 +139,5 @@ QString AppManager::getDefaultConfigPath() {
     return configPath;
 }
 
+void AppManager::initSystemTray() {}
 } // namespace QA::App

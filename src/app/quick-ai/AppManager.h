@@ -3,10 +3,7 @@
 //
 #pragma once
 #include <QObject>
-#include <QSystemTrayIcon>
-
-
-class QMenu;
+#include <SystemTray/SystemTray.h>
 class QQmlApplicationEngine;
 
 namespace QA::Service
@@ -26,7 +23,6 @@ class ProviderEditorViewModel;
 namespace QA::App
 {
 class WindowManager;
-class SystemTray;
 class IPCManager;
 class AppManager final : public QObject
 {
@@ -39,6 +35,7 @@ private:
     static QString getDefaultConfigPath();
     void registerHotkey();
     void resetHotkey();
+    void initSystemTray();
 
     Service::SessionService* m_sessionService = nullptr;
     Service::SettingsRepository* m_settingsRepo = nullptr;

@@ -44,7 +44,7 @@ ScrollView {
 
         SettingsItem {
             text: "Launch Selection"
-            description: "启动时默认选择的模型"
+            description: "Choose your default provider and model for quick launching."
             vertical: true
             GridLayout {
                 columns: 2
@@ -94,7 +94,7 @@ ScrollView {
 
         SettingsItem {
             text: "Model Params:"
-            description: "启动时程序会加载这里的参数作为默认参数"
+            description: "Launch parameters for the default model"
             vertical: true
             ModelParamsEditor {
                 Layout.fillWidth: true

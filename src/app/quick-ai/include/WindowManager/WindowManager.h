@@ -1,6 +1,5 @@
 #pragma once
 #include <QObject>
-#include <QSystemTrayIcon>
 #include <QPointer>
 
 class QQmlApplicationEngine;
@@ -21,7 +20,7 @@ public:
 
     void toggleWindow();
 
-    void handleTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void handleTrayIconActivated(int reason);
 
     void showSettingsWindow();
 
