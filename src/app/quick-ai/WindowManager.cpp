@@ -1,40 +1,36 @@
-#include <WindowManager/WindowManager.h>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickWindow>
+#include <QSystemTrayIcon>
+#include <WindowManager/WindowManager.h>
 #include <qalog/Log.h>
 #include <stdexcept>
 
-namespace QA::App{
+namespace QA::App {
 using namespace Qt::StringLiterals;
 
-WindowManager::WindowManager(QQmlApplicationEngine* qmlEngine, QObject* parent)
-    : QObject(parent), m_qmlEngine(qmlEngine)
-{
-    if (!m_qmlEngine)
-    {
+WindowManager::WindowManager(QQmlApplicationEngine* qmlEngine,
+                             QObject* parent) :
+    QObject(parent), m_qmlEngine(qmlEngine) {
+    if (!m_qmlEngine) {
         QA_LOG_ERR << "QQmlApplicationEngine pointer is null";
         throw std::invalid_argument("QQmlApplicationEngine cannot be null.");
     }
     m_settingsComponent = new QQmlComponent(
-            m_qmlEngine,
-            QUrl(u"qrc:/qt/qml/qaui/settingswindow/MainView.qml"_s),
-            this);
+        m_qmlEngine,
+        QUrl(u"qrc:/qt/qml/qaui/settingswindow/SettingsMainView.qml"_s), this);
     initWindow();
 }
 
-void WindowManager::initWindow()
-{
+void WindowManager::initWindow() {
     m_chatComponent = new QQmlComponent(m_qmlEngine, this);
-    m_chatComponent->loadFromModule(u"qaui.sessionwindow"_s, u"Main"_s);
+    m_chatComponent->loadFromModule(u"qaui"_s, u"ChatMainView"_s);
 
-    if (m_chatComponent->status() == QQmlComponent::Error)
-    {
+    if (m_chatComponent->status() == QQmlComponent::Error) {
         QA_LOG_WARN << "Failed to load Main QML:";
-        for (const auto& err : m_chatComponent->errors())
-        {
+        for (const auto& err : m_chatComponent->errors()) {
             QA_LOG_WARN << err.toString();
         }
         return;
@@ -43,11 +39,9 @@ void WindowManager::initWindow()
     QObject* rootObject = m_chatComponent->create();
     m_window = qobject_cast<QQuickWindow*>(rootObject);
 
-    if (!m_window)
-    {
+    if (!m_window) {
         QA_LOG_WARN << "Root object is not a QQuickWindow";
-        if (rootObject)
-        {
+        if (rootObject) {
             rootObject->deleteLater();
         }
         return;
@@ -55,34 +49,26 @@ void WindowManager::initWindow()
 
     m_window->setFlags(m_window->flags() | Qt::WindowStaysOnTopHint);
 
-    connect(m_window,
-            &QQuickWindow::activeFocusItemChanged,
-            this,
+    connect(m_window, &QQuickWindow::activeFocusItemChanged, this,
             &WindowManager::hideWindow);
 }
 
-void WindowManager::hideWindow()
-{
-    if (!m_window)
-    {
+void WindowManager::hideWindow() {
+    if (!m_window) {
         return;
     }
 
-    if (m_window->isVisible() && m_window->isActive())
-    {
+    if (m_window->isVisible() && m_window->isActive()) {
         m_window->hide();
     }
 }
 
-void WindowManager::showWindow()
-{
-    if (!m_window)
-    {
+void WindowManager::showWindow() {
+    if (!m_window) {
         return;
     }
 
-    if (!m_window->isVisible())
-    {
+    if (!m_window->isVisible()) {
         m_window->show();
     }
 
@@ -90,50 +76,44 @@ void WindowManager::showWindow()
     m_window->requestActivate();
 }
 
-void WindowManager::toggleWindow()
-{
-    if (!m_window)
-    {
+void WindowManager::toggleWindow() {
+    if (!m_window) {
         return;
     }
 
-    if (m_window->isVisible() && m_window->isActive())
-    {
+    if (m_window->isVisible() && m_window->isActive()) {
         m_window->hide();
-    }
-    else
-    {
+    } else {
         m_window->show();
         m_window->raise();
         m_window->requestActivate();
     }
 }
 
-void WindowManager::handleTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
-{
-    if (reason == QSystemTrayIcon::Trigger)
-    {
+void WindowManager::handleTrayIconActivated(int reason) {
+    auto activationReason =
+        static_cast<QSystemTrayIcon::ActivationReason>(reason);
+
+    if (activationReason == QSystemTrayIcon::Trigger) {
         toggleWindow();
+    } else if (activationReason == QSystemTrayIcon::DoubleClick) {
+        showWindow();
     }
 }
 
-void WindowManager::showSettingsWindow(){
-    if (!m_settingsComponent)
-    {
+void WindowManager::showSettingsWindow() {
+    if (!m_settingsComponent) {
         QA_LOG_WARN << "Settings component not initialized";
         return;
     }
-    if (m_settingsComponent->status() == QQmlComponent::Error)
-    {
+    if (m_settingsComponent->status() == QQmlComponent::Error) {
         QA_LOG_WARN << "QML Component load errors:";
-        for (const QQmlError& error : m_settingsComponent->errors())
-        {
+        for (const QQmlError& error : m_settingsComponent->errors()) {
             QA_LOG_WARN << error.toString();
         }
         return;
     }
-    if (m_settingsWindow)
-    {
+    if (m_settingsWindow) {
         // Window already exists, bring to front
         m_settingsWindow->show();
         m_settingsWindow->raise();
@@ -145,20 +125,15 @@ void WindowManager::showSettingsWindow(){
     QObject* object = m_settingsComponent->create();
     m_settingsWindow = qobject_cast<QQuickWindow*>(object);
 
-    if (!m_settingsWindow)
-    {
+    if (!m_settingsWindow) {
         QA_LOG_WARN << "Failed to create settings window";
         delete object;
         return;
     }
 
-    connect(m_settingsWindow,
-            &QQuickWindow::visibleChanged,
-            this,
-            [this](bool visible)
-            {
-                if (!visible)
-                {
+    connect(m_settingsWindow, &QQuickWindow::visibleChanged, this,
+            [this](bool visible) {
+                if (!visible) {
                     closeSettingsWindow();
                 }
             });
@@ -169,13 +144,11 @@ void WindowManager::showSettingsWindow(){
     m_settingsWindow->requestActivate();
 }
 
-void WindowManager::closeSettingsWindow()
-{
-    if (m_settingsWindow)
-    {
+void WindowManager::closeSettingsWindow() {
+    if (m_settingsWindow) {
         m_settingsWindow->deleteLater();
         m_settingsWindow = nullptr;
     }
 }
 
-}
+} // namespace QA::App

@@ -5,8 +5,6 @@ file(GLOB_RECURSE QUICKAIAPP_SRC CONFIGURE_DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/AppManager.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/svg.qrc
-        ${CMAKE_CURRENT_SOURCE_DIR}/SystemTray.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/IPCManager.cpp
         
 )
@@ -34,8 +32,7 @@ target_link_libraries(quickai_app PRIVATE
         Qt6::Widgets
         Qt6::DBus
         Qt6::Network
-        QuickAIUiSessionplugin
-        QuickAIUISettingsplugin
+        quick_ai_qmlplugin
         QuickAIService
         QuickAILog
         Qt6::QuickControls2

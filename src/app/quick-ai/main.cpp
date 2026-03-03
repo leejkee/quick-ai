@@ -1,16 +1,16 @@
 //
 // Created by 31305 on 2025/10/31.
 //
-#include <QApplication>
+#include <QGuiApplication>
 #include "AppManager.h"
 #include <IPCManager/IPCManager.h>
 #include <QLocalSocket>
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     // Prevent the application from quitting when the last window is closed, since we want it to run in the system tray.
-    QApplication::setQuitOnLastWindowClosed(false);
+    QGuiApplication::setQuitOnLastWindowClosed(false);
     QLocalSocket socket;
     socket.connectToServer(QA::App::IPCManager::getDefaultServerName());
     if (socket.waitForConnected(500)) {
@@ -23,5 +23,5 @@ int main(int argc, char *argv[])
     }
 
     QA::App::AppManager appManager;
-    return QApplication::exec();
+    return QGuiApplication::exec();
 }

@@ -7,6 +7,8 @@ Window {
     id: root
     visible: true
     title: "Quick AI Settings"
+    width: 800
+    height: 600
 
     // ============================================
     // Colors - Fusion Style Palette
@@ -54,9 +56,21 @@ Window {
                 anchors.topMargin: root.sidebarMargin
                 focus: true
                 model: ListModel {
-                    ListElement { name: "General Settings"; icon: "⚙️"; pageIndex: 0 }
-                    ListElement { name: "LLM Runtime Config"; icon: "🤖"; pageIndex: 1 }
-                    ListElement { name: "User Configuration"; icon: "📝"; pageIndex: 2 }
+                    ListElement { 
+                        name: "General Settings"; 
+                        icon: "qrc:/qt/qml/qaui/icons/appearance.svg"; 
+                        pageIndex: 0 
+                    }
+                    ListElement { 
+                        name: "LLM Runtime Config"; 
+                        icon: "qrc:/qt/qml/qaui/icons/llm-runtime.svg"; 
+                        pageIndex: 1 
+                    }
+                    ListElement { 
+                        name: "User Configuration"; 
+                        icon: "qrc:/qt/qml/qaui/icons/user-config.svg"; 
+                        pageIndex: 2 
+                    }
                 }
 
                 delegate: Rectangle {
@@ -70,9 +84,12 @@ Window {
                         anchors.leftMargin: root.leftMargin
                         spacing: root.iconSpacing
 
-                        Text {
-                            text: model.icon
-                            font.pixelSize: root.iconSize
+                        Image {
+                            source: model.icon
+                            sourceSize.width: root.iconSize
+                            sourceSize.height: root.iconSize
+                            fillMode: Image.PreserveAspectFit
+                            Layout.alignment: Qt.AlignVCenter
                         }
 
                         Text {

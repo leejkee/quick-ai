@@ -1,30 +1,24 @@
 #pragma once
 #include <QObject>
-#include <QPointer>
-#include <WindowManager/WindowManager.h>
-#include <memory>
 
-class QSystemTrayIcon;
-class QMenu;
 namespace QA::App {
-class WindowManager;
-class SystemTray final : public QObject {
+class SystemTray : public QObject {
     Q_OBJECT
 public:
-    explicit SystemTray(WindowManager* windowManager,
-                        QObject* parent = nullptr);
-    ~SystemTray();
+    explicit SystemTray(QObject* parent = nullptr) : QObject(parent) {}
 
-Q_SIGNALS:
-    void signalToggleWindow();
+    Q_INVOKABLE void showChat() { emit signalRequestShowChat(); }
+    Q_INVOKABLE void showSettings() { emit signalRequestShowSettings(); }
+    Q_INVOKABLE void quitApp() { emit signalExitApp(); }
 
-    void signalShowSettingsWindow();
+    Q_INVOKABLE void handleActivated(int reason) {
+        emit signalTrayActivated(reason);
+    }
 
+signals:
+    void signalRequestShowChat();
+    void signalRequestShowSettings();
+    void signalTrayActivated(int reason);
     void signalExitApp();
-
-private:
-    QPointer<WindowManager> m_windowManager;
-    QSystemTrayIcon* m_trayIcon = nullptr;
-    std::unique_ptr<QMenu> m_trayMenu;
 };
 } // namespace QA::App
