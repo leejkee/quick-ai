@@ -1,3 +1,31 @@
+<p align="center">
+  <img src="docs/screenshot/logo.svg" alt="Quick-AI Logo" width="120">
+</p>
+
+<h1 align="center">Quick-AI</h1>
+
+<p align="center">
+  <strong>由 C++17 与 QtQuick 构建的轻量、跨平台 LLM GUI 客户端</strong>
+  <br />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-blue?style=flat-square&logo=linux" alt="Platform">
+  <img src="https://img.shields.io/badge/Qt-6.8%2B-green?style=flat-square&logo=qt" alt="Qt Version">
+  <img src="https://img.shields.io/badge/C%2B%2B-17-00599C?style=flat-square&logo=c%2B%2B" alt="C++ Standard">
+  <a href="https://github.com/leejkee/quick-ai/stargazers">
+    <img src="https://img.shields.io/github/stars/leejkee/quick-ai?style=flat-square&logo=github" alt="Stars">
+  </a>
+</p>
+
+<p align="center">
+  <a href="#项目简介">项目简介</a> •
+  <a href="#使用方法">使用方法</a> •
+  <a href="#编译">编译指南</a> •
+  <a href="#todo">开发计划</a>
+</p>
+
+---
 # Quick-AI-Assistant
 
 一款支持多模型切换的智能对话助手，提供 CLI 和 Qt Quick GUI 两种交互方式。基于 C++17 和 Qt 6 构建，采用 DeepSeek API 实现流式和非流式对话。
@@ -8,25 +36,24 @@
 
 Quick-AI-Assistant 是一个轻量级、跨平台的 AI 对话客户端，支持以下特性：
 
-- **多模型支持**：支持 DeepSeek 及其他 OpenAI 兼容的 API 提供商
-- **流式对话**：实时显示 AI 回复内容
+- **多模型支持**：支持 DeepSeek 及其他 OpenAI 兼容的 Provider
 - **对话管理**：支持多会话管理和历史记录
 - **配置灵活**：通过环境变量或 GUI 设置 API 密钥和参数
 - **跨平台**：支持 Windows 和 Linux
 
 ---
 
-## 界面演示
+## 界面演示(Arch linux/Wayland/COSMIC)
 
-### 聊天界面
-![Chat Interface](docs/screens/chat_show.png)
+### Chat界面
+![Chat Interface](docs/screenshot/chat.png)
 
-### 设置界面
-![Settings Interface](docs/screens/settings_show.png)
+### Settings界面
+![Settings Interface](docs/screenshot/settings.png)
 
 ---
 
-## 使用方法
+## 使用
 
 ### cli tool 
 - 需要将api key配置到env
@@ -86,7 +113,7 @@ cmake --build build/windows-release
 
 ## Development Guidelines
 
-请阅读 [Development Guidelines](docs/dev_guide.md)
+[Development Guidelines](docs/dev_guide.md)
 
 ---
 
@@ -96,11 +123,11 @@ cmake --build build/windows-release
 - [x] Conversation management
 - [x] Multi-model switching capability
 - [x] Documentation
+- [ ] Streaming-chat
 - [x] GUI based on Qt Quick
   - [x] UI - Session (聊天界面)
   - [x] UI - Settings (设置界面)
   - [x] User Configuration (用户配置)
   - [ ] Style switch ()
-- [ ] Application icon
-- [ ] Const String
+- [x] Application icon
 ---
