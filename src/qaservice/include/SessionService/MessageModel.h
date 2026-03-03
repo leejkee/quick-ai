@@ -16,7 +16,8 @@ class MessageModel final : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit MessageModel(const QString& systemPrompt, QObject* parent = nullptr);
+    explicit MessageModel(const QString& systemPrompt,
+                          QObject* parent = nullptr);
 
     ~MessageModel() override;
 
@@ -32,12 +33,13 @@ public:
 
     // inline static const auto STR_TOKENS = QStringLiteral("tokens");
 
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
+    [[nodiscard]] int
+    rowCount(const QModelIndex& parent) const noexcept override;
 
     [[nodiscard]] QVariant data(const QModelIndex& index,
-                                int role) const override;
+                                int role) const noexcept override;
 
-    [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+    [[nodiscard]] QHash<int, QByteArray> roleNames() const noexcept override;
 
     void appendMessage(const Core::Message& message);
     void clearMessages();

@@ -2,21 +2,21 @@
 // Created by 31305 on 2025/11/20.
 //
 #pragma once
+#include <QJsonObject>
 #include <QString>
 #include <QtGlobal>
-#include <QJsonObject>
 namespace QA::Core
 {
 struct Message
 {
     QString role;
     QString content;
-    [[nodiscard]] QJsonObject toJson() const
+    [[nodiscard]] QJsonObject toJson() const noexcept
     {
         return {{"role", role}, {"content", content}};
     }
 
-    static Message fromJson(const QJsonObject& json)
+    static Message fromJson(const QJsonObject& json) noexcept
     {
         Message msg;
         msg.role = json["role"].toString(msg.role);
@@ -34,7 +34,7 @@ struct ModelParams
     double top_p = 1.0;
     bool stream = false;
 
-    static ModelParams fromJson(const QJsonObject& json)
+    static ModelParams fromJson(const QJsonObject& json) noexcept
     {
         ModelParams p;
         p.temperature = json["temperature"].toDouble(p.temperature);
@@ -42,12 +42,13 @@ struct ModelParams
         p.max_tokens = json["maxTokens"].toInt(p.max_tokens);
         p.frequency_penalty =
                 json["frequencyPenalty"].toDouble(p.frequency_penalty);
-        p.presence_penalty = json["presencePenalty"].toDouble(p.presence_penalty);
+        p.presence_penalty =
+                json["presencePenalty"].toDouble(p.presence_penalty);
         p.stream = json["stream"].toBool(p.stream);
         return p;
     }
 
-    [[nodiscard]] QJsonObject toJson() const
+    [[nodiscard]] QJsonObject toJson() const noexcept
     {
         return {{"frequencyPenalty", frequency_penalty},
                 {"maxTokens", max_tokens},
@@ -57,7 +58,7 @@ struct ModelParams
                 {"stream", stream}};
     }
 
-    bool operator==(const ModelParams& rhs) const
+    bool operator==(const ModelParams& rhs) const noexcept
     {
         return frequency_penalty == rhs.frequency_penalty &&
                 max_tokens == rhs.max_tokens &&
@@ -66,7 +67,10 @@ struct ModelParams
                 stream == rhs.stream;
     }
 
-    bool operator!=(const ModelParams& rhs) const { return !(*this == rhs); }
+    bool operator!=(const ModelParams& rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 };
 
 struct ChatResponseBody
@@ -82,12 +86,15 @@ struct ModelInitData
     QString apiKey;
     QString url;
 
-    bool operator==(const ModelInitData& rhs) const
+    bool operator==(const ModelInitData& rhs) const noexcept
     {
         return model == rhs.model && apiKey == rhs.apiKey && url == rhs.url;
     }
 
-    bool operator!=(const ModelInitData& rhs) const { return !(*this == rhs); }
+    bool operator!=(const ModelInitData& rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 };
 
 } // namespace QA::Core

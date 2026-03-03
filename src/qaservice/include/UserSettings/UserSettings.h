@@ -29,7 +29,7 @@ struct Model
     QString name;
     QString endpoint;
 
-    static Model fromJson(const QJsonObject& json)
+    static Model fromJson(const QJsonObject& json) noexcept
     {
         Model model;
         model.name = json["name"].toString(model.name);
@@ -37,17 +37,17 @@ struct Model
         return model;
     }
 
-    [[nodiscard]] QJsonObject toJson() const
+    [[nodiscard]] QJsonObject toJson() const noexcept
     {
         return {{"name", name}, {"endpoint", endpoint}};
     }
 
-    bool operator==(const Model& rhs) const
+    bool operator==(const Model& rhs) const noexcept
     {
         return name == rhs.name && endpoint == rhs.endpoint;
     }
 
-    bool operator!=(const Model& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Model& rhs) const noexcept { return !(*this == rhs); }
 };
 
 struct Provider
@@ -90,13 +90,16 @@ struct Provider
                 {"models", modelArray}};
     }
 
-    bool operator==(const Provider& rhs) const
+    bool operator==(const Provider& rhs) const noexcept
     {
         return std::tie(id, baseUrl, apiKey, models) ==
                 std::tie(rhs.id, rhs.baseUrl, rhs.apiKey, rhs.models);
     }
 
-    bool operator!=(const Provider& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Provider& rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 
     [[nodiscard]] QString getUrl(const QString& modelName) const
     {
@@ -113,7 +116,7 @@ struct Provider
 
     const Model* getModel(const QString& modelName) const
     {
-        for (const auto& model: models)
+        for (const auto& model : models)
         {
             if (model.name == modelName)
             {
@@ -211,12 +214,15 @@ struct AppSettings
         return config;
     }
 
-    bool operator==(const AppSettings& rhs) const
+    bool operator==(const AppSettings& rhs) const noexcept
     {
         return std::tie(theme) == std::tie(rhs.theme);
     }
 
-    bool operator!=(const AppSettings& rhs) const { return !(*this == rhs); }
+    bool operator!=(const AppSettings& rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 };
 
 
@@ -376,7 +382,7 @@ struct UserSettings
         return defaults;
     }
 
-    bool operator==(const UserSettings& rhs) const
+    bool operator==(const UserSettings& rhs) const noexcept
     {
         return m_appSettings == rhs.m_appSettings &&
                 m_modelParams == rhs.m_modelParams &&
@@ -386,7 +392,10 @@ struct UserSettings
                 m_systemPrompt == rhs.m_systemPrompt;
     }
 
-    bool operator!=(const UserSettings& rhs) const { return !(*this == rhs); }
+    bool operator!=(const UserSettings& rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 };
 
 } // namespace QA::Service
